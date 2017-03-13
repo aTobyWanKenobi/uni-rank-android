@@ -1,7 +1,7 @@
 package com.example.albergon.unirank.Database;
 
-import com.example.albergon.unirank.Indicator;
-import com.example.albergon.unirank.University;
+import com.example.albergon.unirank.Model.Indicator;
+import com.example.albergon.unirank.Model.University;
 
 /**
  * This interface specifies the access methods to the local university and indicators database. It

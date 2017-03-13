@@ -1,6 +1,4 @@
-package com.example.albergon.unirank;
-
-import java.util.Objects;
+package com.example.albergon.unirank.Model;
 
 /**
  * This class models an university. It stores the same information that is present in the database

@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Model.Indicator;
+import com.example.albergon.unirank.Model.University;
 
 import java.io.IOException;
 
@@ -25,6 +27,7 @@ public class SidebarActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 
+    // Week3 demo fields****************************************************************************
     private final String TAG = "SideBarActivity";
     private EditText uniID = null;
     private TextView uniName = null;
@@ -36,6 +39,7 @@ public class SidebarActivity extends AppCompatActivity
     private TextView score = null;
 
     private University uni;
+    //**********************************************************************************************
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +66,7 @@ public class SidebarActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //quick demo
-
+        // Week3 demo code**************************************************************************
         final DatabaseHelper dbHelper = new DatabaseHelper(this);
 
         try {
@@ -72,8 +75,6 @@ public class SidebarActivity extends AppCompatActivity
         } catch (IOException e) {
             Log.e(TAG, e.getMessage());
         }
-
-
 
         uniID = (EditText) findViewById(R.id.uni_id);
         uniName = (TextView) findViewById(R.id.uni_name);
@@ -103,6 +104,7 @@ public class SidebarActivity extends AppCompatActivity
                 score.setText(Double.toString(scoreUni));
             }
         });
+        //******************************************************************************************
     }
 
     @Override

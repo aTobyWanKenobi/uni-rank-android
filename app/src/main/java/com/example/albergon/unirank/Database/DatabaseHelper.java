@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.albergon.unirank.Indicator;
-import com.example.albergon.unirank.University;
+import com.example.albergon.unirank.Model.Indicator;
+import com.example.albergon.unirank.Model.University;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -72,6 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         if(databaseExists()) {
             Log.i(TAG, "Database already exists");
         } else {
+            // TODO: remember to implement calls to this method as background service (long-running)
             // create empty database in default system folder
             this.getReadableDatabase();
             // overwrite it with desired database
@@ -137,17 +138,26 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         inputDB.close();
     }
 
+    /**
+     * Retrieve a University from the database by its unique id.
+     *
+     * @param id    unique identifier for universities in the database
+     * @return      a University object containing all the database information
+     */
     @Override
     public University getUniversity(int id) {
 
+        // specifies which database columns we want from the query
         String[] projection = {
                 Tables.UniversitiesTable.UNI_NAME,
                 Tables.UniversitiesTable.COUNTRY,
                 Tables.UniversitiesTable.ACRONYM
         };
 
+        // specifies the WHERE clause of the query
         String selection = Tables.UniversitiesTable._ID + " = " + id;
 
+        // perform query in UNIVERSITIES table
         Cursor result = db.query(
                 Tables.UniversitiesTable.TABLE_NAME,
                 projection,
@@ -157,6 +167,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
                 null,
                 null);
 
+        // check that we retrieved a unique university
         if(result.getCount() == 1) {
             result.moveToNext();
         } else if(result.getCount() == 0) {
@@ -165,6 +176,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
             throw new IllegalStateException("More universities with same id, database is corrupted");
         }
 
+        // build and return a University object
         String uniName = result.getString(result.getColumnIndexOrThrow(Tables.UniversitiesTable.UNI_NAME));
         String uniCountry = result.getString(result.getColumnIndexOrThrow(Tables.UniversitiesTable.COUNTRY));
         String uniAcronym = result.getString(result.getColumnIndexOrThrow(Tables.UniversitiesTable.ACRONYM));
@@ -176,16 +188,24 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         return fetchUni;
     }
 
+    /**
+     * Retrieve an Indicator by its index in the IndicatorsList enumeration.
+     *
+     * @param id    index of the indicator
+     * @return      an Indicator containing all the respective table data
+     */
     @Override
     public Indicator getIndicator(int id) {
 
+        // specifies which database columns we want from the query
         String[] projection = {
-                Tables.IndicatorTable._ID,
-                Tables.IndicatorTable.SCORE
+                Tables.IndicatorsList._ID,
+                Tables.IndicatorsList.SCORE
         };
 
+        // specifies the WHERE clause of the query
         Cursor result = db.query(
-                Tables.IndicatorTable.IndicatorsIndex.values()[id].toString(),
+                Tables.IndicatorsList.values()[id].TABLE_NAME,
                 projection,
                 null,
                 null,
@@ -193,17 +213,20 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
                 null,
                 null);
 
+        // iterate through the result to build the Map containing all pairs university/score
+        // build and return Indicator object
         if(result.getCount() > 0) {
             Map<University, Double> entries = new HashMap<>();
             while(result.moveToNext()) {
-                int uniID = result.getInt(result.getColumnIndexOrThrow(Tables.IndicatorTable._ID));
-                double uniScore = result.getDouble(result.getColumnIndexOrThrow(Tables.IndicatorTable.SCORE));
+                int uniID = result.getInt(result.getColumnIndexOrThrow(Tables.IndicatorsList._ID));
+                double uniScore = result.getDouble(result.getColumnIndexOrThrow(Tables.IndicatorsList.SCORE));
                 University uni = getUniversity(uniID);
                 entries.put(uni, uniScore);
             }
 
             return new Indicator(entries, id);
         } else {
+
             throw new IllegalStateException("Empty indicator table, database is corrupted");
         }
     }
