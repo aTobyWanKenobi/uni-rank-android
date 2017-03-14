@@ -21,6 +21,16 @@ public class University {
      * @param country   ISO 3166-1 country code
      */
     public University(int id, String name, String country) {
+
+        // arguments check
+        if(id < 0) {
+            throw new IllegalArgumentException("University id must be a positive integer");
+        } else if(name == null || country == null) {
+            throw new IllegalArgumentException("University name or country cannot be null");
+        } else if(name.isEmpty() || country.isEmpty()) {
+            throw new IllegalArgumentException("University name or country cannot be empty");
+        }
+
         this.id = id;
         this.name = name;
         this.country = country;
@@ -37,7 +47,16 @@ public class University {
      * @param acronym   acronym for the university's name
      */
     public University(int id, String name, String country, String acronym) {
+
         this(id, name, country);
+
+        // arguments check
+        if(acronym == null) {
+            throw new IllegalArgumentException("University acronym cannot be null if initialized in constructor");
+        } else if(acronym.isEmpty()) {
+            throw new IllegalArgumentException("University acronym cannot be empty if initialized in constructor");
+        }
+
         hasAcronym = true;
         this.acronym = acronym;
     }
@@ -89,14 +108,14 @@ public class University {
 
     @Override
     public boolean equals(Object other) {
-        if (other == null) {
+        if (other == null || !(other instanceof University)) {
             return false;
         } else if (other == this) {
             return true;
-        }else if (!(other instanceof University)) {
-            return false;
         } else {
-            return id == ((University) other).getId();
+            return (id == ((University) other).getId()) &&
+                    (name.equals(((University) other).getName())) &&
+                    (country.equals(((University) other).getCountry()));
         }
     }
 

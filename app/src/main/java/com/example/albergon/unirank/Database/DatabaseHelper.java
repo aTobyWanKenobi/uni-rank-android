@@ -1,5 +1,6 @@
 package com.example.albergon.unirank.Database;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -34,9 +35,10 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
     private Context context = null;
     private SQLiteDatabase db = null;
 
-    private static String TAG = "DatabaseHelper";
-    private static String DB_PATH = "/data/data/com.example.albergon.unirank/databases/";
-    private static String DB_NAME = "uni_rank.db";
+    private final static String TAG = "DatabaseHelper";
+    @SuppressLint("SdCardPath")
+    private final static String DB_PATH = "/data/data/com.example.albergon.unirank/databases/";
+    private final static String DB_NAME = "uni_rank.db";
 
     /**
      * Public constructor that takes a Context as parameter and stores it in the proper field for
@@ -181,11 +183,12 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         String uniCountry = result.getString(result.getColumnIndexOrThrow(Tables.UniversitiesTable.COUNTRY));
         String uniAcronym = result.getString(result.getColumnIndexOrThrow(Tables.UniversitiesTable.ACRONYM));
 
-        University fetchUni = (uniAcronym == null)?
-                                new University(id, uniName, uniCountry):
-                                new University(id, uniName, uniCountry, uniAcronym);
+        // close Cursor
+        result.close();
 
-        return fetchUni;
+        return (uniAcronym == null)?
+                new University(id, uniName, uniCountry):
+                new University(id, uniName, uniCountry, uniAcronym);
     }
 
     /**
@@ -224,8 +227,14 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
                 entries.put(uni, uniScore);
             }
 
+            // close Cursor
+            result.close();
+
             return new Indicator(entries, id);
         } else {
+
+            // close Cursor
+            result.close();
 
             throw new IllegalStateException("Empty indicator table, database is corrupted");
         }

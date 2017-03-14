@@ -23,6 +23,16 @@ public class Indicator {
      * @param id        unique indicator index
      */
     public Indicator(Map<University, Double> entries, int id) {
+
+        //TODO: check if score is normalized between 0-100?? Or do it in another place?
+
+        // arguments check
+        if(entries == null) {
+            throw new IllegalArgumentException("Entries map in indicator cannot be null");
+        } else if(id < 0) {
+            throw new IllegalArgumentException("Indicator index cannot be negative");
+        }
+
         this.entries = new HashMap<>(entries);
         this.id = id;
     }
@@ -34,10 +44,15 @@ public class Indicator {
      * @param university    university we wish to know the score in the indicator
      * @return              university's score or 0.0 if not present
      */
-    // TODO: verify availability of call (API issues?)
     public double scoreOf(University university) {
-        //noinspection Since15
-        return entries.getOrDefault(university, 0.0);
+
+        // arguments check
+        if(university == null) {
+            throw new IllegalArgumentException("Cannot obtain the score of a null University");
+        }
+
+        Double score = entries.get(university);
+        return (score == null)?0.0:score;
     }
 
     /**

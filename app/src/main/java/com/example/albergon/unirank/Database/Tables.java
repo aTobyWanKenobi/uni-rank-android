@@ -11,7 +11,7 @@ import android.provider.BaseColumns;
  */
 public final class Tables {
 
-    private Tables() {};
+    private Tables() {}
 
     /**
      * This nested static class models the table containing university information. Inheriting from
