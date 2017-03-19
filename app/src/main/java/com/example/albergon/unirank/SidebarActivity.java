@@ -1,8 +1,11 @@
 package com.example.albergon.unirank;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -24,22 +27,11 @@ import com.example.albergon.unirank.Model.University;
 import java.io.IOException;
 
 public class SidebarActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        CreateRankingFragment.OnCreateRankingFragmentInteractionListener {
 
-
-    // Week3 demo fields****************************************************************************
-    private final String TAG = "SideBarActivity";
-    private EditText uniID = null;
-    private TextView uniName = null;
-    private TextView uniCountry = null;
-    private Button searchBtn = null;
-
-    private TextView acRep = null;
-    private Button scoreBtn = null;
-    private TextView score = null;
-
-    private University uni;
-    //**********************************************************************************************
+    private Fragment currentFragment = null;
+    private FragmentManager fragmentManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,15 +39,6 @@ public class SidebarActivity extends AppCompatActivity
         setContentView(R.layout.activity_sidebar);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -66,45 +49,14 @@ public class SidebarActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Week3 demo code**************************************************************************
-        final DatabaseHelper dbHelper = new DatabaseHelper(this);
+        // initializing the fragment structure
+        fragmentManager = getSupportFragmentManager();
+        currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
 
-        try {
-            dbHelper.createDatabase();
-            dbHelper.openDatabase();
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
-
-        uniID = (EditText) findViewById(R.id.uni_id);
-        uniName = (TextView) findViewById(R.id.uni_name);
-        uniCountry = (TextView) findViewById(R.id.uni_country);
-        searchBtn = (Button) findViewById(R.id.search_uni);
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String id = uniID.getText().toString();
-
-                if(!id.isEmpty() && id != null) {
-                    uni = dbHelper.getUniversity(Integer.parseInt(id));
-                    uniName.setText(uni.getName());
-                    uniCountry.setText(uni.getCountry());
-                }
-            }
-        });
-
-        acRep = (TextView) findViewById(R.id.indicator1);
-        score = (TextView) findViewById(R.id.score);
-        scoreBtn = (Button) findViewById(R.id.get_score);
-        scoreBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Indicator ind = dbHelper.getIndicator(0);
-                double scoreUni = ind.scoreOf(uni);
-                score.setText(Double.toString(scoreUni));
-            }
-        });
-        //******************************************************************************************
+        CreateRankingFragment createRankingFragment = CreateRankingFragment.newInstance("", "");
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, createRankingFragment)
+                .commit();
     }
 
     @Override
@@ -162,5 +114,10 @@ public class SidebarActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
