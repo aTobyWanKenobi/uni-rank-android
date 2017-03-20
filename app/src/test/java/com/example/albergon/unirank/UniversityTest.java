@@ -90,6 +90,7 @@ public class UniversityTest {
 
         Assert.assertTrue(testUni1.equals(testUni2));
         Assert.assertTrue(testUni3.equals(testUni4));
+        Assert.assertTrue(testUni1.equals(testUni1));
 
         University testUni5 = new University(1, "testName", "testCountry");
         University testUni6 = new University(0, "testName", "testCountry");
@@ -98,6 +99,14 @@ public class UniversityTest {
 
         Assert.assertFalse(testUni5.equals(testUni6));
         Assert.assertFalse(testUni7.equals(testUni8));
+    }
+
+    @Test
+    public void equalsFailsCorrectly() {
+
+        University testUni1 = new University(0, "testName", "testCountry");
+
+        Assert.assertFalse(testUni1.equals(null));
     }
 
     @Test

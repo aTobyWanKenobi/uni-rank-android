@@ -99,7 +99,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      *
      * @return  true if it exists, false otherwise
      */
-    private boolean databaseExists() {
+    public boolean databaseExists() {
 
         SQLiteDatabase DBCheck = null;
 
@@ -148,6 +148,11 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      */
     @Override
     public University getUniversity(int id) {
+
+        // check arguments
+        if(id < 0) {
+            throw new IllegalArgumentException("University id cannot be negative");
+        }
 
         // specifies which database columns we want from the query
         String[] projection = {
@@ -199,6 +204,11 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      */
     @Override
     public Indicator getIndicator(int id) {
+
+        // check arguments
+        if(id < 0) {
+            throw new IllegalArgumentException("University id cannot be negative");
+        }
 
         // specifies which database columns we want from the query
         String[] projection = {
