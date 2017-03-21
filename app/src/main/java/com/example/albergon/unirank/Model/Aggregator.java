@@ -10,7 +10,7 @@ import java.util.Map;
 public class Aggregator {
 
     private RankAggregationAlgorithm algorithm = null;
-    private Map<Indicator, Integer> dataset = null;
+    private Map<Integer, Integer> dataset = null;
     private Ranking<Integer> generatedRanking = null;
 
     public Aggregator(RankAggregationAlgorithm algorithm) {
@@ -18,13 +18,14 @@ public class Aggregator {
         this.dataset = new HashMap<>();
     }
 
-    public void add(Indicator indicator, int weight) {
+    public void add(Integer indicator, int weight) {
         dataset.put(indicator, weight);
     }
 
     public Ranking aggregate() {
-        Ranking aggregatedRanking = algorithm.aggregate(dataset);
-        return aggregatedRanking;
+        //Ranking aggregatedRanking = algorithm.aggregate(dataset);
+        // return aggregatedRanking;
+        return null;
     }
 
     public Ranking getRanking() {

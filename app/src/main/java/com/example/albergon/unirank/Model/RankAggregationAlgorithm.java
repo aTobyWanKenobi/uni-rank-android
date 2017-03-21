@@ -1,5 +1,6 @@
 package com.example.albergon.unirank.Model;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -7,5 +8,5 @@ import java.util.Map;
  */
 public interface RankAggregationAlgorithm {
 
-    Ranking aggregate(Map<Indicator, Integer> toAggregate);
+    Ranking aggregate(Indicator[] indicators, Map<Integer, Integer> toAggregate);
 }
