@@ -53,7 +53,7 @@ public class SidebarActivity extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
         currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
 
-        CreateRankingFragment createRankingFragment = CreateRankingFragment.newInstance("", "");
+        CreateRankingFragment createRankingFragment = CreateRankingFragment.newInstance();
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, createRankingFragment)
                 .commit();
