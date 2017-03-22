@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.github.lbfgs4j.*;
-import com.github.lbfgs4j.liblbfgs.Function;
+import flanagan.math.Minimization;
+import flanagan.math.MinimizationFunction;
 
 /**
  * Created by Tobia Albergoni on 20.03.2017.
@@ -18,68 +18,77 @@ public class HodgeRanking implements RankAggregationAlgorithm {
 
     private Map<Integer, Integer> weightings = null;
     private Indicator[] indicators = null;
-
-    //TODO: inline in methods and pass as arguments
-    // data processing
-    private Integer[] items = null;
-    private int[] numComparisons = null;
     private int numItems = 0;
-    private double[][] resultMatrix = null;
-
-    // minimization
-    double[] aggregatedScores = null;
-    double[] minimizationResult = null;
-
-    public HodgeRanking() {
-
-    }
 
     @Override
     public Ranking aggregate(Indicator[] indicators, Map<Integer, Integer> weightings) {
 
+        // check arguments
+        if(indicators == null || weightings == null) {
+            throw new IllegalArgumentException("Indicators and weightings cannot be null");
+        } else if(weightings.size() != indicators.length) {
+            throw new IllegalArgumentException("Each indicator must have a weight");
+        }
+
+        // store data to aggregate
         this.weightings = new HashMap<>(weightings);
         this.indicators = Arrays.copyOf(indicators, indicators.length);
 
-        processData();
-        return minimize();
+        // retrieve unique universities ids
+        Integer[] uniqueUniversities = retrieveUniqueItems();
+
+        // initialize other structures
+        numItems = uniqueUniversities.length;
+        int[] numComparisons = new int[numItems*numItems];
+        double[][] resultMatrix = new double[numItems*numItems][indicators.length];
+
+        // process data
+        double[] initialEstimate = pairwiseComparison(uniqueUniversities, resultMatrix, numComparisons);
+        double[] aggregatedScores = aggregateScoresForMinimization(numComparisons, resultMatrix);
+
+        // perform minimization
+        MinimizationFunction costFunction = new HodgeRankCostFunction(aggregatedScores);
+        double[] minimizationResult = minimize(costFunction, initialEstimate);
+
+        // use results to construct ranking
+        Ranking<Integer> resultingAggregation = constructRanking(minimizationResult, uniqueUniversities);
+
+        return resultingAggregation;
     }
 
-    //TODO: generate initial guess?
+    private Integer[] retrieveUniqueItems() {
 
-    private void processData() {
-
-        setupArrays();
-        pairwiseComparison();
-        prepareMinimizationArguments();
-    }
-
-    private void setupArrays() {
-
-        // create unique universities array
+        // create unique universities set
         Set<Integer> uniqueIds = new HashSet<>();
-
         for(Indicator i : indicators) {
             uniqueIds.addAll(i.getIdSet());
         }
 
-        items = new Integer[uniqueIds.size()];
+        Integer[] toRet = new Integer[uniqueIds.size()];
         int index = 0;
         for(int id : uniqueIds) {
-            items[index] = id;
+            toRet[index] = id;
             index++;
         }
 
-        // initialize other structures
-        numItems = items.length;
-        numComparisons = new int[numItems*numItems];
-        resultMatrix = new double[numItems*numItems][indicators.length];
+        return toRet;
     }
 
-    private void pairwiseComparison() {
+    private double[] pairwiseComparison(Integer[] items, double[][] result, int[] numComparisons) {
+
+        double[] estimate = new double[numItems];
+        int[] estimateCount = new int[numItems];
 
         for(int n = 0; n < indicators.length; n++) {
             Indicator currentIndicator = indicators[n];
             for(int i = 0; i < numItems; i++) {
+
+                // keep track of total "aggregated score" of item as an estimate for minimizer
+                estimate[i] += weightings.get(currentIndicator.getId())*currentIndicator.scoreOf(items[i]);
+                if(estimate[i] != 0.0) {
+                    estimateCount[i] += 1;
+                }
+
                 for(int j = 0; j < numItems; j++) {
 
                     int arrayIndex = i * numItems + j;
@@ -87,98 +96,102 @@ public class HodgeRanking implements RankAggregationAlgorithm {
                     double scoreOfJ = currentIndicator.scoreOf(items[j]);
 
                     if(scoreOfI != 0.0 && scoreOfJ != 0.0) {
-                        resultMatrix[arrayIndex][n] = weightings.get(currentIndicator.getId())*(scoreOfJ - scoreOfI);
+                        result[arrayIndex][n] = weightings.get(currentIndicator.getId())*(scoreOfJ - scoreOfI);
                         numComparisons[arrayIndex] += 1;
                     } else {
-                        resultMatrix[arrayIndex][n] = 0;
+                        result[arrayIndex][n] = 0;
                     }
                 }
             }
         }
+
+        for(int i = 0; i < numItems; i++) {
+            estimate[i] = estimate[i]/estimateCount[i];
+        }
+
+        return estimate;
     }
 
-    private void prepareMinimizationArguments() {
+    private double[] aggregateScoresForMinimization(int[] numComparisons, double[][] resultMatrix) {
 
-        aggregatedScores = new double[numItems*numItems];
+        double[] aggregatedScores = new double[numItems*numItems];
 
         for(int pair = 0; pair < numItems*numItems; pair++) {
             double rowSum = 0;
-            for(int indicator = 0; indicator < indicators.length; indicator++) {
+            for (int indicator = 0; indicator < indicators.length; indicator++) {
                 rowSum += resultMatrix[pair][indicator];
             }
-            aggregatedScores[pair] = rowSum/numComparisons[pair];
+            aggregatedScores[pair] = rowSum / numComparisons[pair];
         }
 
-        /*
-        for(double i : aggregatedScores) {
-            System.out.println(i);
-        }
-        System.out.println();
-        */
-
+        return aggregatedScores;
     }
 
-    private Ranking<Integer> minimize(){
+    //TODO: set step parameters
+    private double[] minimize(MinimizationFunction toMinimize, double[] start) {
 
-        prepareMinimizationArguments();
-        Function toMinimize = new Function() {
-            @Override
-            public int getDimension() {
-                return numItems;
-            }
+        // use Flanagan's library Nelder-Mead implementation
+        Minimization minimizer = new Minimization();
+        minimizer.nelderMead(toMinimize, start);
+        double[] resToRet = minimizer.getParamValues();
 
-            @Override
-            public double valueAt(double[] x) {
-                double sum = 0;
-                for(int i = 0; i < x.length; i++) {
-                    for(int j = 0; j < x.length; j++) {
-                        sum += Math.pow(x[j] - x[i] - aggregatedScores[i * x.length + j], 2);
-                    }
-                }
-                return sum;
-            }
+        return resToRet;
+    }
 
-            @Override
-            public double[] gradientAt(double[] x) {
+    private Ranking<Integer> constructRanking(double[] minimizationResult, Integer[]items) {
 
-                double[] gradient = new double[x.length];
-
-                for(int k = 0; k < x.length; k++) {
-                    int gradientSum = 0;
-                    for(int i = 0; i < x.length; i++) {
-                        gradientSum +=  2*x[i] - 2*x[k] - 2*aggregatedScores[k*x.length + i] +
-                                        2*x[k] - 2*x[i] -2*aggregatedScores[i*x.length + k];
-                    }
-                    gradient[k] = gradientSum;
-                }
-                return gradient;
-            }
-        };
-
-        LbfgsMinimizer minimizer = new LbfgsMinimizer();
-        minimizationResult = minimizer.minimize(toMinimize);
-
-
-        for(double i : minimizationResult) {
-            System.out.println(i);
+        // associate computed scores with ids
+        Map<Integer, Double> uniScores = new HashMap<>();
+        for(int i = 0; i < minimizationResult.length; i++) {
+            uniScores.put(items[i], minimizationResult[i]);
         }
 
-
+        // sort ids accordingly
         List<Integer> sortedIds = Arrays.asList(items);
         //noinspection Since15
-        sortedIds.sort(new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                if(minimizationResult[o1] > minimizationResult[o2]) {
-                    return 1;
-                } else if(minimizationResult[o1] == minimizationResult[o2]) {
-                    return 0;
-                } else {
-                    return -1;
+        sortedIds.sort(new RankComparator(uniScores));
+
+        return new Ranking<>(sortedIds);
+    }
+
+    private class RankComparator implements Comparator<Integer> {
+
+        private Map<Integer, Double> uniScores = null;
+
+        public RankComparator(Map<Integer, Double> uniScores) {
+
+            this.uniScores = new HashMap<>(uniScores);
+        }
+
+        @Override
+        public int compare(Integer o1, Integer o2) {
+            if(uniScores.get(o1) < uniScores.get(o2)) {
+                return 1;
+            } else if(uniScores.get(o1) == uniScores.get(o2)) {
+                return 0;
+            } else {
+                return -1;
+            }
+        }
+    }
+
+    private class HodgeRankCostFunction implements MinimizationFunction {
+
+        private double[] aggregatedScores = null;
+
+        public HodgeRankCostFunction(double[] aggregatedScores) {
+            this.aggregatedScores = Arrays.copyOf(aggregatedScores, aggregatedScores.length);
+        }
+
+        @Override
+        public double function(double[] doubles) {
+            double sum = 0;
+            for(int i = 0; i < doubles.length; i++) {
+                for(int j = 0; j < doubles.length; j++) {
+                    sum += Math.pow(doubles[j] - doubles[i] - aggregatedScores[i * doubles.length + j], 2);
                 }
             }
-        });
-
-        return new Ranking<Integer>(sortedIds);
+            return sum;
+        }
     }
 }

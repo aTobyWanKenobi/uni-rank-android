@@ -12,7 +12,25 @@ public class Ranking<T> {
 
     public Ranking(List<T> ranks) {
 
-        this.ranking = new ArrayList<>(ranking);
+        // arguments check
+        if(ranks == null) {
+            throw new IllegalArgumentException("List for Ranking cannot be null");
+        }
+
+        this.ranking = new ArrayList<>(ranks);
     }
 
+    public T getHead() {
+        return ranking.get(0);
+    }
+
+    public List<T> getList() {
+        return new ArrayList<>(ranking);
+    }
+
+    //TODO: change ranking representation?
+    @Override
+    public String toString() {
+        return ranking.toString();
+    }
 }
