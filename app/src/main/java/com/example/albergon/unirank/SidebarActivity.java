@@ -59,6 +59,13 @@ public class SidebarActivity extends AppCompatActivity
                 .commit();
     }
 
+    public void restartRankGeneration() {
+        CreateRankingFragment createRankingFragment = CreateRankingFragment.newInstance();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, createRankingFragment)
+                .commit();
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

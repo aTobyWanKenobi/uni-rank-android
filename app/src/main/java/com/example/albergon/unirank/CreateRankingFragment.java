@@ -162,7 +162,6 @@ public class CreateRankingFragment extends Fragment {
                 }
 
                 Ranking aggregatedRank = aggregator.aggregate();
-                System.out.println(aggregatedRank);
                 displayRanking(aggregatedRank);
             }
         });
@@ -170,7 +169,7 @@ public class CreateRankingFragment extends Fragment {
     }
 
     private void restartFragment() {
-        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+        ((SidebarActivity) getActivity()).restartRankGeneration();
     }
 
     private View.OnClickListener createButtonListener(final int index) {
@@ -199,7 +198,7 @@ public class CreateRankingFragment extends Fragment {
         for(int i = 0; i < idList.size(); i++) {
             int id = idList.get(i);
             University uni = databaseHelper.getUniversity(id);
-            nameList.add(i + "  " + uni.getName());
+            nameList.add((i+1) + "  " + id + "  " + uni.getName());
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
