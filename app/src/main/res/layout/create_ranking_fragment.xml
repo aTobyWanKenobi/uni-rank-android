@@ -11,81 +11,90 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="1"
-        tools:layout_editor_absoluteY="215dp"
-        android:layout_marginLeft="20dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginLeft="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="-1dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator3" />
 
     <TextView
         android:id="@+id/i5n2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2"
-        tools:layout_editor_absoluteY="215dp"
         app:layout_constraintLeft_toRightOf="@+id/i5n1"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator3" />
 
     <TextView
         android:id="@+id/i5n3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="3"
-        tools:layout_editor_absoluteY="215dp"
         app:layout_constraintLeft_toRightOf="@+id/i5n2"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator3" />
 
     <TextView
         android:id="@+id/i5n4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="4"
-        tools:layout_editor_absoluteY="215dp"
         app:layout_constraintLeft_toRightOf="@+id/i5n3"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator3" />
 
     <TextView
         android:id="@+id/i5n5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="5"
-        tools:layout_editor_absoluteY="215dp"
         app:layout_constraintLeft_toRightOf="@+id/i5n4"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator3" />
 
     <TextView
         android:id="@+id/i5n6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="6"
-        tools:layout_editor_absoluteY="215dp"
         app:layout_constraintLeft_toRightOf="@+id/i5n5"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator3" />
 
     <TextView
         android:id="@+id/i5n7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="7"
-        tools:layout_editor_absoluteY="215dp"
         app:layout_constraintLeft_toRightOf="@+id/i5n6"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator3" />
 
     <TextView
         android:id="@+id/i5n8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="8"
-        tools:layout_editor_absoluteY="215dp"
         app:layout_constraintLeft_toRightOf="@+id/i5n7"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator3" />
 
     <TextView
         android:id="@+id/i5n9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="9"
-        tools:layout_editor_absoluteY="215dp"
         app:layout_constraintLeft_toRightOf="@+id/i5n8"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator3" />
 
     <TextView
         android:id="@+id/i5n10"
@@ -94,88 +103,98 @@
         android:layout_marginLeft="16dp"
         android:text="10"
         app:layout_constraintLeft_toRightOf="@+id/i5n9"
-        tools:layout_editor_absoluteY="215dp" />
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator3" />
 
     <TextView
         android:id="@+id/i4n1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="1"
-        tools:layout_editor_absoluteY="165dp"
-        android:layout_marginLeft="20dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginLeft="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="-1dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator4" />
 
     <TextView
         android:id="@+id/i4n2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2"
-        tools:layout_editor_absoluteY="165dp"
         app:layout_constraintLeft_toRightOf="@+id/i4n1"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator4" />
 
     <TextView
         android:id="@+id/i4n3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="3"
-        tools:layout_editor_absoluteY="165dp"
         app:layout_constraintLeft_toRightOf="@+id/i4n2"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator4" />
 
     <TextView
         android:id="@+id/i4n4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="4"
-        tools:layout_editor_absoluteY="165dp"
         app:layout_constraintLeft_toRightOf="@+id/i4n3"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator4" />
 
     <TextView
         android:id="@+id/i4n5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="5"
-        tools:layout_editor_absoluteY="165dp"
         app:layout_constraintLeft_toRightOf="@+id/i4n4"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator4" />
 
     <TextView
         android:id="@+id/i4n6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="6"
-        tools:layout_editor_absoluteY="165dp"
         app:layout_constraintLeft_toRightOf="@+id/i4n5"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator4" />
 
     <TextView
         android:id="@+id/i4n7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="7"
-        tools:layout_editor_absoluteY="165dp"
         app:layout_constraintLeft_toRightOf="@+id/i4n6"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator4" />
 
     <TextView
         android:id="@+id/i4n8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="8"
-        tools:layout_editor_absoluteY="165dp"
         app:layout_constraintLeft_toRightOf="@+id/i4n7"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator4" />
 
     <TextView
         android:id="@+id/i4n9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="9"
-        tools:layout_editor_absoluteY="165dp"
         app:layout_constraintLeft_toRightOf="@+id/i4n8"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator4" />
 
     <TextView
         android:id="@+id/i4n10"
@@ -184,88 +203,98 @@
         android:layout_marginLeft="16dp"
         android:text="10"
         app:layout_constraintLeft_toRightOf="@+id/i4n9"
-        tools:layout_editor_absoluteY="165dp" />
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator4" />
 
     <TextView
         android:id="@+id/i3n1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="1"
-        tools:layout_editor_absoluteY="115dp"
-        android:layout_marginLeft="20dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginLeft="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="-1dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator5" />
 
     <TextView
         android:id="@+id/i3n2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2"
-        tools:layout_editor_absoluteY="115dp"
         app:layout_constraintLeft_toRightOf="@+id/i3n1"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator5" />
 
     <TextView
         android:id="@+id/i3n3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="3"
-        tools:layout_editor_absoluteY="115dp"
         app:layout_constraintLeft_toRightOf="@+id/i3n2"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator5" />
 
     <TextView
         android:id="@+id/i3n4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="4"
-        tools:layout_editor_absoluteY="115dp"
         app:layout_constraintLeft_toRightOf="@+id/i3n3"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator5" />
 
     <TextView
         android:id="@+id/i3n5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="5"
-        tools:layout_editor_absoluteY="115dp"
         app:layout_constraintLeft_toRightOf="@+id/i3n4"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator5" />
 
     <TextView
         android:id="@+id/i3n6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="6"
-        tools:layout_editor_absoluteY="115dp"
         app:layout_constraintLeft_toRightOf="@+id/i3n5"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator5" />
 
     <TextView
         android:id="@+id/i3n7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="7"
-        tools:layout_editor_absoluteY="115dp"
         app:layout_constraintLeft_toRightOf="@+id/i3n6"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator5" />
 
     <TextView
         android:id="@+id/i3n8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="8"
-        tools:layout_editor_absoluteY="115dp"
         app:layout_constraintLeft_toRightOf="@+id/i3n7"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator5" />
 
     <TextView
         android:id="@+id/i3n9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="9"
-        tools:layout_editor_absoluteY="115dp"
         app:layout_constraintLeft_toRightOf="@+id/i3n8"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator5" />
 
     <TextView
         android:id="@+id/i3n10"
@@ -274,88 +303,98 @@
         android:layout_marginLeft="16dp"
         android:text="10"
         app:layout_constraintLeft_toRightOf="@+id/i3n9"
-        tools:layout_editor_absoluteY="115dp" />
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator5" />
 
     <TextView
         android:id="@+id/i2n1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="1"
-        tools:layout_editor_absoluteY="65dp"
-        android:layout_marginLeft="20dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginLeft="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="-1dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator2" />
 
     <TextView
         android:id="@+id/i2n2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2"
-        tools:layout_editor_absoluteY="65dp"
         app:layout_constraintLeft_toRightOf="@+id/i2n1"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator2" />
 
     <TextView
         android:id="@+id/i2n3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="3"
-        tools:layout_editor_absoluteY="65dp"
         app:layout_constraintLeft_toRightOf="@+id/i2n2"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator2" />
 
     <TextView
         android:id="@+id/i2n4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="4"
-        tools:layout_editor_absoluteY="65dp"
         app:layout_constraintLeft_toRightOf="@+id/i2n3"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator2" />
 
     <TextView
         android:id="@+id/i2n5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="5"
-        tools:layout_editor_absoluteY="65dp"
         app:layout_constraintLeft_toRightOf="@+id/i2n4"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator2" />
 
     <TextView
         android:id="@+id/i2n6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="6"
-        tools:layout_editor_absoluteY="65dp"
         app:layout_constraintLeft_toRightOf="@+id/i2n5"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator2" />
 
     <TextView
         android:id="@+id/i2n7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="7"
-        tools:layout_editor_absoluteY="65dp"
         app:layout_constraintLeft_toRightOf="@+id/i2n6"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator2" />
 
     <TextView
         android:id="@+id/i2n8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="8"
-        tools:layout_editor_absoluteY="65dp"
         app:layout_constraintLeft_toRightOf="@+id/i2n7"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator2" />
 
     <TextView
         android:id="@+id/i2n9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="9"
-        tools:layout_editor_absoluteY="65dp"
         app:layout_constraintLeft_toRightOf="@+id/i2n8"
-        android:layout_marginLeft="22dp" />
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator2" />
 
     <TextView
         android:id="@+id/i2n10"
@@ -364,7 +403,8 @@
         android:layout_marginLeft="16dp"
         android:text="10"
         app:layout_constraintLeft_toRightOf="@+id/i2n9"
-        tools:layout_editor_absoluteY="65dp" />
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator2" />
 
     <SeekBar
         android:id="@+id/indicator1"
@@ -425,10 +465,12 @@
         android:id="@+id/indicator1_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textSize="10sp"
         app:layout_constraintBottom_toTopOf="@+id/indicator1"
         app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -436,32 +478,38 @@
         android:id="@+id/indicator2_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textSize="10sp"
         app:layout_constraintBottom_toTopOf="@+id/indicator2"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="8dp" />
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <TextView
         android:id="@+id/indicator3_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="8dp"
         android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textSize="10sp"
         app:layout_constraintBottom_toTopOf="@+id/indicator5"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginStart="8dp" />
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <TextView
         android:id="@+id/indicator4_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textSize="10sp"
         app:layout_constraintBottom_toTopOf="@+id/indicator4"
         app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -469,12 +517,114 @@
         android:id="@+id/indicator5_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textSize="10sp"
         app:layout_constraintBottom_toTopOf="@+id/indicator3"
         app:layout_constraintLeft_toLeftOf="parent" />
+
+    <TextView
+        android:id="@+id/i1n1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:layout_marginLeft="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginBottom="-1dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator1" />
+
+    <TextView
+        android:id="@+id/i1n2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2"
+        app:layout_constraintLeft_toRightOf="@+id/i1n1"
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator1" />
+
+    <TextView
+        android:id="@+id/i1n3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3"
+        app:layout_constraintLeft_toRightOf="@+id/i1n2"
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator1" />
+
+    <TextView
+        android:id="@+id/i1n4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="4"
+        app:layout_constraintLeft_toRightOf="@+id/i1n3"
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator1" />
+
+    <TextView
+        android:id="@+id/i1n5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5"
+        app:layout_constraintLeft_toRightOf="@+id/i1n4"
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator1" />
+
+    <TextView
+        android:id="@+id/i1n6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="6"
+        app:layout_constraintLeft_toRightOf="@+id/i1n5"
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator1" />
+
+    <TextView
+        android:id="@+id/i1n7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="7"
+        app:layout_constraintLeft_toRightOf="@+id/i1n6"
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator1" />
+
+    <TextView
+        android:id="@+id/i1n8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="8"
+        app:layout_constraintLeft_toRightOf="@+id/i1n7"
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator1" />
+
+    <TextView
+        android:id="@+id/i1n9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="9"
+        app:layout_constraintLeft_toRightOf="@+id/i1n8"
+        android:layout_marginLeft="22dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator1" />
+
+    <TextView
+        android:id="@+id/i1n10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10"
+        app:layout_constraintLeft_toRightOf="@+id/i1n9"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/indicator1" />
 
     <ListView
         android:id="@+id/generated_ranking"
@@ -487,96 +637,85 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/generate_button" />
+
+    <Button
+        android:id="@+id/i1add"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:elevation="0dp"
+        android:text="Add"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/indicator1"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintHorizontal_bias="0.0" />
+
+    <Button
+        android:id="@+id/i2add"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/indicator2"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/i1add"
+        app:layout_constraintHorizontal_bias="0.0" />
+
+    <Button
+        android:id="@+id/i3add"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/indicator5"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/i2add"
+        app:layout_constraintHorizontal_bias="0.0" />
+
+    <Button
+        android:id="@+id/i4add"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/indicator4"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/i3add" />
+
+    <Button
+        android:id="@+id/i5add"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/indicator3"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/i4add" />
+
+    <Button
+        android:id="@+id/generate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Generate Ranking"
+        android:textSize="10sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/indicator3" />
-
-    <TextView
-        android:id="@+id/i1n1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="1"
-        tools:layout_editor_absoluteY="16dp"
-        android:layout_marginLeft="20dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
-
-    <TextView
-        android:id="@+id/i1n2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2"
-        tools:layout_editor_absoluteY="16dp"
-        app:layout_constraintLeft_toRightOf="@+id/i1n1"
-        android:layout_marginLeft="22dp" />
-
-    <TextView
-        android:id="@+id/i1n3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="3"
-        tools:layout_editor_absoluteY="16dp"
-        app:layout_constraintLeft_toRightOf="@+id/i1n2"
-        android:layout_marginLeft="22dp" />
-
-    <TextView
-        android:id="@+id/i1n4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="4"
-        tools:layout_editor_absoluteY="16dp"
-        app:layout_constraintLeft_toRightOf="@+id/i1n3"
-        android:layout_marginLeft="22dp" />
-
-    <TextView
-        android:id="@+id/i1n5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="5"
-        tools:layout_editor_absoluteY="16dp"
-        app:layout_constraintLeft_toRightOf="@+id/i1n4"
-        android:layout_marginLeft="22dp" />
-
-    <TextView
-        android:id="@+id/i1n6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="6"
-        tools:layout_editor_absoluteY="16dp"
-        app:layout_constraintLeft_toRightOf="@+id/i1n5"
-        android:layout_marginLeft="22dp" />
-
-    <TextView
-        android:id="@+id/i1n7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="7"
-        tools:layout_editor_absoluteY="16dp"
-        app:layout_constraintLeft_toRightOf="@+id/i1n6"
-        android:layout_marginLeft="22dp" />
-
-    <TextView
-        android:id="@+id/i1n8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="8"
-        tools:layout_editor_absoluteY="16dp"
-        app:layout_constraintLeft_toRightOf="@+id/i1n7"
-        android:layout_marginLeft="22dp" />
-
-    <TextView
-        android:id="@+id/i1n9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="9"
-        tools:layout_editor_absoluteY="16dp"
-        app:layout_constraintLeft_toRightOf="@+id/i1n8"
-        android:layout_marginLeft="22dp" />
-
-    <TextView
-        android:id="@+id/i1n10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="10"
-        tools:layout_editor_absoluteY="16dp"
-        app:layout_constraintLeft_toRightOf="@+id/i1n9"
-        android:layout_marginLeft="16dp" />
 
 </android.support.constraint.ConstraintLayout>
