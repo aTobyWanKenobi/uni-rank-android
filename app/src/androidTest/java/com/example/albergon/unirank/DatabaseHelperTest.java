@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 
 /**
- * Created by Tobia Albergoni on 20.03.2017.
+ * Test suite for DatabaseHelper
  */
 public class DatabaseHelperTest {
 

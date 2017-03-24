@@ -56,7 +56,7 @@ public class IndicatorTest {
     }
 
     @Test
-    public void getScoreWorks() {
+    public void getSizeWorks() {
 
         Map<Integer, Double> testEntries = new HashMap<>();
         testEntries.put(1, 2.0);
@@ -80,5 +80,16 @@ public class IndicatorTest {
         Assert.assertTrue(testIndicator.getIdSet().contains(1));
         Assert.assertTrue(testIndicator.getIdSet().contains(2));
         Assert.assertFalse(testIndicator.getIdSet().contains(3));
+    }
+
+    @Test
+    public void getRankingWorks() {
+        Map<Integer, Double> testEntries = new HashMap<>();
+        testEntries.put(1, 2.0);
+        testEntries.put(2, 4.0);
+
+        Indicator testIndicator = new Indicator(testEntries, 1);
+
+        Assert.assertEquals("[2, 1]", testIndicator.getRanking().toString());
     }
 }

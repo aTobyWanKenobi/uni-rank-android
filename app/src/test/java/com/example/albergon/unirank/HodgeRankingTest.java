@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by Tobia Albergoni on 21.03.2017.
+ * Test suite for HodgeRanking
  */
 public class HodgeRankingTest {
 
@@ -134,4 +134,7 @@ public class HodgeRankingTest {
 
         algorithm.aggregate(indicators, weightings);
     }
+
+
+
 }
