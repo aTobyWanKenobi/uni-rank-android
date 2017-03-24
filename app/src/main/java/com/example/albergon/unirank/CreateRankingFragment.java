@@ -180,7 +180,7 @@ public class CreateRankingFragment extends Fragment {
 
                 // Retrieve indicator from database and add it to aggregator with correct weight
                 Indicator indicator = databaseHelper.getIndicator(index);
-                int weight = seekBars[index].getProgress();
+                int weight = seekBars[index].getProgress() + 1;
                 aggregator.add(indicator, weight);
 
                 // Disable button and seekbar
