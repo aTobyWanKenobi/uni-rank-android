@@ -177,6 +177,7 @@ public class HodgeRanking implements RankAggregationAlgorithm {
                 }
             }
         }
+        long endTime = System.currentTimeMillis();
 
         // further process estimate
         for(int i = 0; i < numItems; i++) {
@@ -226,10 +227,17 @@ public class HodgeRanking implements RankAggregationAlgorithm {
      */
     private double[] minimize(MinimizationFunction toMinimize, double[] start) {
 
+        long startTime = System.currentTimeMillis();
+
         //TODO: set step parameters
         // use Flanagan's library Nelder-Mead implementation
         Minimization minimizer = new Minimization();
+        minimizer.setNmax(20000);
         minimizer.nelderMead(toMinimize, start);
+
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("Duration minimization : " + (endTime - startTime) + " ms");
 
         return minimizer.getParamValues();
     }

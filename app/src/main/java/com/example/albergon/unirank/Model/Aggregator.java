@@ -72,6 +72,13 @@ public class Aggregator {
         indicators.toArray(indicatorsArray);
 
         // use algorithm to aggregate rankings
-        return algorithm.aggregate(indicatorsArray, weightings);
+        long startTime = System.currentTimeMillis();
+        Ranking result = algorithm.aggregate(indicatorsArray, weightings);
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("Duration : " + (endTime - startTime) + " ms");
+        System.out.println(result);
+
+        return result;
     }
 }
