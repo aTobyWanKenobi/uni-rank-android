@@ -18,13 +18,10 @@ public final class Tables {
      * BaseColumns ensure it has the _ID attribute commonly used in android SQLite databases.
      */
     public static class UniversitiesTable implements BaseColumns {
-        public static final String TABLE_NAME = "UNIVERSITIES";
+        public static final String TABLE_NAME = "Universities";
         public static final String UNI_NAME = "Name";
         public static final String COUNTRY = "Country";
         public static final String ACRONYM = "Acronym";
-
-        public static final String SQL_DELETE_ENTRIES =
-                "DROP TABLE IF EXISTS " + TABLE_NAME;
     }
 
     /**
@@ -34,21 +31,17 @@ public final class Tables {
      */
     public enum IndicatorsList implements BaseColumns {
 
-        AcademicReputation("ACADEMIC_REPUTATION"),
-        EmployerReputation("EMPLOYER_REPUTATION"),
-        StudentStaffRatio("STUDENT_STAFF_RATIO"),
-        InternationalOutlook("INTERNATIONAL_OUTLOOK"),
-        Citations("CITATIONS");
+        AcademicReputation("Academic_Reputation"),
+        EmployerReputation("Employer_Reputation"),
+        StudentStaffRatio("Student_Staff_Ratio"),
+        InternationalOutlook("International_Outlook"),
+        Citations("Citations");
 
         public final String TABLE_NAME;
         public final static String SCORE = "Score";
 
         IndicatorsList(final String name) {
             TABLE_NAME = name;
-        }
-
-        public String deleteEntriesQuery() {
-            return "DROP TABLE IF EXISTS " + TABLE_NAME;
         }
     }
 }

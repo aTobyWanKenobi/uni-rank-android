@@ -193,17 +193,17 @@ public class CreateRankingFragment extends Fragment {
     private void displayRanking(Ranking ranking) {
 
         List<Integer> idList = ranking.getList();
-        List<String> nameList = new ArrayList<>();
+        List<University> uniList = new ArrayList<>();
 
         for(int i = 0; i < idList.size(); i++) {
             int id = idList.get(i);
             University uni = databaseHelper.getUniversity(id);
-            nameList.add((i+1) + "  " + id + "  " + uni.getName());
+            uniList.add(uni);
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+        UniversityListAdapter adapter = new UniversityListAdapter(getContext(),
                 R.layout.ranking_list_cell_layout,
-                nameList);
+                uniList);
 
         rankList.setAdapter(adapter);
     }
