@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SeekBar;
@@ -152,6 +151,7 @@ public class CreateRankingFragment extends Fragment {
                     addButtons[i].setVisibility(View.GONE);
                     seekBars[i].setEnabled(false);
                     seekBars[i].setVisibility(View.GONE);
+                    rankList.setVisibility(View.VISIBLE);
                     generateButton.setText("Restart");
                     generateButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -161,7 +161,7 @@ public class CreateRankingFragment extends Fragment {
                     });
                 }
 
-                Ranking aggregatedRank = aggregator.aggregate();
+                Ranking<Integer> aggregatedRank = aggregator.aggregate();
                 displayRanking(aggregatedRank);
             }
         });
@@ -190,7 +190,7 @@ public class CreateRankingFragment extends Fragment {
         };
     }
 
-    private void displayRanking(Ranking ranking) {
+    private void displayRanking(Ranking<Integer> ranking) {
 
         List<Integer> idList = ranking.getList();
         List<University> uniList = new ArrayList<>();

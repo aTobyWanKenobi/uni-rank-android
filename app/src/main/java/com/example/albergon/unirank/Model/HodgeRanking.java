@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import flanagan.math.Matrix;
 import flanagan.math.Minimization;
 import flanagan.math.MinimizationFunction;
 
@@ -31,7 +32,7 @@ public class HodgeRanking implements RankAggregationAlgorithm {
 
     @SuppressLint("UseSparseArrays")
     @Override
-    public Ranking aggregate(Indicator[] indicators, Map<Integer, Integer> weightings) {
+    public Ranking<Integer> aggregate(Indicator[] indicators, Map<Integer, Integer> weightings) {
 
         // check arguments
         if(indicators == null || weightings == null) {
@@ -68,7 +69,6 @@ public class HodgeRanking implements RankAggregationAlgorithm {
         double[] minimizationResult = minimize(costFunction, initialEstimate);
 
         // use results to construct ranking
-
         return constructRanking(minimizationResult, uniqueUniversities);
     }
 
@@ -212,7 +212,6 @@ public class HodgeRanking implements RankAggregationAlgorithm {
         return aggregatedScores;
     }
 
-
     /**
      * This method implements the minimization of the cost function described in HodgeRank. It uses
      * the Nelder-Mead method (or downhill simplex method) provided by Flanagan's library cited in
@@ -273,12 +272,6 @@ public class HodgeRanking implements RankAggregationAlgorithm {
         private double[] aggregatedScores = null;
 
         public HodgeRankCostFunction(double[] aggregatedScores) {
-
-            // check arguments
-            if(aggregatedScores == null || aggregatedScores.length == 0) {
-                throw new IllegalArgumentException("Input parameters of cost function cannot be null or empty");
-            }
-
             this.aggregatedScores = Arrays.copyOf(aggregatedScores, aggregatedScores.length);
         }
 

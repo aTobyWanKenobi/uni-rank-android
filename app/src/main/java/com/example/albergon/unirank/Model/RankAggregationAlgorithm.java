@@ -19,5 +19,5 @@ public interface RankAggregationAlgorithm {
      * @param weightings    weights associated to indicators
      * @return              a Ranking resulting fromt he aggregation
      */
-    Ranking aggregate(Indicator[] indicators, Map<Integer, Integer> weightings);
+    Ranking<Integer> aggregate(Indicator[] indicators, Map<Integer, Integer> weightings);
 }

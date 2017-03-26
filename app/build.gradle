@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'jacoco'
 
 android {
     compileSdkVersion 24
@@ -14,6 +15,7 @@ android {
             enabled true
         }
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -38,4 +40,27 @@ dependencies {
     compile 'com.android.support:support-v4:24.2.1'
     testCompile 'junit:junit:4.12'
     compile files('libs/flanagan.jar')
+    compile files('libs/Jama-1.0.3.jar')
+}
+
+jacoco {
+    toolVersion = "0.7.7.201606060606"
+}
+
+task jacocoReport(type: JacocoReport, dependsOn: "connectedAndroidTest") {
+    sourceDirectories = files(['**/src/main/java'])
+
+    classDirectories = fileTree(
+            dir: '**/classes',
+            excludes: [
+                    '**/R.class',
+                    '**/R$*.class',
+                    '**/BuildConfig.*',
+                    '**/Manifest*.*',
+                    '**/*Test*.*',
+                    '**/android/**/*.*'
+            ]
+    )
+
+    executionData = files('build/outputs/code-coverage/connected/coverage.ec')
 }

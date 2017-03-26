@@ -1,5 +1,6 @@
 package com.example.albergon.unirank;
 
+import com.example.albergon.unirank.Model.Aggregator;
 import com.example.albergon.unirank.Model.HodgeRanking;
 import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.Ranking;
@@ -119,6 +120,51 @@ public class HodgeRankingTest {
         Assert.assertEquals("[2, 1, 3]", res.toString());
     }
 
+    @Test
+    public void aggregateSingleIndicator() {
+        Map<Integer, Double> mi1 = new HashMap<>();
+        mi1.put(2, 100.0);
+        mi1.put(1, 10.0);
+        mi1.put(3, 5.0);
+        Indicator i1 = new Indicator(mi1, 1);
+
+        Indicator[] indicators = {i1};
+
+        Map<Integer, Integer> w = new HashMap<>();
+        w.put(1, 1);
+
+        HodgeRanking algorithm = new HodgeRanking();
+        Ranking<Integer> result = algorithm.aggregate(indicators, w);
+
+        Assert.assertEquals("[2, 1, 3]", result.toString());
+    }
+
+    @Test
+    public void aggregateWithMissingComparison() {
+        HodgeRanking algorithm = new HodgeRanking();
+
+        Map<Integer, Double> mi1 = new HashMap<>();
+        mi1.put(2, 100.0);
+        mi1.put(1, 10.0);
+        Indicator i1 = new Indicator(mi1, 1);
+
+        Map<Integer, Double> mi2 = new HashMap<>();
+        mi2.put(1, 10.0);
+        mi2.put(2, 7.0);
+        mi2.put(3, 2.0);
+        Indicator i2 = new Indicator(mi2, 2);
+
+        Indicator[] indicators = {i1, i2};
+
+        Map<Integer, Integer> w = new HashMap<>();
+        w.put(1, 1);
+        w.put(2, 1);
+
+        Ranking<Integer> res = algorithm.aggregate(indicators, w);
+
+        Assert.assertEquals("[2, 3, 1]", res.toString());
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void aggregateWithNullsThrowsIllegal() {
         new HodgeRanking().aggregate(null, null);
@@ -135,6 +181,29 @@ public class HodgeRankingTest {
         algorithm.aggregate(indicators, weightings);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void incoherentAggregationThrowsIllegal() {
+        Map<Integer, Double> mi1 = new HashMap<>();
+        mi1.put(2, 100.0);
+        mi1.put(1, 10.0);
+        mi1.put(3, 5.0);
+        Indicator i1 = new Indicator(mi1, 1);
+
+        Map<Integer, Double> mi2 = new HashMap<>();
+        mi2.put(1, 10.0);
+        mi2.put(2, 7.0);
+        mi2.put(3, 2.0);
+        Indicator i2 = new Indicator(mi2, 2);
+
+        Indicator[] indicators = {i1, i2};
+
+        Map<Integer, Integer> w = new HashMap<>();
+        w.put(3, 1);
+        w.put(2, 1);
+
+        HodgeRanking algorithm = new HodgeRanking();
+        algorithm.aggregate(indicators, w);
+    }
 
 
 }

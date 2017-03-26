@@ -22,21 +22,20 @@ public class AggregatorTest {
     private static class TestAlgorithm implements RankAggregationAlgorithm {
 
         @Override
-        public Ranking aggregate(Indicator[] indicators, final Map<Integer, Integer> toAggregate) {
+        public Ranking<Integer> aggregate(Indicator[] indicators, final Map<Integer, Integer> toAggregate) {
 
             // just return the indicators id in order of weight
+            List<Integer> iList = Arrays.asList(toAggregate.keySet().toArray(new Integer[indicators.length]));
 
-            List<Indicator> iList = Arrays.asList(indicators);
-
-            iList.sort(new Comparator<Indicator>() {
+            iList.sort(new Comparator<Integer>() {
                 @Override
-                public int compare(Indicator o1, Indicator o2) {
-                    if(toAggregate.get(o1.getId()) < toAggregate.get(o2.getId())) {
-                        return 1;
-                    } else if(toAggregate.get(o1.getId()) == toAggregate.get(o2.getId())) {
+                public int compare(Integer o1, Integer o2) {
+                    if(toAggregate.get(o1) > toAggregate.get(o2)) {
+                        return -1;
+                    } else if(toAggregate.get(o1) == toAggregate.get(o2)) {
                         return 0;
                     } else {
-                        return -1;
+                        return 1;
                     }
                 }
             });
@@ -82,11 +81,11 @@ public class AggregatorTest {
         testAggregator.add(i2, 2);
         testAggregator.add(i3, 3);
 
-        Ranking<Indicator> result = testAggregator.aggregate();
+        Ranking<Integer> result = testAggregator.aggregate();
 
-        Assert.assertEquals(3, result.getHead().getId());
-        Assert.assertEquals(2, result.getList().get(1).getId());
-        Assert.assertEquals(1, result.getList().get(2).getId());
+        Assert.assertEquals(3, (int) result.getHead());
+        Assert.assertEquals(2, (int) result.getList().get(1));
+        Assert.assertEquals(1, (int) result.getList().get(2));
     }
 
 }

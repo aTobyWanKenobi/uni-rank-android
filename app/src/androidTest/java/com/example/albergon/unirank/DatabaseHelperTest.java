@@ -40,17 +40,17 @@ public class DatabaseHelperTest {
 
     @Test
     public void canRetrieveUniveristy() {
-        University harvard = databaseHelper.getUniversity(2);
+        University harvard = databaseHelper.getUniversity(3);
 
         Assert.assertEquals("Harvard University", harvard.getName());
         Assert.assertEquals("USA", harvard.getCountry());
         Assert.assertEquals(null, harvard.getAcronym());
-        Assert.assertEquals(2, harvard.getId());
+        Assert.assertEquals(3, harvard.getId());
     }
 
     @Test
     public void canRetrieveUniversityWithAcronym() {
-        University epfl = databaseHelper.getUniversity(122);
+        University epfl = databaseHelper.getUniversity(14);
 
         Assert.assertEquals("EPFL", epfl.getAcronym());
     }
