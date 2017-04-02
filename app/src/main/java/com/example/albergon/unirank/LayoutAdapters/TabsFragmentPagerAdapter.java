@@ -1,4 +1,4 @@
-package com.example.albergon.unirank;
+package com.example.albergon.unirank.LayoutAdapters;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.example.albergon.unirank.Fragments.BlueFragment;
+import com.example.albergon.unirank.Fragments.CreateRankingFragment;
 import com.example.albergon.unirank.Fragments.GreenFragment;
 import com.example.albergon.unirank.Fragments.RedFragment;
 
@@ -34,13 +35,13 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
         Fragment toRet = null;
 
         switch(position){
-            case 0: toRet = BlueFragment.newInstance("bla", "bla");
+            case 0: toRet = CreateRankingFragment.newInstance();
                     break;
-            case 1: toRet = RedFragment.newInstance("bla", "bla");
+            case 1: toRet = RedFragment.newInstance();
                 break;
-            case 2: toRet = GreenFragment.newInstance("bla", "bla");
+            case 2: toRet = GreenFragment.newInstance();
                 break;
-            case 3: toRet = BlueFragment.newInstance("bla", "bla");
+            case 3: toRet = BlueFragment.newInstance();
                 break;
             default: throw new IllegalStateException("Boh");
         }

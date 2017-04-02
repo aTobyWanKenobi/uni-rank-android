@@ -1,4 +1,4 @@
-package com.example.albergon.unirank;
+package com.example.albergon.unirank.LayoutAdapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.albergon.unirank.Model.University;
+import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -8,7 +8,10 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.albergon.unirank.Model.Aggregator;
 import com.example.albergon.unirank.Model.Indicator;
+import com.example.albergon.unirank.Model.Ranking;
+import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.University;
 
 import java.io.FileOutputStream;
@@ -247,5 +250,11 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
             throw new IllegalStateException("Empty indicator table, database is corrupted");
         }
+    }
+
+    @Override
+    public void saveAggregation(SaveRank ranking) {
+
+
     }
 }

@@ -51,7 +51,7 @@
     </android.support.design.widget.TabLayout>
 
     <FrameLayout
-        android:id="@+id/frag_container"
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/sliding_tabs"
@@ -60,7 +60,6 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp">
-    </FrameLayout>
+        android:layout_marginTop="8dp"></FrameLayout>
 
 </RelativeLayout>

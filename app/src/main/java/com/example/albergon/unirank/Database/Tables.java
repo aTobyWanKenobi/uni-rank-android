@@ -24,6 +24,19 @@ public final class Tables {
         public static final String ACRONYM = "Acronym";
     }
 
+    public static class SavedRankingsTable implements BaseColumns {
+        public static final String TABLE_NAME = "Saved_Rankings";
+        public static final String RANKING_NAME = "Name";
+        public static final String RANKING_DATE = "Date";
+    }
+
+    public static class SavedAggregationsTable implements BaseColumns {
+        public static final String TABLE_NAME = "Saved_Aggregations";
+        public static final String SAVED_ID = "SavedID";
+        public static final String SAVED_INDICATOR = "Indicator";
+        public static final String SAVED_WEIGHT = "Weight";
+    }
+
     /**
      * This nested enumeration contains a list of the indicators currently present in the database.
      * Since every indicator table has the same structure, its field names can be accessed from the
@@ -44,5 +57,7 @@ public final class Tables {
             TABLE_NAME = name;
         }
     }
+
+
 }
 

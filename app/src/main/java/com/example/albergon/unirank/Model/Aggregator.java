@@ -76,4 +76,9 @@ public class Aggregator {
 
         return result;
     }
+
+    public Map<Integer, Integer> getSettings() {
+        return new HashMap<>(weightings);
+    }
+
 }

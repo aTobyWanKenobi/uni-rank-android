@@ -1,4 +1,4 @@
-package com.example.albergon.unirank;
+package com.example.albergon.unirank.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -19,6 +19,9 @@ import com.example.albergon.unirank.Model.HodgeRanking;
 import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.Ranking;
 import com.example.albergon.unirank.Model.University;
+import com.example.albergon.unirank.R;
+import com.example.albergon.unirank.LayoutAdapters.UniversityListAdapter;
+import com.example.albergon.unirank.TabbedActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -169,7 +172,7 @@ public class CreateRankingFragment extends Fragment {
     }
 
     private void restartFragment() {
-        ((SidebarActivity) getActivity()).restartRankGeneration();
+        ((TabbedActivity) getActivity()).restartRankGeneration();
     }
 
     private View.OnClickListener createButtonListener(final int index) {

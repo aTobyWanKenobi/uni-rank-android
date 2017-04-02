@@ -1,33 +1,22 @@
 package com.example.albergon.unirank;
 
 import android.net.Uri;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.TextView;
 
 import com.example.albergon.unirank.Fragments.BlueFragment;
+import com.example.albergon.unirank.Fragments.CreateRankingFragment;
 import com.example.albergon.unirank.Fragments.GreenFragment;
 import com.example.albergon.unirank.Fragments.RedFragment;
+import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
 
 public class TabbedActivity extends AppCompatActivity implements
-        BlueFragment.OnFragmentInteractionListener,
-        RedFragment.OnFragmentInteractionListener,
-        GreenFragment.OnFragmentInteractionListener {
+    CreateRankingFragment.OnCreateRankingFragmentInteractionListener {
 
     private TabLayout tabLayout = null;
     private TabsFragmentPagerAdapter tabsPagerAdapter = null;
@@ -56,18 +45,30 @@ public class TabbedActivity extends AppCompatActivity implements
 
         // initializing the fragment structure
         fragmentManager = getSupportFragmentManager();
-        currentFragment = fragmentManager.findFragmentById(R.id.frag_container);
+        currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
 
+        currentFragment = CreateRankingFragment.newInstance();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, currentFragment)
+                .commit();
+
+    }
+
+    public void restartRankGeneration() {
+        currentFragment = CreateRankingFragment.newInstance();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, currentFragment)
+                .commit();
     }
 
     private TabLayout.OnTabSelectedListener createBlueSwitcher() {
         return new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                Fragment toShow = tabsPagerAdapter.getItem(tab.getPosition());
+                currentFragment = tabsPagerAdapter.getItem(tab.getPosition());
 
                 fragmentManager.beginTransaction()
-                        .replace(R.id.frag_container, toShow)
+                        .replace(R.id.fragment_container, currentFragment)
                         .commit();
             }
 
