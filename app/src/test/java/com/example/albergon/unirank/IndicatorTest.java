@@ -17,13 +17,12 @@ public class IndicatorTest {
     @Test
     public void constructorAndScoreOfWork() {
 
-        Map<University, Double> testEntries = new HashMap<>();
-        University testUni = new University(0, "testName", "testCountry");
-        testEntries.put(testUni, 100.0);
+        Map<Integer, Double> testEntries = new HashMap<>();
+        testEntries.put(1, 100.0);
 
         Indicator testIndicator = new Indicator(testEntries, 0);
 
-        Assert.assertEquals(100.0, testIndicator.scoreOf(testUni), 0.01);
+        Assert.assertEquals(100.0, testIndicator.scoreOf(1), 0.01);
         Assert.assertEquals(0, testIndicator.getId());
     }
 
@@ -34,27 +33,63 @@ public class IndicatorTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void constructorThrowsIllegalOnNegativeIndex() {
-        new Indicator(new HashMap<University, Double>(), -1);
+        new Indicator(new HashMap<Integer, Double>(), -1);
     }
 
     @Test
     public void constructorCorrectlyEncapsulatesMap() {
-        Map<University, Double> testEntries = new HashMap<>();
-        University testUni1 = new University(0, "testName1", "testCountry1");
-        testEntries.put(testUni1, 100.0);
+        Map<Integer, Double> testEntries = new HashMap<>();
+        testEntries.put(1, 100.0);
 
         Indicator testIndicator = new Indicator(testEntries, 0);
 
-        University testUni2 = new University(10, "testName2", "testCountry2");
-        testEntries.put(testUni2, 50.0);
+        testEntries.put(2, 50.0);
 
-        Assert.assertEquals(0.0, testIndicator.scoreOf(testUni2), 0.01);
+        Assert.assertEquals(0.0, testIndicator.scoreOf(2), 0.01);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void scoreOfThrowsIllegalOnNull() {
-        Indicator testIndicator = new Indicator(new HashMap<University, Double>(), 1);
+        Indicator testIndicator = new Indicator(new HashMap<Integer, Double>(), 1);
 
-        testIndicator.scoreOf(null);
+        testIndicator.scoreOf(-1);
+    }
+
+    @Test
+    public void getSizeWorks() {
+
+        Map<Integer, Double> testEntries = new HashMap<>();
+        testEntries.put(1, 2.0);
+        testEntries.put(2, 4.0);
+
+        Indicator testIndicator = new Indicator(testEntries, 1);
+
+        Assert.assertEquals(2, testIndicator.getSize());
+    }
+
+    @Test
+    public void getIdSetWorks() {
+
+        Map<Integer, Double> testEntries = new HashMap<>();
+        testEntries.put(1, 0.0);
+        testEntries.put(2, 0.0);
+
+        Indicator testIndicator = new Indicator(testEntries, 1);
+
+        Assert.assertEquals(2, testIndicator.getIdSet().size());
+        Assert.assertTrue(testIndicator.getIdSet().contains(1));
+        Assert.assertTrue(testIndicator.getIdSet().contains(2));
+        Assert.assertFalse(testIndicator.getIdSet().contains(3));
+    }
+
+    @Test
+    public void getRankingWorks() {
+        Map<Integer, Double> testEntries = new HashMap<>();
+        testEntries.put(1, 2.0);
+        testEntries.put(2, 4.0);
+
+        Indicator testIndicator = new Indicator(testEntries, 1);
+
+        Assert.assertEquals("[2, 1]", testIndicator.getRanking().toString());
     }
 }

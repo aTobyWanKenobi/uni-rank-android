@@ -99,7 +99,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      *
      * @return  true if it exists, false otherwise
      */
-    private boolean databaseExists() {
+    public boolean databaseExists() {
 
         SQLiteDatabase DBCheck = null;
 
@@ -148,6 +148,11 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      */
     @Override
     public University getUniversity(int id) {
+
+        // check arguments
+        if(id < 0) {
+            throw new IllegalArgumentException("University id cannot be negative");
+        }
 
         // specifies which database columns we want from the query
         String[] projection = {
@@ -200,6 +205,11 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
     @Override
     public Indicator getIndicator(int id) {
 
+        // check arguments
+        if(id < 0) {
+            throw new IllegalArgumentException("University id cannot be negative");
+        }
+
         // specifies which database columns we want from the query
         String[] projection = {
                 Tables.IndicatorsList._ID,
@@ -219,12 +229,11 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         // iterate through the result to build the Map containing all pairs university/score
         // build and return Indicator object
         if(result.getCount() > 0) {
-            Map<University, Double> entries = new HashMap<>();
+            Map<Integer, Double> entries = new HashMap<>();
             while(result.moveToNext()) {
                 int uniID = result.getInt(result.getColumnIndexOrThrow(Tables.IndicatorsList._ID));
                 double uniScore = result.getDouble(result.getColumnIndexOrThrow(Tables.IndicatorsList.SCORE));
-                University uni = getUniversity(uniID);
-                entries.put(uni, uniScore);
+                entries.put(uniID, uniScore);
             }
 
             // close Cursor
