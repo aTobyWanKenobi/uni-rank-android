@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import flanagan.math.Matrix;
 import flanagan.math.Minimization;
 import flanagan.math.MinimizationFunction;
 

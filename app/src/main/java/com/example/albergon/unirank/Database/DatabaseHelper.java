@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,13 +89,13 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
     // TODO: verify that it has been created?
     /**
-     * Open local database in read mode.
+     * Open local database in read/write mode.
      *
      * @throws SQLiteException propagated from openDatabase()
      */
     public void openDatabase() throws SQLiteException{
 
-        db = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, SQLiteDatabase.OPEN_READONLY);
+        db = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, SQLiteDatabase.OPEN_READWRITE);
     }
 
 
@@ -109,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         SQLiteDatabase DBCheck = null;
 
         try {
-            DBCheck = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, SQLiteDatabase.OPEN_READONLY);
+            DBCheck = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, SQLiteDatabase.OPEN_READWRITE);
         } catch (SQLiteException e) {
             Log.i(TAG, "Database does not exist yet (exception : " + e.getMessage());
         }
@@ -254,6 +254,12 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         }
     }
 
+    /**
+     * Writes a SaveRank object in the local database by storing all the information about an
+     * aggregation in the appropriate tables.
+     *
+     * @param ranking   aggregation to be saved
+     */
     @Override
     public void saveAggregation(SaveRank ranking) {
 
@@ -262,11 +268,14 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
             throw new IllegalArgumentException("Ranking to be saved cannot be null");
         }
 
+        // initialize tuples to insert
         ContentValues rankings = new ContentValues();
         ContentValues aggregations = new ContentValues();
         ContentValues rankList = new ContentValues();
 
+        // verify if the current writing is an update of an already present save
         if(ranking.getId() != -1) {
+            // in that case delete old data
             deleteSavedAggregation(ranking.getId());
         }
 
@@ -287,30 +296,49 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         List<Integer> ranks = ranking.getResult();
         for(int i = 0; i < ranks.size(); i++) {
             rankList.put(Tables.SavedRankListTable.SAVED_RANKING_ID, newRankingID);
-            rankList.put(Tables.SavedRankListTable.SAVED_RANK, i+1);
+            rankList.put(Tables.SavedRankListTable.SAVED_RANK, i);
             rankList.put(Tables.SavedRankListTable.SAVED_UNI_ID, ranks.get(i));
         }
         db.insert(Tables.SavedRankListTable.TABLE_NAME, null, rankList);
     }
 
+    /**
+     * Private method that deletes all information of a saved aggregation given it's id in the
+     * database.
+     *
+     * @param id    id of the save to delete
+     */
     private void deleteSavedAggregation(int id) {
 
+        // arguments check
+        if(id < 0) {
+            throw new IllegalArgumentException("Saves cannot have a negative id in database");
+        }
+
+        // prepare selection queries
         String selection1 = Tables.SavedRankingsTable._ID + " = " + id;
         String selection2 = Tables.SavedAggregationsTable.SAVED_ID + " = " + id;
         String selection3 = Tables.SavedRankListTable.SAVED_RANKING_ID + " = " + id;
 
+        // delete in all tables based on selection
         db.delete(Tables.SavedRankingsTable.TABLE_NAME, selection1, null);
         db.delete(Tables.SavedAggregationsTable.TABLE_NAME, selection2, null);
         db.delete(Tables.SavedRankListTable.TABLE_NAME, selection3, null);
     }
 
+    /**
+     * This method fetches all the current saved aggregations in database.
+     *
+     * @return  a list of SaveRank
+     */
     public List<SaveRank> fetchAllSaves() {
+
         // specifies which database columns we want from the query
         String[] projection = {
                 Tables.SavedRankingsTable._ID
         };
 
-        // perform query in UNIVERSITIES table
+        // perform query of saved ids
         Cursor uniqueIds = db.query(
                 Tables.SavedRankingsTable.TABLE_NAME,
                 projection,
@@ -321,6 +349,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
                 null);
 
 
+        // fetch all saves using id list with the getAggregation method
         if(uniqueIds.getCount() >= 0) {
             List<SaveRank> allSaves = new ArrayList<>();
             while(uniqueIds.moveToNext()) {
@@ -341,6 +370,12 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
     }
 
+    /**
+     * Retrieve a single saved aggregation from database given its id.
+     *
+     * @param savedId   id of the save in the database
+     * @return          a SaveRank object containing aggregation information
+     */
     @Override
     public SaveRank getAggregation(int savedId) {
 
@@ -349,16 +384,18 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
             throw new IllegalArgumentException("Id of a saved ranking cannot be negative");
         }
 
+        // call private methods to perform queries on each interested table
         Cursor savedRankingsResult = retrieveSavedRankingsData(savedId);
         Cursor savedAggregationSettings = retrieveSavedAggregationData(savedId);
         Cursor savedRankList = retrieveSavedRankList(savedId);
 
-        // build and return a SaveRank object
+        // build string parameters
         String rName = savedRankingsResult.getString(
                 savedRankingsResult.getColumnIndexOrThrow(Tables.SavedRankingsTable.RANKING_NAME));
         String rDate = savedRankingsResult.getString(
                 savedRankingsResult.getColumnIndexOrThrow(Tables.SavedRankingsTable.RANKING_DATE));
 
+        // build settings parametere
         Map<Integer, Integer> settings = new HashMap<>();
         while(savedAggregationSettings.moveToNext()) {
             int indicatorID = savedAggregationSettings.
@@ -370,7 +407,9 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
             settings.put(indicatorID, weight);
         }
 
-        Integer[] rank = new Integer[savedRankList.getCount()];
+        // build rank list
+        List<Integer> unsortedUniIds = new ArrayList<>();
+        Map<Integer, Integer> idsWithRank = new HashMap<>();
         while(savedRankList.moveToNext()) {
             int rankPos = savedRankList.
                     getInt(savedRankList.
@@ -378,11 +417,13 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
             int uniID = savedRankList.
                     getInt(savedRankList.
                             getColumnIndexOrThrow(Tables.SavedRankListTable.SAVED_UNI_ID));
-            rank[rankPos-1] = uniID;
+            idsWithRank.put(uniID, rankPos);
+            unsortedUniIds.add(uniID);
         }
-        List<Integer> rankList = Arrays.asList(rank);
+        unsortedUniIds.sort(new RetrieveRankComparator(idsWithRank));
 
-        SaveRank savedRanking = new SaveRank(rName, rDate, settings, rankList, savedId);
+        // build and return a SaveRank object with the fetched parameters
+        SaveRank savedRanking = new SaveRank(rName, rDate, settings, unsortedUniIds, savedId);
 
         // close Cursors
         savedRankingsResult.close();
@@ -392,6 +433,12 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         return savedRanking;
     }
 
+    /**
+     * Private method that queries name and date of a saved aggregation given it's id.
+     *
+     * @param savedId   id of the saved aggregation in the database
+     * @return          the Cursor containing the query result
+     */
     private Cursor retrieveSavedRankingsData(int savedId) {
         // specifies which database columns we want from the query
         String[] projection = {
@@ -425,6 +472,13 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         return result;
     }
 
+    /**
+     * Private method that queries the indicator and weights settings of a saved aggregation
+     * given it's id.
+     *
+     * @param savedId   id of the saved aggregation in the database
+     * @return          the Cursor containing the query result
+     */
     private Cursor retrieveSavedAggregationData(int savedId) {
         // specifies which database columns we want from the query
         String[] projection = {
@@ -459,6 +513,12 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         }
     }
 
+    /**
+     * Private method that queries the resulting rank list of a saved aggregation given it's id.
+     *
+     * @param savedId   id of the saved aggregation in the database
+     * @return          the Cursor containing the query result
+     */
     private Cursor retrieveSavedRankList(int savedId) {
         // specifies which database columns we want from the query
         String[] projection = {
@@ -489,6 +549,36 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         } else {
 
             return result;
+        }
+    }
+
+    /**
+     * Nested comparator class that reconstructs a rank list of universities ids given database data.
+     */
+    public static class RetrieveRankComparator implements Comparator<Integer> {
+
+        private Map<Integer, Integer> pairings = null;
+
+        public RetrieveRankComparator(Map<Integer, Integer> pairings) {
+
+            // check arguments
+            if(pairings == null) {
+                throw new IllegalArgumentException("Cannot create a comparator with a null pairing map");
+            }
+
+            this.pairings = new HashMap<>(pairings);
+        }
+
+        @Override
+        public int compare(Integer o1, Integer o2) {
+
+            if(pairings.get(o1) < pairings.get(o2)) {
+                return -1;
+            } else if(pairings.get(o1) == pairings.get(o2)) {
+                return 0;
+            } else {
+                return 1;
+            }
         }
     }
 }

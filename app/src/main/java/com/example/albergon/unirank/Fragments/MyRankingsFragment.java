@@ -10,10 +10,7 @@ import android.widget.ListView;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.SavesListAdapter;
-import com.example.albergon.unirank.LayoutAdapters.UniversityListAdapter;
-import com.example.albergon.unirank.Model.Ranking;
 import com.example.albergon.unirank.Model.SaveRank;
-import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
 import com.example.albergon.unirank.TabbedActivity;
 

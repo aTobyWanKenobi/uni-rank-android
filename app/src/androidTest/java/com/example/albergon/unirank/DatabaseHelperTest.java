@@ -5,6 +5,7 @@ import android.support.test.InstrumentationRegistry;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Model.Indicator;
+import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.University;
 
 import org.junit.Assert;
@@ -12,6 +13,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
@@ -71,5 +76,26 @@ public class DatabaseHelperTest {
 
         Assert.assertEquals(0, academicReputation.getId());
         Assert.assertEquals(academicReputation.getIdSet().size(), academicReputation.getSize());
+    }
+
+    @Test
+    public void saveAndRetrieveAggregation() {
+
+        List<Integer> rankList = new ArrayList<>();
+        rankList.add(12);
+        rankList.add(3);
+
+        Map<Integer, Integer> settings = new HashMap<>();
+        settings.put(1, 3);
+        settings.put(2, 2);
+
+        SaveRank testSave = new SaveRank("TestName", "TestDate", settings, rankList);
+
+        databaseHelper.saveAggregation(testSave);
+
+        List<SaveRank> savings = databaseHelper.fetchAllSaves();
+
+        Assert.assertEquals("TestName", savings.get(0).getName());
+        Assert.assertEquals("TestDate", savings.get(0).getDate());
     }
 }

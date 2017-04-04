@@ -1,8 +1,6 @@
 package com.example.albergon.unirank.Database;
 
-import com.example.albergon.unirank.Model.Aggregator;
 import com.example.albergon.unirank.Model.Indicator;
-import com.example.albergon.unirank.Model.Ranking;
 import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.University;
 

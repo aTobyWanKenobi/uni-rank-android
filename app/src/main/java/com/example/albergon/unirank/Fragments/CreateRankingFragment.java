@@ -14,16 +14,15 @@ import android.widget.TextView;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.Tables;
+import com.example.albergon.unirank.LayoutAdapters.UniversityListAdapter;
 import com.example.albergon.unirank.Model.Aggregator;
 import com.example.albergon.unirank.Model.HodgeRanking;
 import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.Ranking;
 import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
-import com.example.albergon.unirank.LayoutAdapters.UniversityListAdapter;
 import com.example.albergon.unirank.TabbedActivity;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

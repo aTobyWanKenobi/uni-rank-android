@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.albergon.unirank.Model.SaveRank;
-import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;

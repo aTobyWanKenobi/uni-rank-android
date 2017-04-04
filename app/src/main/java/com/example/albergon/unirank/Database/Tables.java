@@ -24,12 +24,22 @@ public final class Tables {
         public static final String ACRONYM = "Acronym";
     }
 
+    /**
+     * This nested static class models the table containing information about saved aggregations.
+     * In particular it stores names and dates. Inheriting from BaseColumns ensure it has the _ID
+     * attribute commonly used in android SQLite databases.
+     */
     public static class SavedRankingsTable implements BaseColumns {
         public static final String TABLE_NAME = "Saved_Rankings";
         public static final String RANKING_NAME = "Name";
         public static final String RANKING_DATE = "Date";
     }
 
+    /**
+     * This nested static class models the table containing information about saved aggregations.
+     * In particular it stores the indicator and weight settings for all saves. Inheriting from
+     * BaseColumns ensure it has the _ID attribute commonly used in android SQLite databases.
+     */
     public static class SavedAggregationsTable implements BaseColumns {
         public static final String TABLE_NAME = "Saved_Aggregations";
         public static final String SAVED_ID = "SavedID";
@@ -37,6 +47,11 @@ public final class Tables {
         public static final String SAVED_WEIGHT = "Weight";
     }
 
+    /**
+     * This nested static class models the table containing information about saved aggregations.
+     * In particular it stores the positions of universities in each save. Inheriting from
+     * BaseColumns ensure it has the _ID attribute commonly used in android SQLite databases.
+     */
     public static class SavedRankListTable implements BaseColumns {
         public static final String TABLE_NAME = "Saved_RankList";
         public static final String SAVED_RANK = "Rank";

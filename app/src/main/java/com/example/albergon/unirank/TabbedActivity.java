@@ -1,19 +1,15 @@
 package com.example.albergon.unirank;
 
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.AppCompatActivity;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
-import com.example.albergon.unirank.Fragments.BlueFragment;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
-import com.example.albergon.unirank.Fragments.GreenFragment;
-import com.example.albergon.unirank.Fragments.RedFragment;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
 
 import java.io.IOException;

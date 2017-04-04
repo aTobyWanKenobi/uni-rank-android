@@ -77,6 +77,12 @@ public class Aggregator {
         return result;
     }
 
+    /**
+     * Getter for the settings of an aggregation, which are returned as a map that binds indicators
+     * ids with their respective weight.
+     *
+     * @return  a Map of indicators ids and weights
+     */
     public Map<Integer, Integer> getSettings() {
         return new HashMap<>(weightings);
     }

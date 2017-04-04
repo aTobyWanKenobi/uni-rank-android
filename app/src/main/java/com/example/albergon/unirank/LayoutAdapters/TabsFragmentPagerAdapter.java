@@ -9,7 +9,6 @@ import com.example.albergon.unirank.Fragments.BlueFragment;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
 import com.example.albergon.unirank.Fragments.GreenFragment;
 import com.example.albergon.unirank.Fragments.MyRankingsFragment;
-import com.example.albergon.unirank.Fragments.RedFragment;
 
 /**
  * Created by Tobia Albergoni on 02.04.2017.
