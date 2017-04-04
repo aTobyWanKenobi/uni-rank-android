@@ -88,13 +88,7 @@ public class CreateRankingFragment extends Fragment {
 
         // create aggregator with HodgeRank algorithm and database helper to setup aggregation
         aggregator = new Aggregator(new HodgeRanking());
-        databaseHelper = new DatabaseHelper(getContext());
-        try {
-            databaseHelper.createDatabase();
-        } catch (IOException e) {
-
-        }
-        databaseHelper.openDatabase();
+        databaseHelper = ((TabbedActivity) getActivity()).getDatabase();
 
         createUI(view);
         onAddButtonsBehavior();

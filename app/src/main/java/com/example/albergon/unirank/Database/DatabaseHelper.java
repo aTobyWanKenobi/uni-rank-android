@@ -1,6 +1,7 @@
 package com.example.albergon.unirank.Database;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -8,9 +9,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.albergon.unirank.Model.Aggregator;
 import com.example.albergon.unirank.Model.Indicator;
-import com.example.albergon.unirank.Model.Ranking;
 import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.University;
 
@@ -18,7 +17,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -255,6 +257,238 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
     @Override
     public void saveAggregation(SaveRank ranking) {
 
+        // check arguments
+        if(ranking == null) {
+            throw new IllegalArgumentException("Ranking to be saved cannot be null");
+        }
 
+        ContentValues rankings = new ContentValues();
+        ContentValues aggregations = new ContentValues();
+        ContentValues rankList = new ContentValues();
+
+        if(ranking.getId() != -1) {
+            deleteSavedAggregation(ranking.getId());
+        }
+
+        // add rankings information to appropriate table
+        rankings.put(Tables.SavedRankingsTable.RANKING_NAME, ranking.getName());
+        rankings.put(Tables.SavedRankingsTable.RANKING_DATE, ranking.getDate());
+        long newRankingID = db.insert(Tables.SavedRankingsTable.TABLE_NAME, null, rankings);
+
+        // add aggregation settings to appropriate table
+        for(Map.Entry<Integer, Integer> e : ranking.getSettings().entrySet()) {
+            aggregations.put(Tables.SavedAggregationsTable.SAVED_ID, newRankingID);
+            aggregations.put(Tables.SavedAggregationsTable.SAVED_INDICATOR, e.getKey());
+            aggregations.put(Tables.SavedAggregationsTable.SAVED_WEIGHT, e.getValue());
+        }
+        db.insert(Tables.SavedAggregationsTable.TABLE_NAME, null, aggregations);
+
+        // add rank list to appropriate table
+        List<Integer> ranks = ranking.getResult();
+        for(int i = 0; i < ranks.size(); i++) {
+            rankList.put(Tables.SavedRankListTable.SAVED_RANKING_ID, newRankingID);
+            rankList.put(Tables.SavedRankListTable.SAVED_RANK, i+1);
+            rankList.put(Tables.SavedRankListTable.SAVED_UNI_ID, ranks.get(i));
+        }
+        db.insert(Tables.SavedRankListTable.TABLE_NAME, null, rankList);
+    }
+
+    private void deleteSavedAggregation(int id) {
+
+        String selection1 = Tables.SavedRankingsTable._ID + " = " + id;
+        String selection2 = Tables.SavedAggregationsTable.SAVED_ID + " = " + id;
+        String selection3 = Tables.SavedRankListTable.SAVED_RANKING_ID + " = " + id;
+
+        db.delete(Tables.SavedRankingsTable.TABLE_NAME, selection1, null);
+        db.delete(Tables.SavedAggregationsTable.TABLE_NAME, selection2, null);
+        db.delete(Tables.SavedRankListTable.TABLE_NAME, selection3, null);
+    }
+
+    public List<SaveRank> fetchAllSaves() {
+        // specifies which database columns we want from the query
+        String[] projection = {
+                Tables.SavedRankingsTable._ID
+        };
+
+        // perform query in UNIVERSITIES table
+        Cursor uniqueIds = db.query(
+                Tables.SavedRankingsTable.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+
+        if(uniqueIds.getCount() >= 0) {
+            List<SaveRank> allSaves = new ArrayList<>();
+            while(uniqueIds.moveToNext()) {
+                int saveId = uniqueIds.getInt(uniqueIds.getColumnIndexOrThrow(Tables.SavedRankingsTable._ID));
+                allSaves.add(getAggregation(saveId));
+            }
+
+            // close Cursor
+            uniqueIds.close();
+
+            return allSaves;
+        } else {
+
+            // close Cursor
+            uniqueIds.close();
+            throw new IllegalStateException("Negative result count, database corrupted");
+        }
+
+    }
+
+    @Override
+    public SaveRank getAggregation(int savedId) {
+
+        // arguments check
+        if(savedId < 0) {
+            throw new IllegalArgumentException("Id of a saved ranking cannot be negative");
+        }
+
+        Cursor savedRankingsResult = retrieveSavedRankingsData(savedId);
+        Cursor savedAggregationSettings = retrieveSavedAggregationData(savedId);
+        Cursor savedRankList = retrieveSavedRankList(savedId);
+
+        // build and return a SaveRank object
+        String rName = savedRankingsResult.getString(
+                savedRankingsResult.getColumnIndexOrThrow(Tables.SavedRankingsTable.RANKING_NAME));
+        String rDate = savedRankingsResult.getString(
+                savedRankingsResult.getColumnIndexOrThrow(Tables.SavedRankingsTable.RANKING_DATE));
+
+        Map<Integer, Integer> settings = new HashMap<>();
+        while(savedAggregationSettings.moveToNext()) {
+            int indicatorID = savedAggregationSettings.
+                    getInt(savedAggregationSettings.
+                            getColumnIndexOrThrow(Tables.SavedAggregationsTable.SAVED_INDICATOR));
+            int weight = savedAggregationSettings.
+                    getInt(savedAggregationSettings.
+                            getColumnIndexOrThrow(Tables.SavedAggregationsTable.SAVED_WEIGHT));
+            settings.put(indicatorID, weight);
+        }
+
+        Integer[] rank = new Integer[savedRankList.getCount()];
+        while(savedRankList.moveToNext()) {
+            int rankPos = savedRankList.
+                    getInt(savedRankList.
+                            getColumnIndexOrThrow(Tables.SavedRankListTable.SAVED_RANK));
+            int uniID = savedRankList.
+                    getInt(savedRankList.
+                            getColumnIndexOrThrow(Tables.SavedRankListTable.SAVED_UNI_ID));
+            rank[rankPos-1] = uniID;
+        }
+        List<Integer> rankList = Arrays.asList(rank);
+
+        SaveRank savedRanking = new SaveRank(rName, rDate, settings, rankList, savedId);
+
+        // close Cursors
+        savedRankingsResult.close();
+        savedAggregationSettings.close();
+        savedRankList.close();
+
+        return savedRanking;
+    }
+
+    private Cursor retrieveSavedRankingsData(int savedId) {
+        // specifies which database columns we want from the query
+        String[] projection = {
+                Tables.SavedRankingsTable._ID,
+                Tables.SavedRankingsTable.RANKING_NAME,
+                Tables.SavedRankingsTable.RANKING_DATE
+        };
+
+        // specifies the WHERE clause of the query
+        String selection = Tables.SavedRankingsTable._ID + " = " + savedId;
+
+        // perform query in UNIVERSITIES table
+        Cursor result = db.query(
+                Tables.SavedRankingsTable.TABLE_NAME,
+                projection,
+                selection,
+                null,
+                null,
+                null,
+                null);
+
+        // check that we retrieved a unique university
+        if(result.getCount() == 1) {
+            result.moveToNext();
+        } else if(result.getCount() == 0) {
+            throw new NoSuchElementException("This id does not correspond to any ranking in database");
+        } else {
+            throw new IllegalStateException("More rankings with same id, database is corrupted");
+        }
+
+        return result;
+    }
+
+    private Cursor retrieveSavedAggregationData(int savedId) {
+        // specifies which database columns we want from the query
+        String[] projection = {
+                Tables.SavedAggregationsTable.SAVED_ID,
+                Tables.SavedAggregationsTable.SAVED_INDICATOR,
+                Tables.SavedAggregationsTable.SAVED_WEIGHT
+        };
+
+        // specifies the WHERE clause of the query
+        String selection = Tables.SavedAggregationsTable.SAVED_ID + " = " + savedId;
+
+        // perform query in UNIVERSITIES table
+        Cursor result = db.query(
+                Tables.SavedAggregationsTable.TABLE_NAME,
+                projection,
+                selection,
+                null,
+                null,
+                null,
+                null);
+
+        // check
+        if(result.getCount() <= 0) {
+            // close Cursor
+            result.close();
+
+            throw new IllegalStateException("Empty settings for saved ranking, database is corrupted");
+
+        } else {
+
+            return result;
+        }
+    }
+
+    private Cursor retrieveSavedRankList(int savedId) {
+        // specifies which database columns we want from the query
+        String[] projection = {
+                Tables.SavedRankListTable.SAVED_RANK,
+                Tables.SavedRankListTable.SAVED_UNI_ID
+        };
+
+        // specifies the WHERE clause of the query
+        String selection = Tables.SavedRankListTable.SAVED_RANKING_ID + " = " + savedId;
+
+        // perform query in UNIVERSITIES table
+        Cursor result = db.query(
+                Tables.SavedRankListTable.TABLE_NAME,
+                projection,
+                selection,
+                null,
+                null,
+                null,
+                null);
+
+        // check
+        if(result.getCount() <= 0) {
+            // close Cursor
+            result.close();
+
+            throw new IllegalStateException("Empty rank list for saved ranking, database is corrupted");
+
+        } else {
+
+            return result;
+        }
     }
 }

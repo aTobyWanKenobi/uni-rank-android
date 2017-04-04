@@ -9,14 +9,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 
+import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Fragments.BlueFragment;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
 import com.example.albergon.unirank.Fragments.GreenFragment;
 import com.example.albergon.unirank.Fragments.RedFragment;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
 
+import java.io.IOException;
+
 public class TabbedActivity extends AppCompatActivity implements
     CreateRankingFragment.OnCreateRankingFragmentInteractionListener {
+
+    private DatabaseHelper databaseHelper = null;
 
     private TabLayout tabLayout = null;
     private TabsFragmentPagerAdapter tabsPagerAdapter = null;
@@ -52,6 +57,20 @@ public class TabbedActivity extends AppCompatActivity implements
                 .replace(R.id.fragment_container, currentFragment)
                 .commit();
 
+        // TODO: move it to service
+        // open database
+        databaseHelper = new DatabaseHelper(this);
+        try {
+            databaseHelper.createDatabase();
+        } catch (IOException e) {
+
+        }
+        databaseHelper.openDatabase();
+
+    }
+
+    public DatabaseHelper getDatabase() {
+        return databaseHelper;
     }
 
     public void restartRankGeneration() {

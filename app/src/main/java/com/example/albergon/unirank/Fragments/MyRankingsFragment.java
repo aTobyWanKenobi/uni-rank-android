@@ -16,19 +16,9 @@ public class MyRankingsFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     public static MyRankingsFragment newInstance() {
         MyRankingsFragment fragment = new MyRankingsFragment();
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override

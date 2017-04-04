@@ -37,6 +37,13 @@ public final class Tables {
         public static final String SAVED_WEIGHT = "Weight";
     }
 
+    public static class SavedRankListTable implements BaseColumns {
+        public static final String TABLE_NAME = "Saved_RankList";
+        public static final String SAVED_RANK = "Rank";
+        public static final String SAVED_UNI_ID = "UniID";
+        public static final String SAVED_RANKING_ID = "RankingID";
+    }
+
     /**
      * This nested enumeration contains a list of the indicators currently present in the database.
      * Since every indicator table has the same structure, its field names can be accessed from the

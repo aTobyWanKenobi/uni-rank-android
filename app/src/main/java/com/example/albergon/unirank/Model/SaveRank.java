@@ -1,5 +1,6 @@
 package com.example.albergon.unirank.Model;
 
+import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,14 +14,20 @@ public class SaveRank {
 
     private String name = null;
     private String date = null;
-    private Aggregator settings = null;
-    private Ranking<Integer> result = null;
+    private Map<Integer, Integer> settings = null;
+    private List<Integer> result = null;
+    private int id = -1;
 
-    public SaveRank(String name, String date, Aggregator aggregator, Ranking<Integer> result) {
+    public SaveRank(String name, String date, Map<Integer, Integer> settings, List<Integer> result) {
         this.name = name;
         this.date = date;
-        settings = aggregator;
-        this.result = result;
+        this.settings = settings;
+        this.result = new ArrayList<>(result);
+    }
+
+    public SaveRank(String name, String date, Map<Integer, Integer> settings, List<Integer> result, int id) {
+        this(name, date, settings, result);
+        this.id = id;
     }
 
     public String getName() {
@@ -32,10 +39,15 @@ public class SaveRank {
     }
 
     public Map<Integer, Integer> getSettings() {
-        return settings.getSettings();
+
+        return new HashMap<>(settings);
     }
 
     public List<Integer> getResult() {
-        return result.getList();
+        return new ArrayList<>(result);
+    }
+
+    public int getId() {
+        return id;
     }
 }

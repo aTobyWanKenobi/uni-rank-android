@@ -8,14 +8,8 @@
 
     <ListView
         android:id="@+id/generated_ranking"
-        android:layout_width="match_parent"
-        android:layout_height="430dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -93,7 +87,8 @@
         app:layout_constraintBottom_toTopOf="@+id/indicator1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/i1add"
-        android:layout_marginRight="8dp" />
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:id="@+id/indicator2_name"
@@ -107,7 +102,8 @@
         app:layout_constraintBottom_toTopOf="@+id/indicator2"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/i2add"
-        android:layout_marginRight="8dp" />
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:id="@+id/indicator3_name"
@@ -121,7 +117,8 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintBottom_toTopOf="@+id/indicator3"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/i3add" />
+        app:layout_constraintRight_toLeftOf="@+id/i3add"
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:id="@+id/indicator4_name"
@@ -135,7 +132,8 @@
         app:layout_constraintBottom_toTopOf="@+id/indicator4"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/i4add"
-        android:layout_marginRight="8dp" />
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp" />
 
     <TextView
         android:id="@+id/indicator5_name"
@@ -149,21 +147,20 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         app:layout_constraintBottom_toTopOf="@+id/indicator5"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/i5add" />
+        app:layout_constraintRight_toLeftOf="@+id/i5add"
+        android:layout_marginEnd="8dp" />
 
     <Button
         android:id="@+id/i1add"
         android:layout_width="88dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:elevation="0dp"
         android:text="Add"
         android:textSize="10sp"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="0dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/indicator1" />
 
@@ -175,7 +172,6 @@
         android:textSize="10sp"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/indicator2" />
@@ -188,7 +184,6 @@
         android:textSize="10sp"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/indicator3" />
@@ -202,7 +197,6 @@
         android:textSize="10sp"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/indicator4" />
@@ -217,7 +211,6 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         android:textSize="10sp"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/indicator5" />
