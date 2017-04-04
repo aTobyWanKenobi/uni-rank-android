@@ -19,6 +19,8 @@ public class SaveRank {
     private int id = -1;
 
     public SaveRank(String name, String date, Map<Integer, Integer> settings, List<Integer> result) {
+
+        // TODO: argument check
         this.name = name;
         this.date = date;
         this.settings = settings;

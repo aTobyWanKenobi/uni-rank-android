@@ -81,7 +81,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         } else {
             // TODO: remember to implement calls to this method as background service (long-running)
             // create empty database in default system folder
-            this.getReadableDatabase();
+            this.getWritableDatabase();
             // overwrite it with desired database
             copyDatabase();
         }
