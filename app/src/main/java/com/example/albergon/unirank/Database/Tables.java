@@ -73,11 +73,17 @@ public final class Tables {
         Citations("Citations");
 
         public final String TABLE_NAME;
+        public final String NAME;
         public final static String SCORE = "Score";
 
         IndicatorsList(final String name) {
             TABLE_NAME = name;
+            NAME = removeUnderscores(name);
         }
+    }
+
+    private static String removeUnderscores(String s) {
+        return s.replace("_", " ");
     }
 
 

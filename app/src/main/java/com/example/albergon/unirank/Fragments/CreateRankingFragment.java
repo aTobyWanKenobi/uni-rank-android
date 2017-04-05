@@ -1,7 +1,6 @@
 package com.example.albergon.unirank.Fragments;
 
-import android.content.Context;
-import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,8 +11,9 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.albergon.unirank.AsyncIndicatorListAdd;
 import com.example.albergon.unirank.Database.DatabaseHelper;
-import com.example.albergon.unirank.Database.Tables;
+import com.example.albergon.unirank.LayoutAdapters.IndicatorListAdapter;
 import com.example.albergon.unirank.LayoutAdapters.UniversityListAdapter;
 import com.example.albergon.unirank.Model.Aggregator;
 import com.example.albergon.unirank.Model.HodgeRanking;
@@ -24,37 +24,18 @@ import com.example.albergon.unirank.R;
 import com.example.albergon.unirank.TabbedActivity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class CreateRankingFragment extends Fragment {
 
-    private OnCreateRankingFragmentInteractionListener defaultListener;
+    private ListView indicatorList = null;
+    private IndicatorListAdapter adapter = null;
 
-    private TextView indicator1 = null;
-    private TextView indicator2 = null;
-    private TextView indicator3 = null;
-    private TextView indicator4 = null;
-    private TextView indicator5 = null;
-
-    private SeekBar seekBar1 = null;
-    private SeekBar seekBar2 = null;
-    private SeekBar seekBar3 = null;
-    private SeekBar seekBar4 = null;
-    private SeekBar seekBar5 = null;
-
-    private Button addIndicator1Button = null;
-    private Button addIndicator2Button = null;
-    private Button addIndicator3Button = null;
-    private Button addIndicator4Button = null;
-    private Button addIndicator5Button = null;
-
-    private Button generateButton = null;
-    private ListView rankList = null;
-
-    private SeekBar[] seekBars = null;
-    private Button[] addButtons = null;
+    private Indicator[] testIndicators = null;
+    private int count = 0;
 
     private Aggregator aggregator = null;
     private DatabaseHelper databaseHelper = null;
@@ -63,19 +44,9 @@ public class CreateRankingFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     */
     public static CreateRankingFragment newInstance() {
         CreateRankingFragment fragment = new CreateRankingFragment();
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -89,76 +60,66 @@ public class CreateRankingFragment extends Fragment {
         aggregator = new Aggregator(new HodgeRanking());
         databaseHelper = ((TabbedActivity) getActivity()).getDatabase();
 
-        createUI(view);
-        onAddButtonsBehavior();
+        adapter = new IndicatorListAdapter(getContext(), R.layout.indicator_list_cell);
+        indicatorList = (ListView) view.findViewById(R.id.indicator_list);
+        indicatorList.setAdapter(adapter);
+
+        createTest();
+        addButtonsBehavior(view);
 
         return view;
     }
 
-    private void createUI(View view) {
-
-        indicator1 = (TextView) view.findViewById(R.id.indicator1_name);
-        indicator2 = (TextView) view.findViewById(R.id.indicator2_name);
-        indicator3 = (TextView) view.findViewById(R.id.indicator3_name);
-        indicator4 = (TextView) view.findViewById(R.id.indicator4_name);
-        indicator5 = (TextView) view.findViewById(R.id.indicator5_name);
-
-        seekBar1 = (SeekBar) view.findViewById(R.id.indicator1);
-        seekBar2 = (SeekBar) view.findViewById(R.id.indicator2);
-        seekBar3 = (SeekBar) view.findViewById(R.id.indicator3);
-        seekBar4 = (SeekBar) view.findViewById(R.id.indicator4);
-        seekBar5 = (SeekBar) view.findViewById(R.id.indicator5);
-
-        SeekBar[] seekBarsC = {seekBar1, seekBar2, seekBar3, seekBar4, seekBar5};
-        seekBars = Arrays.copyOf(seekBarsC, seekBarsC.length);
-
-        addIndicator1Button = (Button) view.findViewById(R.id.i1add);
-        addIndicator2Button = (Button) view.findViewById(R.id.i2add);
-        addIndicator3Button = (Button) view.findViewById(R.id.i3add);
-        addIndicator4Button = (Button) view.findViewById(R.id.i4add);
-        addIndicator5Button = (Button) view.findViewById(R.id.i5add);
-
-        Button[] addButtonsC = {addIndicator1Button, addIndicator2Button, addIndicator3Button,
-                        addIndicator4Button, addIndicator5Button};
-        addButtons = Arrays.copyOf(addButtonsC, addButtonsC.length);
-
-        generateButton = (Button) view.findViewById(R.id.generate_button);
-        rankList = (ListView) view.findViewById(R.id.generated_ranking);
-
-        indicator1.setText(Tables.IndicatorsList.values()[0].TABLE_NAME);
-        indicator2.setText(Tables.IndicatorsList.values()[1].TABLE_NAME);
-        indicator3.setText(Tables.IndicatorsList.values()[2].TABLE_NAME);
-        indicator4.setText(Tables.IndicatorsList.values()[3].TABLE_NAME);
-        indicator5.setText(Tables.IndicatorsList.values()[4].TABLE_NAME);
+    //TODO: remove when correct indicator picking is implemented
+    public void createTest() {
+        testIndicators = new Indicator[5];
+        testIndicators[0] = databaseHelper.getIndicator(0);
+        testIndicators[1] = databaseHelper.getIndicator(1);
+        testIndicators[2] = databaseHelper.getIndicator(2);
+        testIndicators[3] = databaseHelper.getIndicator(3);
+        testIndicators[4] = databaseHelper.getIndicator(4);
     }
 
-    private void onAddButtonsBehavior() {
+    private SeekBar.OnSeekBarChangeListener createTestListener() {
+        return new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-        for(int i = 0; i < addButtons.length; i++) {
-            addButtons[i].setOnClickListener(createButtonListener(i));
-        }
+            }
 
-        generateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        };
+    }
+
+
+    private void addButtonsBehavior(View view) {
+
+        ((Button) view.findViewById(R.id.add_indicator_btn)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AsyncIndicatorListAdd task = new AsyncIndicatorListAdd(adapter, getContext());
+                AsyncIndicatorListAdd.AsyncTuple tuple = new AsyncIndicatorListAdd.AsyncTuple(
+                        testIndicators[count], createTestListener()
+                        );
+                task.execute(tuple);
+
+                count += 1;
+            }
+        });
+
+        ((Button) view.findViewById(R.id.generate_btn)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                for(int i = 0; i < addButtons.length; i++) {
-                    addButtons[i].setEnabled(false);
-                    addButtons[i].setVisibility(View.GONE);
-                    seekBars[i].setEnabled(false);
-                    seekBars[i].setVisibility(View.GONE);
-                    rankList.setVisibility(View.VISIBLE);
-                    generateButton.setText("Restart");
-                    generateButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            restartFragment();
-                        }
-                    });
-                }
 
-                Ranking<Integer> aggregatedRank = aggregator.aggregate();
-                displayRanking(aggregatedRank);
             }
         });
 
@@ -174,6 +135,7 @@ public class CreateRankingFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                /*
                 // Retrieve indicator from database and add it to aggregator with correct weight
                 Indicator indicator = databaseHelper.getIndicator(index);
                 int weight = seekBars[index].getProgress() + 1;
@@ -182,6 +144,7 @@ public class CreateRankingFragment extends Fragment {
                 // Disable button and seekbar
                 seekBars[index].setEnabled(false);
                 addButtons[index].setEnabled(false);
+                */
             }
         };
     }
@@ -198,41 +161,9 @@ public class CreateRankingFragment extends Fragment {
         }
 
         UniversityListAdapter adapter = new UniversityListAdapter(getContext(),
-                R.layout.ranking_list_cell_layout,
+                R.layout.ranking_list_cell,
                 uniList);
 
-        rankList.setAdapter(adapter);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnCreateRankingFragmentInteractionListener) {
-            defaultListener = (OnCreateRankingFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        defaultListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnCreateRankingFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        //rankList.setAdapter(adapter);
     }
 }

@@ -14,8 +14,7 @@ import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
 
 import java.io.IOException;
 
-public class TabbedActivity extends AppCompatActivity implements
-    CreateRankingFragment.OnCreateRankingFragmentInteractionListener {
+public class TabbedActivity extends AppCompatActivity {
 
     private DatabaseHelper databaseHelper = null;
 
@@ -99,8 +98,4 @@ public class TabbedActivity extends AppCompatActivity implements
         };
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 }

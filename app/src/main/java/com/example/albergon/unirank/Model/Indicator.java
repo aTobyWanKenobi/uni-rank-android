@@ -101,4 +101,20 @@ public class Indicator {
 
         return new Ranking<>(ranking);
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null || !(other instanceof Indicator)) {
+            return false;
+        } else if (other == this) {
+            return true;
+        } else {
+            return (id == ((Indicator) other).getId());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getId();
+    }
 }
