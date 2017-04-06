@@ -1,111 +1,107 @@
 package com.example.albergon.unirank.Fragments;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
 
+import com.example.albergon.unirank.Database.Tables;
+import com.example.albergon.unirank.LayoutAdapters.PickListAdapter;
 import com.example.albergon.unirank.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ChooseIndicatorsDialog.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ChooseIndicatorsDialog#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class ChooseIndicatorsDialog extends DialogFragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ALREADY_PICKED = "already_picked";
+    private ChooseIndicatorDialogInteractionListener interactionListener;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private List<Integer> alreadyPicked = null;
+    private AlertDialog dialog = null;
 
-    private OnFragmentInteractionListener mListener;
+    // UI elements
+    ListView pickingList = null;
+    Button addBtn = null;
+    Button cancelBtn = null;
 
-    public ChooseIndicatorsDialog() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ChooseIndicatorsDialog.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ChooseIndicatorsDialog newInstance(String param1, String param2) {
+    public static ChooseIndicatorsDialog newInstance(ArrayList<Integer> alreadyPicked) {
         ChooseIndicatorsDialog fragment = new ChooseIndicatorsDialog();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(ALREADY_PICKED, alreadyPicked);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        View view = inflater.inflate(R.layout.fragment_choose_indicators_dialog, null);
+
+        // UI setup
+        setupUI(view);
+
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            //TODO: set already picked
         }
+
+        builder.setView(view);
+        dialog = builder.create();
+
+        return dialog;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_choose_indicators_dialog, container, false);
+    private void setupUI(View view) {
+        pickingList = (ListView) view.findViewById(R.id.indicator_picking_list);
+        addBtn = (Button) view.findViewById(R.id.add_indicator_dialog_btn);
+        cancelBtn = (Button) view.findViewById(R.id.cancel_indicator_dialog_btn);
+
+        List<Integer> indicatorsIdList = new ArrayList<>();
+        for(int i = 0; i < Tables.IndicatorsList.values().length; i++) {
+            indicatorsIdList.add(i);
+        }
+
+        PickListAdapter adapter = new PickListAdapter(getContext(),
+                R.layout.pick_indicators_list_cell,
+                indicatorsIdList);
+
+        pickingList.setAdapter(adapter);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof ChooseIndicatorDialogInteractionListener) {
+            interactionListener = (ChooseIndicatorDialogInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement ChooseIndicatorDialogInteractionListener");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        interactionListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public interface ChooseIndicatorDialogInteractionListener {
+
     }
 }

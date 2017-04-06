@@ -3,12 +3,14 @@ package com.example.albergon.unirank;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Fragments.ChooseIndicatorsDialog;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
 import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
@@ -21,7 +23,8 @@ import java.util.Map;
 
 public class TabbedActivity extends AppCompatActivity implements
         CreateRankingFragment.OnRankGenerationInteractionListener,
-        ResultAggregationFragment.ResultFragmentInteractionListener {
+        ResultAggregationFragment.ResultFragmentInteractionListener,
+        ChooseIndicatorsDialog.ChooseIndicatorDialogInteractionListener {
 
     private DatabaseHelper databaseHelper = null;
 
@@ -91,6 +94,8 @@ public class TabbedActivity extends AppCompatActivity implements
         };
     }
 
+
+
     // TODO: keep fragment stack
     private void changeFragment(Fragment newFragment) {
         currentFragment = newFragment;
@@ -104,6 +109,13 @@ public class TabbedActivity extends AppCompatActivity implements
 
         HashMap<Integer, Integer> settingsCopy = new HashMap<>(settings);
         changeFragment(ResultAggregationFragment.newInstance(settingsCopy));
+    }
+
+    @Override
+    public void showPickIndicatorDialog() {
+
+        DialogFragment dialog = new ChooseIndicatorsDialog();
+        dialog.show(fragmentManager, "ChooseIndicatorsDialog");
     }
 
     @Override

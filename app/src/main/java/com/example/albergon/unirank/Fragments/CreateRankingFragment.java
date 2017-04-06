@@ -124,6 +124,8 @@ public class CreateRankingFragment extends Fragment {
                 // update settings
                 currentSettings.put(newIndicator, 1);
                 listener.bindToIndicator(newIndicator);
+
+                interactionListener.showPickIndicatorDialog();
             }
         });
 
@@ -165,6 +167,8 @@ public class CreateRankingFragment extends Fragment {
     public interface OnRankGenerationInteractionListener {
 
         void onPressGenerate(Map<Integer, Integer> settings);
+
+        void showPickIndicatorDialog();
     }
 
     private class CustomSeekBarListener implements SeekBar.OnSeekBarChangeListener {
