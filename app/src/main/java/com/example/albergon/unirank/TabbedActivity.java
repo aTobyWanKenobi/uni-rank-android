@@ -10,11 +10,18 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
+import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
+import com.example.albergon.unirank.Model.Aggregator;
+import com.example.albergon.unirank.Model.Indicator;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-public class TabbedActivity extends AppCompatActivity {
+public class TabbedActivity extends AppCompatActivity implements
+        CreateRankingFragment.OnRankGenerationInteractionListener,
+        ResultAggregationFragment.ResultFragmentInteractionListener {
 
     private DatabaseHelper databaseHelper = null;
 
@@ -47,10 +54,7 @@ public class TabbedActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
 
-        currentFragment = CreateRankingFragment.newInstance();
-        fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, currentFragment)
-                .commit();
+        changeFragment(new CreateRankingFragment());
 
         // TODO: move it to service
         // open database
@@ -68,22 +72,11 @@ public class TabbedActivity extends AppCompatActivity {
         return databaseHelper;
     }
 
-    public void restartRankGeneration() {
-        currentFragment = CreateRankingFragment.newInstance();
-        fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, currentFragment)
-                .commit();
-    }
-
     private TabLayout.OnTabSelectedListener createBlueSwitcher() {
         return new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                currentFragment = tabsPagerAdapter.getItem(tab.getPosition());
-
-                fragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, currentFragment)
-                        .commit();
+                changeFragment(tabsPagerAdapter.getItem(tab.getPosition()));
             }
 
             @Override
@@ -98,4 +91,29 @@ public class TabbedActivity extends AppCompatActivity {
         };
     }
 
+    // TODO: keep fragment stack
+    private void changeFragment(Fragment newFragment) {
+        currentFragment = newFragment;
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, newFragment)
+                .commit();
+    }
+
+    @Override
+    public void onPressGenerate(Map<Integer, Integer> settings) {
+
+        HashMap<Integer, Integer> settingsCopy = new HashMap<>(settings);
+        changeFragment(ResultAggregationFragment.newInstance(settingsCopy));
+    }
+
+    @Override
+    public void restartGeneration() {
+        changeFragment(new CreateRankingFragment());
+    }
+
+    @Override
+    public void startGenerationWithSettings(Map<Integer, Integer> settings) {
+        HashMap<Integer, Integer> settingsCopy = new HashMap<>(settings);
+        changeFragment(CreateRankingFragment.newInstanceFromSettings(settingsCopy));
+    }
 }

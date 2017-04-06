@@ -1,5 +1,6 @@
 package com.example.albergon.unirank.Fragments;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -31,21 +32,29 @@ import java.util.Map;
 
 public class CreateRankingFragment extends Fragment {
 
+    // optional aggregation update parameter
+    private static final String OLD_SETTINGS = "old_settings";
+
+    // UI elements
     private ListView indicatorList = null;
     private IndicatorListAdapter adapter = null;
+    private Button addIndicatorBtn = null;
+    private Button generateBtn = null;
+    private Button loadBtn = null;
 
-    private Indicator[] testIndicators = null;
+    private DatabaseHelper databaseHelper = null;
+    private Map<Integer, Integer> currentSettings = null;
+    private OnRankGenerationInteractionListener interactionListener = null;
+
+    //TODO: remove when correct indicator picking is implemented
     private int count = 0;
 
-    private Aggregator aggregator = null;
-    private DatabaseHelper databaseHelper = null;
-
-    public CreateRankingFragment() {
-        // Required empty public constructor
-    }
-
-    public static CreateRankingFragment newInstance() {
+    public static CreateRankingFragment newInstanceFromSettings(HashMap<Integer, Integer> settings) {
         CreateRankingFragment fragment = new CreateRankingFragment();
+        Bundle args = new Bundle();
+        // assume hash map usage since it's serializable
+        args.putSerializable(OLD_SETTINGS, settings);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -56,114 +65,131 @@ public class CreateRankingFragment extends Fragment {
         // Inflate layout for this fragment
         final View view = inflater.inflate(R.layout.create_ranking_fragment, container, false);
 
-        // create aggregator with HodgeRank algorithm and database helper to setup aggregation
-        aggregator = new Aggregator(new HodgeRanking());
-        databaseHelper = ((TabbedActivity) getActivity()).getDatabase();
+        // structures and helpers setup
+        currentSettings = new HashMap<>();
 
-        adapter = new IndicatorListAdapter(getContext(), R.layout.indicator_list_cell);
-        indicatorList = (ListView) view.findViewById(R.id.indicator_list);
-        indicatorList.setAdapter(adapter);
+        // UI setup
+        setupUI(view);
+        addButtonsBehavior();
 
-        createTest();
-        addButtonsBehavior(view);
+        if (getArguments() != null) {
+            currentSettings = (HashMap<Integer, Integer>) getArguments().getSerializable(OLD_SETTINGS);
+            updateListFromSettings();
+        }
 
         return view;
     }
 
-    //TODO: remove when correct indicator picking is implemented
-    public void createTest() {
-        testIndicators = new Indicator[5];
-        testIndicators[0] = databaseHelper.getIndicator(0);
-        testIndicators[1] = databaseHelper.getIndicator(1);
-        testIndicators[2] = databaseHelper.getIndicator(2);
-        testIndicators[3] = databaseHelper.getIndicator(3);
-        testIndicators[4] = databaseHelper.getIndicator(4);
+    private void updateListFromSettings() {
+
+        for(Map.Entry<Integer, Integer> entry : currentSettings.entrySet()) {
+            // add indicator to the list
+            AsyncIndicatorListAdd task = new AsyncIndicatorListAdd(adapter, getContext());
+            CustomSeekBarListener listener = new CustomSeekBarListener();
+            Integer newIndicator = entry.getKey();
+            listener.bindToIndicator(newIndicator);
+            AsyncIndicatorListAdd.AsyncTuple tuple =
+                    new AsyncIndicatorListAdd.AsyncTuple(newIndicator, listener);
+            task.execute(tuple);
+        }
     }
 
-    private SeekBar.OnSeekBarChangeListener createTestListener() {
-        return new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    private void setupUI(View view) {
+        // setup UI adding mechanism
+        adapter = new IndicatorListAdapter(getContext(), R.layout.indicator_list_cell);
+        indicatorList = (ListView) view.findViewById(R.id.indicator_list);
+        indicatorList.setAdapter(adapter);
 
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        };
+        // setup buttons
+        addIndicatorBtn = (Button) view.findViewById(R.id.add_indicator_btn);
+        loadBtn = (Button) view.findViewById(R.id.load_btn);
+        generateBtn = (Button) view.findViewById(R.id.generate_btn);
     }
 
+    private void addButtonsBehavior() {
 
-    private void addButtonsBehavior(View view) {
-
-        ((Button) view.findViewById(R.id.add_indicator_btn)).setOnClickListener(new View.OnClickListener() {
+        addIndicatorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // add indicator to the list
                 AsyncIndicatorListAdd task = new AsyncIndicatorListAdd(adapter, getContext());
-                AsyncIndicatorListAdd.AsyncTuple tuple = new AsyncIndicatorListAdd.AsyncTuple(
-                        testIndicators[count], createTestListener()
-                        );
+                CustomSeekBarListener listener = new CustomSeekBarListener();
+                Integer newIndicator = count;
+                AsyncIndicatorListAdd.AsyncTuple tuple =
+                        new AsyncIndicatorListAdd.AsyncTuple(newIndicator, listener);
                 task.execute(tuple);
-
                 count += 1;
+
+                // update settings
+                currentSettings.put(newIndicator, 1);
+                listener.bindToIndicator(newIndicator);
             }
         });
 
-        ((Button) view.findViewById(R.id.generate_btn)).setOnClickListener(new View.OnClickListener() {
+        generateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                interactionListener.onPressGenerate(currentSettings);
+
+            }
+        });
+
+        loadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
             }
         });
 
     }
 
-    private void restartFragment() {
-        ((TabbedActivity) getActivity()).restartRankGeneration();
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof CreateRankingFragment.OnRankGenerationInteractionListener) {
+            interactionListener = (CreateRankingFragment.OnRankGenerationInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnRankGenerationInteractionListener");
+        }
     }
 
-    private View.OnClickListener createButtonListener(final int index) {
-        return new View.OnClickListener() {
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        interactionListener = null;
+    }
 
-            @Override
-            public void onClick(View v) {
+    public interface OnRankGenerationInteractionListener {
 
-                /*
-                // Retrieve indicator from database and add it to aggregator with correct weight
-                Indicator indicator = databaseHelper.getIndicator(index);
-                int weight = seekBars[index].getProgress() + 1;
-                aggregator.add(indicator, weight);
+        void onPressGenerate(Map<Integer, Integer> settings);
+    }
 
-                // Disable button and seekbar
-                seekBars[index].setEnabled(false);
-                addButtons[index].setEnabled(false);
-                */
+    private class CustomSeekBarListener implements SeekBar.OnSeekBarChangeListener {
+
+        private Integer indicator = null;
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if(fromUser) {
+                currentSettings.put(indicator, progress+1);
             }
-        };
-    }
-
-    private void displayRanking(Ranking<Integer> ranking) {
-
-        List<Integer> idList = ranking.getList();
-        List<University> uniList = new ArrayList<>();
-
-        for(int i = 0; i < idList.size(); i++) {
-            int id = idList.get(i);
-            University uni = databaseHelper.getUniversity(id);
-            uniList.add(uni);
         }
 
-        UniversityListAdapter adapter = new UniversityListAdapter(getContext(),
-                R.layout.ranking_list_cell,
-                uniList);
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
 
-        //rankList.setAdapter(adapter);
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        public void bindToIndicator(Integer i) {
+            indicator = i;
+        }
     }
 }

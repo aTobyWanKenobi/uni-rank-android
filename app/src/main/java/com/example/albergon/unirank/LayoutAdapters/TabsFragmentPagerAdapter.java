@@ -34,7 +34,7 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
         Fragment toRet = null;
 
         switch(position){
-            case 0: toRet = CreateRankingFragment.newInstance();
+            case 0: toRet = new CreateRankingFragment();
                     break;
             case 1: toRet = MyRankingsFragment.newInstance();
                 break;

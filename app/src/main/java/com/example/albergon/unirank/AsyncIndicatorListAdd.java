@@ -54,15 +54,15 @@ public class AsyncIndicatorListAdd extends AsyncTask<AsyncIndicatorListAdd.Async
 
     public static class AsyncTuple {
 
-        private Indicator indicator = null;
+        private Integer indicator = null;
         private SeekBar.OnSeekBarChangeListener listener = null;
 
-        public AsyncTuple(Indicator indicator, SeekBar.OnSeekBarChangeListener listener) {
+        public AsyncTuple(Integer indicator, SeekBar.OnSeekBarChangeListener listener) {
             this.indicator = indicator;
             this.listener = listener;
         }
 
-        public Indicator getIndicator() {
+        public Integer getIndicator() {
             return indicator;
         }
 

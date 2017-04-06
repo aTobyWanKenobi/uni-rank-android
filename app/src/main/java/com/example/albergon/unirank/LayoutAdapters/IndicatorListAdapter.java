@@ -78,7 +78,7 @@ public class IndicatorListAdapter extends BaseAdapter {
         }
 
         AsyncIndicatorListAdd.AsyncTuple tuple = indicators.get(position);
-        holder.getName().setText(Tables.IndicatorsList.values()[tuple.getIndicator().getId()].NAME);
+        holder.getName().setText(Tables.IndicatorsList.values()[tuple.getIndicator()].NAME);
         holder.getSeekBar().setOnSeekBarChangeListener(tuple.getListener());
 
         return row;
