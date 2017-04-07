@@ -19,6 +19,7 @@ public class Aggregator {
     private RankAggregationAlgorithm algorithm = null;
     private Map<Integer, Integer> weightings = null;
     private List<Indicator> indicators = null;
+    private Ranking<Integer> result = null;
 
     /**
      * Public constructor that instantiates the aggregator with the desired aggregation algorithm.
@@ -73,6 +74,7 @@ public class Aggregator {
 
         // use algorithm to aggregate rankings
         Ranking<Integer> result = algorithm.aggregate(indicatorsArray, weightings);
+        this.result = result;
 
         return result;
     }
@@ -85,6 +87,10 @@ public class Aggregator {
      */
     public Map<Integer, Integer> getSettings() {
         return new HashMap<>(weightings);
+    }
+
+    public Ranking<Integer> getResult() {
+        return result;
     }
 
 }

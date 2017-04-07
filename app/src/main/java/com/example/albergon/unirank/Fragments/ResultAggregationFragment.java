@@ -2,13 +2,17 @@ package com.example.albergon.unirank.Fragments;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
@@ -17,14 +21,18 @@ import com.example.albergon.unirank.Model.Aggregator;
 import com.example.albergon.unirank.Model.HodgeRanking;
 import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.Ranking;
+import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
 import com.example.albergon.unirank.TabbedActivity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ResultAggregationFragment extends Fragment {
@@ -106,7 +114,7 @@ public class ResultAggregationFragment extends Fragment {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                showSaveDialog();
             }
         });
 
@@ -117,6 +125,43 @@ public class ResultAggregationFragment extends Fragment {
             }
         });
 
+    }
+
+    private void showSaveDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Save as");
+
+        // Set up the input
+        final EditText input = new EditText(getContext());
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                saveAggregation(input.getText().toString());
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
+    private void saveAggregation(String name) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
+        String date = dateFormat.format(new Date());
+
+        SaveRank save = new SaveRank(name, date, settings, aggregator.getResult().getList());
+        databaseHelper.saveAggregation(save);
+        saveBtn.setEnabled(false);
     }
 
     private Ranking<Integer> performAggregation() {

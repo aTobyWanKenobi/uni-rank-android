@@ -11,6 +11,7 @@
         android:id="@+id/saves_list"
         android:layout_width="match_parent"
         android:layout_height="300dp"
+        android:clickable="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"

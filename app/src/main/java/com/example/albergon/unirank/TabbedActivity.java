@@ -12,10 +12,12 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Fragments.ChooseIndicatorsDialog;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
+import com.example.albergon.unirank.Fragments.MyRankingsFragment;
 import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
 import com.example.albergon.unirank.Model.Aggregator;
 import com.example.albergon.unirank.Model.Indicator;
+import com.example.albergon.unirank.Model.SaveRank;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,7 +28,8 @@ import java.util.Set;
 public class TabbedActivity extends AppCompatActivity implements
         CreateRankingFragment.OnRankGenerationInteractionListener,
         ResultAggregationFragment.ResultFragmentInteractionListener,
-        ChooseIndicatorsDialog.ChooseIndicatorDialogInteractionListener {
+        ChooseIndicatorsDialog.ChooseIndicatorDialogInteractionListener,
+        MyRankingsFragment.MyRankingsFragmentInteractionListener {
 
     private DatabaseHelper databaseHelper = null;
 
@@ -132,5 +135,15 @@ public class TabbedActivity extends AppCompatActivity implements
     @Override
     public void addIndicators(Set<Integer> pickedOnes) {
         ((CreateRankingFragment) currentFragment).updateListFromDialog(pickedOnes);
+    }
+
+    @Override
+    public void openSave(int id) {
+        SaveRank toOpen = databaseHelper.getAggregation(id);
+        HashMap<Integer, Integer> settings = new HashMap<>(toOpen.getSettings());
+
+        tabLayout.getTabAt(0).select();
+        changeFragment(CreateRankingFragment.newInstanceFromSettings(settings));
+
     }
 }

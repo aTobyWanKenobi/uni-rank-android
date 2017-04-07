@@ -1,12 +1,15 @@
 package com.example.albergon.unirank.Fragments;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.SavesListAdapter;
@@ -22,8 +25,13 @@ import java.util.Map;
 
 public class MyRankingsFragment extends Fragment {
 
-    ListView savesList = null;
-    DatabaseHelper databaseHelper = null;
+    private MyRankingsFragmentInteractionListener interactionListener = null;
+
+    private Button openBtn = null;
+    private ListView savesList = null;
+    private DatabaseHelper databaseHelper = null;
+
+    private int currentlySelectedSave = -1;
 
     public MyRankingsFragment() {
         // Required empty public constructor
@@ -42,6 +50,19 @@ public class MyRankingsFragment extends Fragment {
 
         databaseHelper = ((TabbedActivity) getActivity()).getDatabase();
 
+        //UI
+        openBtn = (Button) view.findViewById(R.id.open_save);
+        openBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentlySelectedSave == -1) {
+                    Toast.makeText(getContext(), "You must select a save to open", Toast.LENGTH_LONG).show();
+                } else {
+                    interactionListener.openSave(currentlySelectedSave);
+                }
+            }
+        });
+
         //addSavesToDB();
         savesList = (ListView) view.findViewById(R.id.saves_list);
         displaySaves();
@@ -49,34 +70,45 @@ public class MyRankingsFragment extends Fragment {
         return view;
     }
 
-    //TODO: just for testing, remove
-    private void addSavesToDB() {
-
-        List<Integer> rank = new ArrayList<>();
-        rank.add(1);
-        Map<Integer, Integer> settings = new HashMap<>();
-        settings.put(1, 1);
-
-        SaveRank s1 = new SaveRank("Test1", "04/04/2017", settings, rank);
-        SaveRank s2 = new SaveRank("Test2", "05/04/2017", settings, rank);
-        SaveRank s3 = new SaveRank("Test3", "06/04/2017", settings, rank);
-        SaveRank s4 = new SaveRank("Test4", "07/04/2017", settings, rank);
-
-        databaseHelper.saveAggregation(s1);
-        databaseHelper.saveAggregation(s2);
-        databaseHelper.saveAggregation(s3);
-        databaseHelper.saveAggregation(s4);
-    }
-
     private void displaySaves() {
 
         List<SaveRank> saves = databaseHelper.fetchAllSaves();
 
+        View.OnClickListener rowListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentlySelectedSave = ((SavesListAdapter.SaveHolder)v.getTag()).getId();
+            }
+        };
+
         SavesListAdapter adapter = new SavesListAdapter(getContext(),
                 R.layout.saving_list_cell,
-                saves);
+                saves,
+                rowListener);
 
         savesList.setAdapter(adapter);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof MyRankingsFragmentInteractionListener) {
+            interactionListener = (MyRankingsFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement MyRankingsFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        interactionListener = null;
+    }
+
+    public interface MyRankingsFragmentInteractionListener {
+
+        void openSave(int id);
     }
 
 }

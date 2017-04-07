@@ -25,49 +25,58 @@ public class SavesListAdapter extends ArrayAdapter {
     private Context context = null;
     private int layoutResourceId = 0;
     private List<SaveRank> savings = null;
+    private View.OnClickListener rowListener = null;
 
-    public SavesListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<SaveRank> savings) {
+    public SavesListAdapter(@NonNull Context context,
+                            @LayoutRes int resource,
+                            @NonNull List<SaveRank> savings,
+                            View.OnClickListener rowListener) {
         super(context, resource, savings);
 
         this.context = context;
         this.layoutResourceId = resource;
         this.savings = new ArrayList<>(savings);
+        this.rowListener = rowListener;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        SavesListAdapter.SavesHolder holder = null;
+        SaveHolder holder = null;
 
         if(row == null)
         {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
 
-            holder = new SavesListAdapter.SavesHolder((TextView)row.findViewById(R.id.save_name),
-                    (TextView)row.findViewById(R.id.save_date));
+            holder = new SaveHolder((TextView)row.findViewById(R.id.save_name),
+                    (TextView)row.findViewById(R.id.save_date), savings.get(position).getId());
             row.setTag(holder);
         }
         else
         {
-            holder = (SavesListAdapter.SavesHolder) row.getTag();
+            holder = (SaveHolder) row.getTag();
         }
 
         SaveRank save = savings.get(position);
         holder.getName().setText(save.getName());
         holder.getDate().setText(save.getDate());
 
+        row.setOnClickListener(rowListener);
+
         return row;
     }
 
-    private static class SavesHolder {
+    public static class SaveHolder {
 
         private TextView name = null;
         private TextView date = null;
+        private int saveId = -1;
 
-        public SavesHolder(TextView name, TextView date) {
+        public SaveHolder(TextView name, TextView date, int id) {
             this.name = name;
             this.date = date;
+            saveId = id;
         }
 
         public TextView getDate() {
@@ -76,6 +85,10 @@ public class SavesListAdapter extends ArrayAdapter {
 
         public TextView getName() {
             return name;
+        }
+
+        public int getId() {
+            return saveId;
         }
     }
 }
