@@ -18,8 +18,10 @@ import com.example.albergon.unirank.Model.Aggregator;
 import com.example.albergon.unirank.Model.Indicator;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class TabbedActivity extends AppCompatActivity implements
         CreateRankingFragment.OnRankGenerationInteractionListener,
@@ -94,8 +96,6 @@ public class TabbedActivity extends AppCompatActivity implements
         };
     }
 
-
-
     // TODO: keep fragment stack
     private void changeFragment(Fragment newFragment) {
         currentFragment = newFragment;
@@ -112,9 +112,9 @@ public class TabbedActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void showPickIndicatorDialog() {
+    public void showPickIndicatorDialog(Set<Integer> alreadyPicked) {
 
-        DialogFragment dialog = new ChooseIndicatorsDialog();
+        DialogFragment dialog = ChooseIndicatorsDialog.newInstance(new ArrayList<>(alreadyPicked));
         dialog.show(fragmentManager, "ChooseIndicatorsDialog");
     }
 
@@ -127,5 +127,10 @@ public class TabbedActivity extends AppCompatActivity implements
     public void startGenerationWithSettings(Map<Integer, Integer> settings) {
         HashMap<Integer, Integer> settingsCopy = new HashMap<>(settings);
         changeFragment(CreateRankingFragment.newInstanceFromSettings(settingsCopy));
+    }
+
+    @Override
+    public void addIndicators(Set<Integer> pickedOnes) {
+        ((CreateRankingFragment) currentFragment).updateListFromDialog(pickedOnes);
     }
 }

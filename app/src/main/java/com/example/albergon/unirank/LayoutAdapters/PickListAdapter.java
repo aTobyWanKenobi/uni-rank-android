@@ -7,12 +7,11 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.example.albergon.unirank.Database.Tables;
-import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
@@ -22,18 +21,32 @@ import java.util.List;
  * Created by Tobia Albergoni on 06.04.2017.
  */
 
-public class PickListAdapter extends ArrayAdapter {
+public class PickListAdapter extends BaseAdapter {
 
     private Context context = null;
     private int layoutResourceId = 0;
-    private List<Integer> indicators = null;
+    private List<CheckBoxTuple> indicators = null;
 
-    public PickListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<Integer> indicators) {
-        super(context, resource, indicators);
+    public PickListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<CheckBoxTuple> indicators) {
 
         this.context = context;
         this.layoutResourceId = resource;
         this.indicators = new ArrayList<>(indicators);
+    }
+
+    @Override
+    public int getCount() {
+        return indicators.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return indicators.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return indicators.get(position).getIndicator();
     }
 
     @Override
@@ -55,12 +68,21 @@ public class PickListAdapter extends ArrayAdapter {
             holder = (PickListAdapter.PickHolder) row.getTag();
         }
 
-        holder.getName().setText(Tables.IndicatorsList.values()[indicators.get(position)].NAME);
+        holder.getName().setText(Tables.IndicatorsList.values()[indicators.get(position).getIndicator()].NAME);
+        holder.getCheckBox().setChecked(indicators.get(position).getAlreadyOn());
+
+        final CheckBox toClick = holder.getCheckBox();
+        row.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toClick.performClick();
+            }
+        });
 
         return row;
     }
 
-    private static class PickHolder {
+    public static class PickHolder {
 
         private TextView name = null;
         private CheckBox checkBox = null;
@@ -70,12 +92,31 @@ public class PickListAdapter extends ArrayAdapter {
             this.name = name;
         }
 
-        public TextView getCheckBox() {
+        public CheckBox getCheckBox() {
             return checkBox;
         }
 
         public TextView getName() {
             return name;
+        }
+    }
+
+    public static class CheckBoxTuple {
+
+        private Integer indicator = 0;;
+        private boolean alreadyOn = false;
+
+        public CheckBoxTuple(Integer indicator, boolean on) {
+            this.indicator = indicator;
+            alreadyOn = on;
+        }
+
+        public Integer getIndicator() {
+            return indicator;
+        }
+
+        public boolean getAlreadyOn() {
+            return alreadyOn;
         }
     }
 }

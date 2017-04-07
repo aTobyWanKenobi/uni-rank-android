@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.albergon.unirank.AsyncIndicatorListAdd;
 import com.example.albergon.unirank.Database.DatabaseHelper;
@@ -26,8 +27,10 @@ import com.example.albergon.unirank.TabbedActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class CreateRankingFragment extends Fragment {
@@ -94,6 +97,27 @@ public class CreateRankingFragment extends Fragment {
         }
     }
 
+    public void updateListFromDialog(Set<Integer> picked) {
+        Set<Integer> toAdd = new HashSet<>(picked);
+        Map<Integer, Integer> newSettings = new HashMap<>();
+
+        System.out.println(toAdd);
+
+        for(Integer indicator : toAdd) {
+            if (!currentSettings.entrySet().contains(indicator)) {
+                newSettings.put(indicator, 1);
+            } else {
+                newSettings.put(indicator, currentSettings.get(indicator));
+            }
+        }
+
+        adapter = null;
+        adapter = new IndicatorListAdapter(getContext(), R.layout.indicator_list_cell);
+        indicatorList.setAdapter(adapter);
+        currentSettings = newSettings;
+        updateListFromSettings();
+    }
+
     private void setupUI(View view) {
         // setup UI adding mechanism
         adapter = new IndicatorListAdapter(getContext(), R.layout.indicator_list_cell);
@@ -111,21 +135,7 @@ public class CreateRankingFragment extends Fragment {
         addIndicatorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // add indicator to the list
-                AsyncIndicatorListAdd task = new AsyncIndicatorListAdd(adapter, getContext());
-                CustomSeekBarListener listener = new CustomSeekBarListener();
-                Integer newIndicator = count;
-                AsyncIndicatorListAdd.AsyncTuple tuple =
-                        new AsyncIndicatorListAdd.AsyncTuple(newIndicator, listener);
-                task.execute(tuple);
-                count += 1;
-
-                // update settings
-                currentSettings.put(newIndicator, 1);
-                listener.bindToIndicator(newIndicator);
-
-                interactionListener.showPickIndicatorDialog();
+                interactionListener.showPickIndicatorDialog(currentSettings.keySet());
             }
         });
 
@@ -133,7 +143,11 @@ public class CreateRankingFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                interactionListener.onPressGenerate(currentSettings);
+                if(currentSettings.size() == 0) {
+                    Toast.makeText(getContext(), "Choose at least one indicator", Toast.LENGTH_LONG);
+                } else {
+                    interactionListener.onPressGenerate(currentSettings);
+                }
 
             }
         });
@@ -168,7 +182,7 @@ public class CreateRankingFragment extends Fragment {
 
         void onPressGenerate(Map<Integer, Integer> settings);
 
-        void showPickIndicatorDialog();
+        void showPickIndicatorDialog(Set<Integer> alreadyPicked);
     }
 
     private class CustomSeekBarListener implements SeekBar.OnSeekBarChangeListener {

@@ -42,7 +42,7 @@ public class MyRankingsFragment extends Fragment {
 
         databaseHelper = ((TabbedActivity) getActivity()).getDatabase();
 
-        addSavesToDB();
+        //addSavesToDB();
         savesList = (ListView) view.findViewById(R.id.saves_list);
         displaySaves();
 

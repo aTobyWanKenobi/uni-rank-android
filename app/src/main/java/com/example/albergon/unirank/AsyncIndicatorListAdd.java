@@ -48,7 +48,6 @@ public class AsyncIndicatorListAdd extends AsyncTask<AsyncIndicatorListAdd.Async
 
     @Override
     protected void onPostExecute(Void unused) {
-        Toast.makeText(context, "Done!", Toast.LENGTH_SHORT).show();
         arrayAdapter.notifyDataSetChanged();
     }
 
