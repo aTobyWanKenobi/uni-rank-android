@@ -10,16 +10,32 @@ import com.example.albergon.unirank.Fragments.GreenFragment;
 import com.example.albergon.unirank.Fragments.MyRankingsFragment;
 
 /**
- * Created by Tobia Albergoni on 02.04.2017.
+ * This adapter is assigned to the main activity TabLayout to manage number and names of tabs, on top
+ * of instantiating the correct fragments for each tab.
  */
 public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    final int PAGE_COUNT = 4;
-    private String tabTitles[] = new String[] { "Create", "MyRank", "Browse", "Settings" };
+    private final int PAGE_COUNT = 4;
     private Context context;
 
+    // Tab titles
+    private final String[] tabTitles = new String[] { "Create", "MyRank", "Browse", "Settings" };
+
+
+    /**
+     * Public constructor that takes the fragment manager of the context in which its implemented and
+     * the context itself.
+     *
+     * @param fm        activity's fragment manager
+     * @param context   context
+     */
     public TabsFragmentPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
+
+        //arguments check
+        if(context == null) {
+            throw new IllegalArgumentException("Context for TabPager cannot be null");
+        }
         this.context = context;
     }
 
@@ -31,8 +47,9 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
 
-        Fragment toRet = null;
+        Fragment toRet;
 
+        // Instantiate correct fragment depending on selected tab
         switch(position){
             case 0: toRet = new CreateRankingFragment();
                     break;
@@ -42,7 +59,7 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
                 break;
             case 3: toRet = GreenFragment.newInstance();
                 break;
-            default: throw new IllegalStateException("Boh");
+            default: throw new IllegalStateException("A non-existing tab was selected");
         }
 
         return toRet;

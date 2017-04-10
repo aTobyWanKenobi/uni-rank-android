@@ -234,7 +234,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         // iterate through the result to build the Map containing all pairs university/score
         // build and return Indicator object
         if(result.getCount() > 0) {
-            Map<Integer, Double> entries = new HashMap<>();
+            @SuppressLint("UseSparseArrays") Map<Integer, Double> entries = new HashMap<>();
             while(result.moveToNext()) {
                 int uniID = result.getInt(result.getColumnIndexOrThrow(Tables.IndicatorsList._ID));
                 double uniScore = result.getDouble(result.getColumnIndexOrThrow(Tables.IndicatorsList.SCORE));
@@ -268,7 +268,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
             throw new IllegalArgumentException("Ranking to be saved cannot be null");
         }
 
-        // initialize tuples to insert
+        // initialize rows to insert
         ContentValues save = new ContentValues();
         ContentValues settings = new ContentValues();
         ContentValues ranking = new ContentValues();
@@ -346,6 +346,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         List<String> names = fetchAllSavesName();
 
         List<SaveRank> allSaves = new ArrayList<>();
+        //noinspection Convert2streamapi
         for(String name : names) {
             allSaves.add(getSave(name));
         }
@@ -398,12 +399,18 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
     public SaveRank getSave(String name) {
 
         // arguments check
+        //noinspection ConstantConditions
         if(name == null | name.isEmpty()) {
             throw new IllegalArgumentException("Name a saved ranking cannot be null or empty");
         }
 
         // call private methods to perform queries on each interested table
         Cursor savedRankingsResult = retrieveSaveData(name);
+
+        if(savedRankingsResult == null) {
+            throw new IllegalArgumentException("Save was not found in the database");
+        }
+
         Cursor savedAggregationSettings = retrieveSaveSettings(name);
         Cursor savedRankList = retrieveSaveRanking(name);
 
@@ -414,7 +421,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
                 savedRankingsResult.getColumnIndexOrThrow(Tables.Saves.RANKING_DATE));
 
         // build settings parameter
-        Map<Integer, Integer> settings = new HashMap<>();
+        @SuppressLint("UseSparseArrays") Map<Integer, Integer> settings = new HashMap<>();
         savedAggregationSettings.moveToFirst();
         while(!savedAggregationSettings.isAfterLast()) {
             int indicatorID = savedAggregationSettings.
@@ -432,7 +439,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
         System.out.println("Log count: " + savedAggregationSettings.getCount());
 
-        Map<Integer, Integer> idsWithRank = new HashMap<>();
+        @SuppressLint("UseSparseArrays") Map<Integer, Integer> idsWithRank = new HashMap<>();
         while(savedRankList.moveToNext()) {
             int rankPos = savedRankList.
                     getInt(savedRankList.
@@ -463,11 +470,6 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      * @return          the Cursor containing the query result
      */
     private Cursor retrieveSaveData(String name) {
-        // specifies which database columns we want from the query
-        String[] projection = {
-                Tables.Saves.RANKING_NAME,
-                Tables.Saves.RANKING_DATE
-        };
 
         String query = "SELECT " +
                 Tables.Saves.RANKING_NAME + ", "+Tables.Saves.RANKING_DATE +
@@ -497,12 +499,6 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      * @return          the Cursor containing the query result
      */
     private Cursor retrieveSaveSettings(String name) {
-        // specifies which database columns we want from the query
-        String[] projection = {
-                Tables.SavesSettings.SAVED_NAME,
-                Tables.SavesSettings.SAVED_INDICATOR,
-                Tables.SavesSettings.SAVED_WEIGHT
-        };
 
         String query = "SELECT " +
                 Tables.SavesSettings.SAVED_NAME + ", "+ Tables.SavesSettings.SAVED_INDICATOR + ", " + Tables.SavesSettings.SAVED_WEIGHT +
@@ -531,12 +527,6 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      * @return          the Cursor containing the query result
      */
     private Cursor retrieveSaveRanking(String name) {
-        // specifies which database columns we want from the query
-        String[] projection = {
-                Tables.SavesRankings.SAVED_NAME,
-                Tables.SavesRankings.SAVED_RANK,
-                Tables.SavesRankings.SAVED_UNI_ID
-        };
 
         String query = "SELECT " +
                 Tables.SavesRankings.SAVED_NAME + ", " + Tables.SavesRankings.SAVED_RANK + ", "+ Tables.SavesRankings.SAVED_UNI_ID +
@@ -565,6 +555,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
         private Map<Integer, Integer> pairings = null;
 
+        @SuppressLint("UseSparseArrays")
         public RetrieveRankComparator(Map<Integer, Integer> pairings) {
 
             // check arguments
@@ -580,7 +571,8 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
             if(pairings.get(o1) < pairings.get(o2)) {
                 return -1;
-            } else if(pairings.get(o1) == pairings.get(o2)) {
+            } else //noinspection NumberEquality
+                if(pairings.get(o1) == pairings.get(o2)) {
                 return 0;
             } else {
                 return 1;

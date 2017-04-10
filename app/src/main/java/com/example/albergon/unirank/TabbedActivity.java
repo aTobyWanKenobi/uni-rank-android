@@ -1,5 +1,6 @@
 package com.example.albergon.unirank;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
@@ -24,6 +25,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This activity is the main activity of the application. It implements the navigation mechanism
+ * via a TabLayout. It additionally implements all the fragment interaction listeners that allow
+ * inter-fragment communication.
+ */
 public class TabbedActivity extends AppCompatActivity implements
         CreateRankingFragment.OnRankGenerationInteractionListener,
         ResultAggregationFragment.ResultFragmentInteractionListener,
@@ -31,12 +37,15 @@ public class TabbedActivity extends AppCompatActivity implements
         MyRankingsFragment.MyRankingsFragmentInteractionListener,
         ChooseLoadDialog.OnChooseLoadDialogInteractionListener {
 
+    // Database instance, unique for the entire application
     private DatabaseHelper databaseHelper = null;
 
+    // Layout elements
     private TabLayout tabLayout = null;
     private TabsFragmentPagerAdapter tabsPagerAdapter = null;
     private ViewPager viewPager = null;
 
+    // Fragment management system
     private Fragment currentFragment = null;
     private FragmentManager fragmentManager = null;
 
@@ -56,7 +65,7 @@ public class TabbedActivity extends AppCompatActivity implements
         tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        tabLayout.addOnTabSelectedListener(createBlueSwitcher());
+        tabLayout.addOnTabSelectedListener(createSwitcher());
 
         // initializing the fragment structure
         fragmentManager = getSupportFragmentManager();
@@ -70,17 +79,28 @@ public class TabbedActivity extends AppCompatActivity implements
         try {
             databaseHelper.createDatabase();
         } catch (IOException e) {
-
+            Log.e("TabbedActivity", e.getMessage());
         }
         databaseHelper.openDatabase();
 
     }
 
+    /**
+     * Getter for the unique database instance. Fragments should access the database through this
+     * method only.
+     *
+     * @return      open database instance
+     */
     public DatabaseHelper getDatabase() {
         return databaseHelper;
     }
 
-    private TabLayout.OnTabSelectedListener createBlueSwitcher() {
+    /**
+     * This method creates the selection listener that implements fragments and tab switching.
+     *
+     * @return  a OnTabSelectedListener
+     */
+    private TabLayout.OnTabSelectedListener createSwitcher() {
         return new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -100,6 +120,12 @@ public class TabbedActivity extends AppCompatActivity implements
     }
 
     // TODO: keep fragment stack
+
+    /**
+     * Method that manages the fragment switching by replacing the old fragment with the new one.
+     *
+     * @param newFragment   fragment to set as current
+     */
     private void changeFragment(Fragment newFragment) {
         currentFragment = newFragment;
         fragmentManager.beginTransaction()
@@ -107,15 +133,30 @@ public class TabbedActivity extends AppCompatActivity implements
                 .commit();
     }
 
+    /**
+     * Launches a ResultAggregationFragment which performs the aggregation with the parameter settings.
+     *
+     * @param settings  settings for the aggregation
+     */
     @Override
     public void onPressGenerate(Map<Integer, Integer> settings) {
 
-        HashMap<Integer, Integer> settingsCopy = new HashMap<>(settings);
+        // arguments check
+        if(settings == null) {
+            throw new IllegalArgumentException("Cannot perform aggregation from null settings");
+        }
+
+        @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settingsCopy = new HashMap<>(settings);
         changeFragment(ResultAggregationFragment.newInstance(settingsCopy));
     }
 
     @Override
     public void showPickIndicatorDialog(Set<Integer> alreadyPicked) {
+
+        // arguments check
+        if(alreadyPicked == null) {
+            throw new IllegalArgumentException("The set of already picked indicators cannot be null");
+        }
 
         DialogFragment dialog = ChooseIndicatorsDialog.newInstance(new ArrayList<>(alreadyPicked));
         dialog.show(fragmentManager, "ChooseIndicatorsDialog");
@@ -133,34 +174,66 @@ public class TabbedActivity extends AppCompatActivity implements
         changeFragment(new CreateRankingFragment());
     }
 
+    /**
+     * Switches to a CreateRankingFragment instance with predefined settings.
+     *
+     * @param settings      desired starting settings
+     */
     @Override
     public void startGenerationWithSettings(Map<Integer, Integer> settings) {
-        HashMap<Integer, Integer> settingsCopy = new HashMap<>(settings);
+
+        // arguments check
+        if(settings == null) {
+            throw new IllegalArgumentException("Cannot generate a ranking from null settings");
+        }
+
+        @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settingsCopy = new HashMap<>(settings);
         changeFragment(CreateRankingFragment.newInstanceFromSettings(settingsCopy));
     }
 
+    /**
+     * Updates the indicators chosen in CreateRankingFragment via the apposite dialog.
+     *
+     * @param pickedOnes    selected indicators
+     */
     @Override
     public void addIndicators(Set<Integer> pickedOnes) {
+
+        // arguments check
+        if(pickedOnes == null) {
+            throw new IllegalArgumentException("Cannot have a null set of indicators selected");
+        }
+
         ((CreateRankingFragment) currentFragment).updateListFromDialog(pickedOnes);
     }
 
+    /**
+     * Opens a saved aggregation in the CreateRankingFragment
+     *
+     * @param toOpen    save to open
+     */
     @Override
     public void openSaveFromMyRanking(SaveRank toOpen) {
-        HashMap<Integer, Integer> settings = new HashMap<>(toOpen.getSettings());
+        @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settings = new HashMap<>(toOpen.getSettings());
 
+        //noinspection ConstantConditions
         tabLayout.getTabAt(0).select();
         changeFragment(CreateRankingFragment.newInstanceFromSettings(settings));
 
     }
 
-    //TODO: copy paste of method above, refactor
+    //TODO: copy paste of method above, refactor?
+    /**
+     * Opens a saved aggregation in the CreateRankingFragment
+     *
+     * @param name    save to open
+     */
     @Override
     public void openSaveFromLoadDialog(String name) {
         SaveRank toOpen = databaseHelper.getSave(name);
-        HashMap<Integer, Integer> settings = new HashMap<>(toOpen.getSettings());
+        @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settings = new HashMap<>(toOpen.getSettings());
 
-        Log.i("***********************", "Settings: " + settings);
-
+        //noinspection ConstantConditions
         tabLayout.getTabAt(0).select();
         changeFragment(CreateRankingFragment.newInstanceFromSettings(settings));
     }

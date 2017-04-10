@@ -10,16 +10,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Tobia Albergoni on 04.04.2017.
+ * This ListView adapter implementation defines the behavior of a ListView containing the names of
+ * local aggregation saves. It's used in MyRankingsFragment.
  */
-
 public class SavesListAdapter extends ArrayAdapter {
 
     private Context context = null;
@@ -31,7 +30,13 @@ public class SavesListAdapter extends ArrayAdapter {
                             @LayoutRes int resource,
                             @NonNull List<String> savings,
                             View.OnClickListener rowListener) {
+        //noinspection unchecked
         super(context, resource, savings);
+
+        // arguments check
+        if(rowListener == null) {
+            throw new IllegalArgumentException("RowListener cannot be null");
+        }
 
         this.context = context;
         this.layoutResourceId = resource;
@@ -39,10 +44,11 @@ public class SavesListAdapter extends ArrayAdapter {
         this.rowListener = rowListener;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View row = convertView;
-        SaveHolder holder = null;
+        SaveHolder holder;
 
         if(row == null)
         {
@@ -64,11 +70,21 @@ public class SavesListAdapter extends ArrayAdapter {
         return row;
     }
 
+    /**
+     * Object which will be set as the row's tag and that contains the instantiated layout elements
+     * of a list cell.
+     */
     public static class SaveHolder {
 
         private TextView name = null;
 
         public SaveHolder(TextView name) {
+
+            // arguments check
+            if(name == null) {
+                throw new IllegalArgumentException("TextView for SaveHolder cannot be null");
+            }
+
             this.name = name;
         }
 

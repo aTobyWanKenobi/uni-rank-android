@@ -85,10 +85,16 @@ public class Aggregator {
      *
      * @return  a Map of indicators ids and weights
      */
+    @SuppressLint("UseSparseArrays")
     public Map<Integer, Integer> getSettings() {
         return new HashMap<>(weightings);
     }
 
+    /**
+     * Returns the last result of the aggregation, if it has been performed.
+     *
+     * @return  resulting ranking if aggregate() was already called, null otherwise
+     */
     public Ranking<Integer> getResult() {
         return result;
     }

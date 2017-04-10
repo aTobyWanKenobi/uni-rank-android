@@ -176,7 +176,6 @@ public class HodgeRanking implements RankAggregationAlgorithm {
                 }
             }
         }
-        long endTime = System.currentTimeMillis();
 
         // further process estimate
         for(int i = 0; i < numItems; i++) {

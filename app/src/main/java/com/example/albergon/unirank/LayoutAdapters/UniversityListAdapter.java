@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Tobia Albergoni on 25.03.2017.
+ * This ListView adapter implementation defines the behavior of a ListView containing universities
+ * and their rank. It's used in the ResultAggregationFragment.
  */
 public class UniversityListAdapter extends ArrayAdapter {
 
@@ -26,6 +27,7 @@ public class UniversityListAdapter extends ArrayAdapter {
     private List<University> universities = null;
 
     public UniversityListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<University> universities) {
+        //noinspection unchecked
         super(context, resource, universities);
 
         this.context = context;
@@ -33,10 +35,11 @@ public class UniversityListAdapter extends ArrayAdapter {
         this.universities = new ArrayList<>(universities);
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View row = convertView;
-        UniHolder holder = null;
+        UniHolder holder;
 
         if(row == null)
         {
@@ -59,12 +62,22 @@ public class UniversityListAdapter extends ArrayAdapter {
         return row;
     }
 
+    /**
+     * Object which will be set as the row's tag and that contains the instantiated layout elements
+     * of a list cell.
+     */
     private static class UniHolder {
 
         private TextView rank = null;
         private TextView name = null;
 
         public UniHolder(TextView rank, TextView name) {
+
+            // arguments check
+            if(rank == null || name == null) {
+                throw new IllegalArgumentException("UniHolder parameters cannot be null");
+            }
+
             this.rank = rank;
             this.name = name;
         }

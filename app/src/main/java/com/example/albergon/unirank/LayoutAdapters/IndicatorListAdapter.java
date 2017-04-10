@@ -7,25 +7,21 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.albergon.unirank.AsyncIndicatorListAdd;
 import com.example.albergon.unirank.Database.Tables;
-import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * Created by Tobia Albergoni on 05.04.2017.
+ * This ListView adapter implementation defines the behavior of a ListView containing indicators
+ * names and SeekBars. It's used in the CreateRankingFragment.
  */
-
 public class IndicatorListAdapter extends BaseAdapter {
 
     private Context context = null;
@@ -33,12 +29,16 @@ public class IndicatorListAdapter extends BaseAdapter {
     private List<AsyncIndicatorListAdd.AsyncTuple> indicators = null;
 
     public IndicatorListAdapter(@NonNull Context context, @LayoutRes int resource) {
-
         this.indicators = new ArrayList<>();
         this.context = context;
         this.layoutResourceId = resource;
     }
 
+    /**
+     * Add an indicator item in the list and its listener.
+     *
+     * @param tuple     indicator and corresponding SeekBAr listener
+     */
     public void addIndicator(AsyncIndicatorListAdd.AsyncTuple tuple) {
         indicators.add(tuple);
     }
@@ -61,7 +61,7 @@ public class IndicatorListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        IndicatorListAdapter.IndicatorHolder holder = null;
+        IndicatorListAdapter.IndicatorHolder holder;
 
         if(row == null)
         {
@@ -84,6 +84,10 @@ public class IndicatorListAdapter extends BaseAdapter {
         return row;
     }
 
+    /**
+     * Object which will be set as the row's tag and that contains the instantiated layout elements
+     * of a list cell.
+     */
     private static class IndicatorHolder {
 
         private TextView name = null;

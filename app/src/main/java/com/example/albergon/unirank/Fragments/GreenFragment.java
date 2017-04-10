@@ -18,8 +18,7 @@ public class GreenFragment extends Fragment {
     }
 
     public static GreenFragment newInstance() {
-        GreenFragment fragment = new GreenFragment();
-        return fragment;
+        return new GreenFragment();
     }
 
     @Override

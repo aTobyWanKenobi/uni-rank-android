@@ -8,20 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.example.albergon.unirank.Database.Tables;
-import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Tobia Albergoni on 10.04.2017.
+ * This ListView adapter implementation defines the behavior of a ListView containing the names of
+ * saved rankings. It's used in the ChooseLoadDialog.
  */
-
 public class LoadListAdapter extends ArrayAdapter {
 
     private Context context = null;
@@ -33,7 +30,13 @@ public class LoadListAdapter extends ArrayAdapter {
                            @LayoutRes int resource,
                            @NonNull List<String> saves,
                            View.OnClickListener rowListener) {
+        //noinspection unchecked
         super(context, resource, saves);
+
+        //arguments check
+        if(rowListener == null) {
+            throw new IllegalArgumentException("Row listener cannot be null");
+        }
 
         this.context = context;
         this.layoutResourceId = resource;
@@ -41,10 +44,11 @@ public class LoadListAdapter extends ArrayAdapter {
         this.rowListener = rowListener;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View row = convertView;
-        ChooseSaveHolder holder = null;
+        ChooseSaveHolder holder;
 
         if(row == null)
         {
@@ -65,11 +69,21 @@ public class LoadListAdapter extends ArrayAdapter {
         return row;
     }
 
+    /**
+     * Object which will be set as the row's tag and that contains the instantiated layout elements
+     * of a list cell.
+     */
     public static class ChooseSaveHolder {
 
         private TextView saveName = null;
 
         public ChooseSaveHolder(TextView nameView) {
+
+            //arguments check
+            if(nameView == null) {
+                throw new IllegalArgumentException("TextView for ChooseSaveHolder cannot be null");
+            }
+
             saveName = nameView;
         }
 

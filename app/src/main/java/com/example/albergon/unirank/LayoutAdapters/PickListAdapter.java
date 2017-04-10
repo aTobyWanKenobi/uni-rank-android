@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Tobia Albergoni on 06.04.2017.
+ * This ListView adapter implementation defines the behavior of a ListView containing indicators
+ * names and a checkbox. It's used in the ChooseIndicatorsDialog.
  */
-
 public class PickListAdapter extends BaseAdapter {
 
     private Context context = null;
@@ -52,7 +52,7 @@ public class PickListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        PickListAdapter.PickHolder holder = null;
+        PickListAdapter.PickHolder holder;
 
         if(row == null)
         {
@@ -72,22 +72,27 @@ public class PickListAdapter extends BaseAdapter {
         holder.getCheckBox().setChecked(indicators.get(position).getAlreadyOn());
 
         final CheckBox toClick = holder.getCheckBox();
-        row.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toClick.performClick();
-            }
-        });
+        row.setOnClickListener(v -> toClick.performClick());
 
         return row;
     }
 
+    /**
+     * Object which will be set as the row's tag and that contains the instantiated layout elements
+     * of a list cell.
+     */
     public static class PickHolder {
 
         private TextView name = null;
         private CheckBox checkBox = null;
 
         public PickHolder(TextView name, CheckBox checkBox) {
+
+            //arguments check
+            if(name == null || checkBox == null) {
+                throw new IllegalArgumentException("Parameters for PickHolder cannot be null");
+            }
+
             this.checkBox = checkBox;
             this.name = name;
         }
@@ -101,9 +106,13 @@ public class PickListAdapter extends BaseAdapter {
         }
     }
 
+    /**
+     * This nested static class is used to bind a checkbox to an indicator and to pass to this adapter
+     * the information about whether the indicator was already selected or not.
+     */
     public static class CheckBoxTuple {
 
-        private Integer indicator = 0;;
+        private Integer indicator = 0;
         private boolean alreadyOn = false;
 
         public CheckBoxTuple(Integer indicator, boolean on) {

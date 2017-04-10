@@ -1,5 +1,7 @@
 package com.example.albergon.unirank.Model;
 
+import android.annotation.SuppressLint;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +65,7 @@ public class SaveRank {
      *
      * @return  mapping from indicators present in the aggregation and their weights
      */
+    @SuppressLint("UseSparseArrays")
     public Map<Integer, Integer> getSettings() {
 
         return new HashMap<>(settings);
