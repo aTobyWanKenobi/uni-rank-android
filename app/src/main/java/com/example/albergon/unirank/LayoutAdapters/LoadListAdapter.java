@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.example.albergon.unirank.Database.Tables;
 import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.R;
 
@@ -17,64 +19,63 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Tobia Albergoni on 04.04.2017.
+ * Created by Tobia Albergoni on 10.04.2017.
  */
 
-public class SavesListAdapter extends ArrayAdapter {
+public class LoadListAdapter extends ArrayAdapter {
 
     private Context context = null;
     private int layoutResourceId = 0;
-    private List<String> savings = null;
+    private List<String> saves = null;
     private View.OnClickListener rowListener = null;
 
-    public SavesListAdapter(@NonNull Context context,
-                            @LayoutRes int resource,
-                            @NonNull List<String> savings,
-                            View.OnClickListener rowListener) {
-        super(context, resource, savings);
+    public LoadListAdapter(@NonNull Context context,
+                           @LayoutRes int resource,
+                           @NonNull List<String> saves,
+                           View.OnClickListener rowListener) {
+        super(context, resource, saves);
 
         this.context = context;
         this.layoutResourceId = resource;
-        this.savings = new ArrayList<>(savings);
+        this.saves = new ArrayList<>(saves);
         this.rowListener = rowListener;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
-        SaveHolder holder = null;
+        ChooseSaveHolder holder = null;
 
         if(row == null)
         {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             row = inflater.inflate(layoutResourceId, parent, false);
 
-            holder = new SaveHolder((TextView)row.findViewById(R.id.save_name));
+            holder = new ChooseSaveHolder((TextView)row.findViewById(R.id.save_name_list_txt));
             row.setTag(holder);
         }
         else
         {
-            holder = (SaveHolder) row.getTag();
+            holder = (ChooseSaveHolder) row.getTag();
         }
 
-        holder.getName().setText(savings.get(position));
-
+        holder.getName().setText(saves.get(position));
         row.setOnClickListener(rowListener);
 
         return row;
     }
 
-    public static class SaveHolder {
+    public static class ChooseSaveHolder {
 
-        private TextView name = null;
+        private TextView saveName = null;
 
-        public SaveHolder(TextView name) {
-            this.name = name;
+        public ChooseSaveHolder(TextView nameView) {
+            saveName = nameView;
         }
 
         public TextView getName() {
-            return name;
+            return saveName;
         }
-
     }
+
 }

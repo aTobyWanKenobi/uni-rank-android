@@ -194,7 +194,7 @@ public class CreateRankingFragment extends Fragment {
         loadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: implement loading system
+                interactionListener.showLoadSaveDialog();
             }
         });
 
@@ -222,6 +222,8 @@ public class CreateRankingFragment extends Fragment {
         void onPressGenerate(Map<Integer, Integer> settings);
 
         void showPickIndicatorDialog(Set<Integer> alreadyPicked);
+
+        void showLoadSaveDialog();
     }
 
     /**

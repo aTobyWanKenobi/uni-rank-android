@@ -258,72 +258,82 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      * Writes a SaveRank object in the local database by storing all the information about an
      * aggregation in the appropriate tables.
      *
-     * @param ranking   aggregation to be saved
+     * @param toSave   aggregation to be saved
      */
     @Override
-    public void saveAggregation(SaveRank ranking) {
+    public void saveAggregation(SaveRank toSave) {
 
         // check arguments
-        if(ranking == null) {
+        if(toSave == null) {
             throw new IllegalArgumentException("Ranking to be saved cannot be null");
         }
 
         // initialize tuples to insert
-        ContentValues rankings = new ContentValues();
-        ContentValues aggregations = new ContentValues();
-        ContentValues rankList = new ContentValues();
+        ContentValues save = new ContentValues();
+        ContentValues settings = new ContentValues();
+        ContentValues ranking = new ContentValues();
 
+        // TODO: implement correct system
         // verify if the current writing is an update of an already present save
-        if(ranking.getId() != -1) {
+        /*if(saveAlreadyPresent(toSave.getName())) {
             // in that case delete old data
-            deleteSavedAggregation(ranking.getId());
-        }
+            deleteSavedAggregation(toSave.getName());
+        }*/
 
         // add rankings information to appropriate table
-        rankings.put(Tables.SavedRankingsTable.RANKING_NAME, ranking.getName());
-        rankings.put(Tables.SavedRankingsTable.RANKING_DATE, ranking.getDate());
-        long newRankingID = db.insert(Tables.SavedRankingsTable.TABLE_NAME, null, rankings);
+        save.put(Tables.Saves.RANKING_NAME, toSave.getName());
+        save.put(Tables.Saves.RANKING_DATE, toSave.getDate());
+        db.insert(Tables.Saves.TABLE_NAME, null, save);
 
         // add aggregation settings to appropriate table
-        for(Map.Entry<Integer, Integer> e : ranking.getSettings().entrySet()) {
-            aggregations.put(Tables.SavedAggregationsTable.SAVED_ID, newRankingID);
-            aggregations.put(Tables.SavedAggregationsTable.SAVED_INDICATOR, e.getKey());
-            aggregations.put(Tables.SavedAggregationsTable.SAVED_WEIGHT, e.getValue());
+        for(Map.Entry<Integer, Integer> e : toSave.getSettings().entrySet()) {
+            settings.put(Tables.SavesSettings.SAVED_NAME, toSave.getName());
+            settings.put(Tables.SavesSettings.SAVED_INDICATOR, e.getKey());
+            settings.put(Tables.SavesSettings.SAVED_WEIGHT, e.getValue());
         }
-        db.insert(Tables.SavedAggregationsTable.TABLE_NAME, null, aggregations);
+        db.insert(Tables.SavesSettings.TABLE_NAME, null, settings);
 
         // add rank list to appropriate table
-        List<Integer> ranks = ranking.getResult();
+        List<Integer> ranks = toSave.getResult();
         for(int i = 0; i < ranks.size(); i++) {
-            rankList.put(Tables.SavedRankListTable.SAVED_RANKING_ID, newRankingID);
-            rankList.put(Tables.SavedRankListTable.SAVED_RANK, i);
-            rankList.put(Tables.SavedRankListTable.SAVED_UNI_ID, ranks.get(i));
+            ranking.put(Tables.SavesRankings.SAVED_NAME, toSave.getName());
+            ranking.put(Tables.SavesRankings.SAVED_RANK, i);
+            ranking.put(Tables.SavesRankings.SAVED_UNI_ID, ranks.get(i));
         }
-        db.insert(Tables.SavedRankListTable.TABLE_NAME, null, rankList);
+        db.insert(Tables.SavesRankings.TABLE_NAME, null, ranking);
+    }
+
+    public boolean saveAlreadyPresent(String name) {
+
+        return retrieveSaveData(name) != null;
     }
 
     /**
-     * Private method that deletes all information of a saved aggregation given it's id in the
+     * Method that deletes all information of a saved aggregation given it's name in the
      * database.
      *
-     * @param id    id of the save to delete
+     * @param name    name of the save to delete
      */
-    private void deleteSavedAggregation(int id) {
+    public void deleteSavedAggregation(String name) {
 
         // arguments check
-        if(id < 0) {
-            throw new IllegalArgumentException("Saves cannot have a negative id in database");
+        if(name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Save name cannot be empty or null");
         }
 
-        // prepare selection queries
-        String selection1 = Tables.SavedRankingsTable._ID + " = " + id;
-        String selection2 = Tables.SavedAggregationsTable.SAVED_ID + " = " + id;
-        String selection3 = Tables.SavedRankListTable.SAVED_RANKING_ID + " = " + id;
+        String[] selectionArgs = {name};
 
-        // delete in all tables based on selection
-        db.delete(Tables.SavedRankingsTable.TABLE_NAME, selection1, null);
-        db.delete(Tables.SavedAggregationsTable.TABLE_NAME, selection2, null);
-        db.delete(Tables.SavedRankListTable.TABLE_NAME, selection3, null);
+        String query1 = "DELETE FROM " + Tables.Saves.TABLE_NAME +
+                " WHERE "+Tables.Saves.RANKING_NAME+" = ?;";
+        db.execSQL(query1, selectionArgs);
+
+        String query2 = "DELETE FROM " + Tables.SavesSettings.TABLE_NAME +
+                " WHERE "+Tables.SavesSettings.SAVED_NAME+" = ?;";
+        db.execSQL(query2, selectionArgs);
+
+        String query3 = "DELETE FROM " + Tables.SavesRankings.TABLE_NAME +
+                " WHERE "+Tables.SavesRankings.SAVED_NAME+" = ?;";
+        db.execSQL(query3, selectionArgs);
     }
 
     /**
@@ -333,14 +343,25 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      */
     public List<SaveRank> fetchAllSaves() {
 
+        List<String> names = fetchAllSavesName();
+
+        List<SaveRank> allSaves = new ArrayList<>();
+        for(String name : names) {
+            allSaves.add(getSave(name));
+        }
+
+        return allSaves;
+    }
+
+    public List<String> fetchAllSavesName() {
         // specifies which database columns we want from the query
         String[] projection = {
-                Tables.SavedRankingsTable._ID
+                Tables.Saves.RANKING_NAME
         };
 
-        // perform query of saved ids
-        Cursor uniqueIds = db.query(
-                Tables.SavedRankingsTable.TABLE_NAME,
+        // perform query of saved names
+        Cursor uniqueNames = db.query(
+                Tables.Saves.TABLE_NAME,
                 projection,
                 null,
                 null,
@@ -348,82 +369,84 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
                 null,
                 null);
 
-
-        // fetch all saves using id list with the getAggregation method
-        if(uniqueIds.getCount() >= 0) {
-            List<SaveRank> allSaves = new ArrayList<>();
-            while(uniqueIds.moveToNext()) {
-                int saveId = uniqueIds.getInt(uniqueIds.getColumnIndexOrThrow(Tables.SavedRankingsTable._ID));
-                allSaves.add(getAggregation(saveId));
+        if(uniqueNames.getCount() >= 0) {
+            List<String> allNames = new ArrayList<>();
+            while(uniqueNames.moveToNext()) {
+                String saveName = uniqueNames.getString(uniqueNames.getColumnIndexOrThrow(Tables.Saves.RANKING_NAME));
+                allNames.add(saveName);
             }
 
             // close Cursor
-            uniqueIds.close();
+            uniqueNames.close();
 
-            return allSaves;
+            return allNames;
         } else {
 
             // close Cursor
-            uniqueIds.close();
+            uniqueNames.close();
             throw new IllegalStateException("Negative result count, database corrupted");
         }
-
     }
 
     /**
-     * Retrieve a single saved aggregation from database given its id.
+     * Retrieve a single saved aggregation from database given its name.
      *
-     * @param savedId   id of the save in the database
+     * @param name      name of the save in the database
      * @return          a SaveRank object containing aggregation information
      */
     @Override
-    public SaveRank getAggregation(int savedId) {
+    public SaveRank getSave(String name) {
 
         // arguments check
-        if(savedId < 0) {
-            throw new IllegalArgumentException("Id of a saved ranking cannot be negative");
+        if(name == null | name.isEmpty()) {
+            throw new IllegalArgumentException("Name a saved ranking cannot be null or empty");
         }
 
         // call private methods to perform queries on each interested table
-        Cursor savedRankingsResult = retrieveSavedRankingsData(savedId);
-        Cursor savedAggregationSettings = retrieveSavedAggregationData(savedId);
-        Cursor savedRankList = retrieveSavedRankList(savedId);
+        Cursor savedRankingsResult = retrieveSaveData(name);
+        Cursor savedAggregationSettings = retrieveSaveSettings(name);
+        Cursor savedRankList = retrieveSaveRanking(name);
 
         // build string parameters
         String rName = savedRankingsResult.getString(
-                savedRankingsResult.getColumnIndexOrThrow(Tables.SavedRankingsTable.RANKING_NAME));
+                savedRankingsResult.getColumnIndexOrThrow(Tables.Saves.RANKING_NAME));
         String rDate = savedRankingsResult.getString(
-                savedRankingsResult.getColumnIndexOrThrow(Tables.SavedRankingsTable.RANKING_DATE));
+                savedRankingsResult.getColumnIndexOrThrow(Tables.Saves.RANKING_DATE));
 
-        // build settings parametere
+        // build settings parameter
         Map<Integer, Integer> settings = new HashMap<>();
-        while(savedAggregationSettings.moveToNext()) {
+        savedAggregationSettings.moveToFirst();
+        while(!savedAggregationSettings.isAfterLast()) {
             int indicatorID = savedAggregationSettings.
                     getInt(savedAggregationSettings.
-                            getColumnIndexOrThrow(Tables.SavedAggregationsTable.SAVED_INDICATOR));
+                            getColumnIndexOrThrow(Tables.SavesSettings.SAVED_INDICATOR));
             int weight = savedAggregationSettings.
                     getInt(savedAggregationSettings.
-                            getColumnIndexOrThrow(Tables.SavedAggregationsTable.SAVED_WEIGHT));
+                            getColumnIndexOrThrow(Tables.SavesSettings.SAVED_WEIGHT));
             settings.put(indicatorID, weight);
+            savedAggregationSettings.moveToNext();
         }
 
         // build rank list
         List<Integer> unsortedUniIds = new ArrayList<>();
+
+        System.out.println("Log count: " + savedAggregationSettings.getCount());
+
         Map<Integer, Integer> idsWithRank = new HashMap<>();
         while(savedRankList.moveToNext()) {
             int rankPos = savedRankList.
                     getInt(savedRankList.
-                            getColumnIndexOrThrow(Tables.SavedRankListTable.SAVED_RANK));
+                            getColumnIndexOrThrow(Tables.SavesRankings.SAVED_RANK));
             int uniID = savedRankList.
                     getInt(savedRankList.
-                            getColumnIndexOrThrow(Tables.SavedRankListTable.SAVED_UNI_ID));
+                            getColumnIndexOrThrow(Tables.SavesRankings.SAVED_UNI_ID));
             idsWithRank.put(uniID, rankPos);
             unsortedUniIds.add(uniID);
         }
         unsortedUniIds.sort(new RetrieveRankComparator(idsWithRank));
 
         // build and return a SaveRank object with the fetched parameters
-        SaveRank savedRanking = new SaveRank(rName, rDate, settings, unsortedUniIds, savedId);
+        SaveRank savedRanking = new SaveRank(rName, rDate, settings, unsortedUniIds);
 
         // close Cursors
         savedRankingsResult.close();
@@ -434,39 +457,33 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
     }
 
     /**
-     * Private method that queries name and date of a saved aggregation given it's id.
+     * Private method that queries name and date of a saved aggregation given its name.
      *
-     * @param savedId   id of the saved aggregation in the database
+     * @param name      name of the saved aggregation in the database
      * @return          the Cursor containing the query result
      */
-    private Cursor retrieveSavedRankingsData(int savedId) {
+    private Cursor retrieveSaveData(String name) {
         // specifies which database columns we want from the query
         String[] projection = {
-                Tables.SavedRankingsTable._ID,
-                Tables.SavedRankingsTable.RANKING_NAME,
-                Tables.SavedRankingsTable.RANKING_DATE
+                Tables.Saves.RANKING_NAME,
+                Tables.Saves.RANKING_DATE
         };
 
-        // specifies the WHERE clause of the query
-        String selection = Tables.SavedRankingsTable._ID + " = " + savedId;
+        String query = "SELECT " +
+                Tables.Saves.RANKING_NAME + ", "+Tables.Saves.RANKING_DATE +
+                " FROM " + Tables.Saves.TABLE_NAME +
+                " WHERE "+Tables.Saves.RANKING_NAME+" = ?;";
 
-        // perform query in UNIVERSITIES table
-        Cursor result = db.query(
-                Tables.SavedRankingsTable.TABLE_NAME,
-                projection,
-                selection,
-                null,
-                null,
-                null,
-                null);
+        String[] selectionArgs = {name};
+        Cursor result = db.rawQuery(query, selectionArgs);
 
-        // check that we retrieved a unique university
+        // check that we retrieved a unique save
         if(result.getCount() == 1) {
             result.moveToNext();
         } else if(result.getCount() == 0) {
-            throw new NoSuchElementException("This id does not correspond to any ranking in database");
+            return null;
         } else {
-            throw new IllegalStateException("More rankings with same id, database is corrupted");
+            throw new IllegalStateException("More rankings with same name, database is corrupted");
         }
 
         return result;
@@ -474,31 +491,25 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
     /**
      * Private method that queries the indicator and weights settings of a saved aggregation
-     * given it's id.
+     * given its name.
      *
-     * @param savedId   id of the saved aggregation in the database
+     * @param name      name of the saved aggregation in the database
      * @return          the Cursor containing the query result
      */
-    private Cursor retrieveSavedAggregationData(int savedId) {
+    private Cursor retrieveSaveSettings(String name) {
         // specifies which database columns we want from the query
         String[] projection = {
-                Tables.SavedAggregationsTable.SAVED_ID,
-                Tables.SavedAggregationsTable.SAVED_INDICATOR,
-                Tables.SavedAggregationsTable.SAVED_WEIGHT
+                Tables.SavesSettings.SAVED_NAME,
+                Tables.SavesSettings.SAVED_INDICATOR,
+                Tables.SavesSettings.SAVED_WEIGHT
         };
 
-        // specifies the WHERE clause of the query
-        String selection = Tables.SavedAggregationsTable.SAVED_ID + " = " + savedId;
-
-        // perform query in UNIVERSITIES table
-        Cursor result = db.query(
-                Tables.SavedAggregationsTable.TABLE_NAME,
-                projection,
-                selection,
-                null,
-                null,
-                null,
-                null);
+        String query = "SELECT " +
+                Tables.SavesSettings.SAVED_NAME + ", "+ Tables.SavesSettings.SAVED_INDICATOR + ", " + Tables.SavesSettings.SAVED_WEIGHT +
+                " FROM " + Tables.SavesSettings.TABLE_NAME +
+                " WHERE "+ Tables.SavesSettings.SAVED_NAME+" = ?;";
+        String[] selectionArgs = {name};
+        Cursor result = db.rawQuery(query, selectionArgs);
 
         // check
         if(result.getCount() <= 0) {
@@ -514,30 +525,25 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
     }
 
     /**
-     * Private method that queries the resulting rank list of a saved aggregation given it's id.
+     * Private method that queries the resulting rank list of a saved aggregation given its name.
      *
-     * @param savedId   id of the saved aggregation in the database
+     * @param name      name of the saved aggregation in the database
      * @return          the Cursor containing the query result
      */
-    private Cursor retrieveSavedRankList(int savedId) {
+    private Cursor retrieveSaveRanking(String name) {
         // specifies which database columns we want from the query
         String[] projection = {
-                Tables.SavedRankListTable.SAVED_RANK,
-                Tables.SavedRankListTable.SAVED_UNI_ID
+                Tables.SavesRankings.SAVED_NAME,
+                Tables.SavesRankings.SAVED_RANK,
+                Tables.SavesRankings.SAVED_UNI_ID
         };
 
-        // specifies the WHERE clause of the query
-        String selection = Tables.SavedRankListTable.SAVED_RANKING_ID + " = " + savedId;
-
-        // perform query in UNIVERSITIES table
-        Cursor result = db.query(
-                Tables.SavedRankListTable.TABLE_NAME,
-                projection,
-                selection,
-                null,
-                null,
-                null,
-                null);
+        String query = "SELECT " +
+                Tables.SavesRankings.SAVED_NAME + ", " + Tables.SavesRankings.SAVED_RANK + ", "+ Tables.SavesRankings.SAVED_UNI_ID +
+                " FROM " + Tables.SavesRankings.TABLE_NAME +
+                " WHERE "+ Tables.SavesRankings.SAVED_NAME+" = ?;";
+        String[] selectionArgs = {name};
+        Cursor result = db.rawQuery(query, selectionArgs);
 
         // check
         if(result.getCount() <= 0) {

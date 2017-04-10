@@ -44,7 +44,7 @@ public class DatabaseHelperTest {
     }
 
     @Test
-    public void canRetrieveUniveristy() {
+    public void canRetrieveUniversity() {
         University harvard = databaseHelper.getUniversity(3);
 
         Assert.assertEquals("Harvard University", harvard.getName());
@@ -81,6 +81,10 @@ public class DatabaseHelperTest {
     @Test
     public void saveAndRetrieveAggregation() {
 
+        System.out.println("Log List 0: " + databaseHelper.fetchAllSavesName());
+        databaseHelper.deleteSavedAggregation("TestName");
+        System.out.println("Log List 1: " + databaseHelper.fetchAllSavesName());
+
         List<Integer> rankList = new ArrayList<>();
         rankList.add(12);
         rankList.add(3);
@@ -93,9 +97,21 @@ public class DatabaseHelperTest {
 
         databaseHelper.saveAggregation(testSave);
 
-        List<SaveRank> savings = databaseHelper.fetchAllSaves();
+        System.out.println("Log List 2: " + databaseHelper.fetchAllSavesName());
 
-        Assert.assertEquals("TestName", savings.get(0).getName());
-        Assert.assertEquals("TestDate", savings.get(0).getDate());
+        SaveRank save = databaseHelper.getSave("TestName");
+
+        System.out.println("Log Save : " + save.getName());
+        System.out.println("Log Save : " + save.getDate());
+        System.out.println("Log Save : " + save.getSettings());
+
+        Assert.assertEquals("TestName", save.getName());
+        Assert.assertEquals("TestDate", save.getDate());
+
+        Assert.assertEquals(3, (int) save.getSettings().get(1));
+        Assert.assertEquals(2, (int) save.getSettings().get(2));
+
+        databaseHelper.deleteSavedAggregation("TestName");
+        System.out.println("Log List 3: " + databaseHelper.fetchAllSavesName());
     }
 }

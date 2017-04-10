@@ -17,6 +17,6 @@ public interface UniRankDatabase {
 
     void saveAggregation(SaveRank ranking);
 
-    SaveRank getAggregation(int savedId);
+    SaveRank getSave(String name);
 
 }

@@ -16,7 +16,6 @@ public class SaveRank {
     private String date = null;
     private Map<Integer, Integer> settings = null;
     private List<Integer> result = null;
-    private int id = -1;
 
     /**
      * Public constructor that encapsulates the arguments.
@@ -39,21 +38,6 @@ public class SaveRank {
         this.date = date;
         this.settings = settings;
         this.result = new ArrayList<>(result);
-    }
-
-    /**
-     * Public constructor that additionally takes the id of the save in the database. Useful to perform
-     * updates to saves and delete old data.
-     */
-    public SaveRank(String name, String date, Map<Integer, Integer> settings, List<Integer> result, int id) {
-        this(name, date, settings, result);
-
-        // arguments check
-        if(id < 0) {
-            throw new IllegalArgumentException("Id of saved aggregation in database cannot be negative");
-        }
-
-        this.id = id;
     }
 
     /**
@@ -93,12 +77,4 @@ public class SaveRank {
         return new ArrayList<>(result);
     }
 
-    /**
-     * Getter of the id attribute. If this is a new save, it's -1 by default.
-     *
-     * @return      id of aggregation in database if update, -1 if new save
-     */
-    public int getId() {
-        return id;
-    }
 }

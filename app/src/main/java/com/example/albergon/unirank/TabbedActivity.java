@@ -1,6 +1,5 @@
 package com.example.albergon.unirank;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
@@ -8,15 +7,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Fragments.ChooseIndicatorsDialog;
+import com.example.albergon.unirank.Fragments.ChooseLoadDialog;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
 import com.example.albergon.unirank.Fragments.MyRankingsFragment;
 import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
-import com.example.albergon.unirank.Model.Aggregator;
-import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.SaveRank;
 
 import java.io.IOException;
@@ -29,7 +28,8 @@ public class TabbedActivity extends AppCompatActivity implements
         CreateRankingFragment.OnRankGenerationInteractionListener,
         ResultAggregationFragment.ResultFragmentInteractionListener,
         ChooseIndicatorsDialog.ChooseIndicatorDialogInteractionListener,
-        MyRankingsFragment.MyRankingsFragmentInteractionListener {
+        MyRankingsFragment.MyRankingsFragmentInteractionListener,
+        ChooseLoadDialog.OnChooseLoadDialogInteractionListener {
 
     private DatabaseHelper databaseHelper = null;
 
@@ -122,6 +122,13 @@ public class TabbedActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void showLoadSaveDialog() {
+
+        DialogFragment dialog = new ChooseLoadDialog();
+        dialog.show(fragmentManager, "LoadSaveDialog");
+    }
+
+    @Override
     public void restartGeneration() {
         changeFragment(new CreateRankingFragment());
     }
@@ -138,12 +145,23 @@ public class TabbedActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void openSave(int id) {
-        SaveRank toOpen = databaseHelper.getAggregation(id);
+    public void openSaveFromMyRanking(SaveRank toOpen) {
         HashMap<Integer, Integer> settings = new HashMap<>(toOpen.getSettings());
 
         tabLayout.getTabAt(0).select();
         changeFragment(CreateRankingFragment.newInstanceFromSettings(settings));
 
+    }
+
+    //TODO: copy paste of method above, refactor
+    @Override
+    public void openSaveFromLoadDialog(String name) {
+        SaveRank toOpen = databaseHelper.getSave(name);
+        HashMap<Integer, Integer> settings = new HashMap<>(toOpen.getSettings());
+
+        Log.i("***********************", "Settings: " + settings);
+
+        tabLayout.getTabAt(0).select();
+        changeFragment(CreateRankingFragment.newInstanceFromSettings(settings));
     }
 }

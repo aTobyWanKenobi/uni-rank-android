@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
@@ -28,10 +29,11 @@ public class MyRankingsFragment extends Fragment {
     private MyRankingsFragmentInteractionListener interactionListener = null;
 
     private Button openBtn = null;
+    private TextView dateTemproary = null;
     private ListView savesList = null;
     private DatabaseHelper databaseHelper = null;
 
-    private int currentlySelectedSave = -1;
+    private SaveRank currentlySelectedSave = null;
 
     public MyRankingsFragment() {
         // Required empty public constructor
@@ -50,15 +52,18 @@ public class MyRankingsFragment extends Fragment {
 
         databaseHelper = ((TabbedActivity) getActivity()).getDatabase();
 
+        //TODO: just for test
+        dateTemproary = (TextView) view.findViewById(R.id.selected_save_date);
+
         //UI
         openBtn = (Button) view.findViewById(R.id.open_save);
         openBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currentlySelectedSave == -1) {
+                if(currentlySelectedSave == null) {
                     Toast.makeText(getContext(), "You must select a save to open", Toast.LENGTH_LONG).show();
                 } else {
-                    interactionListener.openSave(currentlySelectedSave);
+                    interactionListener.openSaveFromMyRanking(currentlySelectedSave);
                 }
             }
         });
@@ -72,12 +77,15 @@ public class MyRankingsFragment extends Fragment {
 
     private void displaySaves() {
 
-        List<SaveRank> saves = databaseHelper.fetchAllSaves();
+        final List<String> saves = databaseHelper.fetchAllSavesName();
 
         View.OnClickListener rowListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentlySelectedSave = ((SavesListAdapter.SaveHolder)v.getTag()).getId();
+
+                String name = ((SavesListAdapter.SaveHolder)v.getTag()).getName().getText().toString();
+                currentlySelectedSave = databaseHelper.getSave(name);
+                dateTemproary.setText(currentlySelectedSave.getDate());
             }
         };
 
@@ -108,7 +116,7 @@ public class MyRankingsFragment extends Fragment {
 
     public interface MyRankingsFragmentInteractionListener {
 
-        void openSave(int id);
+        void openSaveFromMyRanking(SaveRank toOpen);
     }
 
 }

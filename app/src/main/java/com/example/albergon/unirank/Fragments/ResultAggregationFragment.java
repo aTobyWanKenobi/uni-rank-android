@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.UniversityListAdapter;
@@ -141,7 +142,13 @@ public class ResultAggregationFragment extends Fragment {
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                saveAggregation(input.getText().toString());
+
+                String name = input.getText().toString();
+                if(databaseHelper.saveAlreadyPresent(name)) {
+                    restartSaveDialogWithToast();
+                } else {
+                    saveAggregation(name);
+                }
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -154,12 +161,19 @@ public class ResultAggregationFragment extends Fragment {
         builder.show();
     }
 
+    private void restartSaveDialogWithToast() {
+
+        Toast.makeText(getContext(), "Name already used, choose another", Toast.LENGTH_LONG);
+        showSaveDialog();
+    }
+
     private void saveAggregation(String name) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
         String date = dateFormat.format(new Date());
 
         SaveRank save = new SaveRank(name, date, settings, aggregator.getResult().getList());
+
         databaseHelper.saveAggregation(save);
         saveBtn.setEnabled(false);
     }
