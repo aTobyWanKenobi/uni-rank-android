@@ -78,6 +78,7 @@ public class DatabaseHelperTest {
         Assert.assertEquals(academicReputation.getIdSet().size(), academicReputation.getSize());
     }
 
+    /*
     @Test
     public void saveAndRetrieveAggregation() {
 
@@ -114,4 +115,5 @@ public class DatabaseHelperTest {
         databaseHelper.deleteSavedAggregation("TestName");
         System.out.println("Log List 3: " + databaseHelper.fetchAllSavesName());
     }
+    */
 }

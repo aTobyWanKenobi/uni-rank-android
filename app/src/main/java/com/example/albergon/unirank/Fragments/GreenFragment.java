@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 
 import com.example.albergon.unirank.R;
 
-
+/**
+ * Placeholder class
+ */
 public class GreenFragment extends Fragment {
 
     public GreenFragment() {

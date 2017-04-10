@@ -1,5 +1,6 @@
 package com.example.albergon.unirank.Fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -65,6 +66,7 @@ public class CreateRankingFragment extends Fragment {
         return fragment;
     }
 
+    @SuppressLint("UseSparseArrays")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -81,6 +83,7 @@ public class CreateRankingFragment extends Fragment {
 
         // If the fragment is created based on old settings, "load them"
         if (getArguments() != null) {
+            //noinspection unchecked
             currentSettings = (HashMap<Integer, Integer>) getArguments().getSerializable(OLD_SETTINGS);
             updateListFromSettings();
         }
@@ -122,11 +125,11 @@ public class CreateRankingFragment extends Fragment {
         }
 
         Set<Integer> toAdd = new HashSet<>(picked);
-        Map<Integer, Integer> newSettings = new HashMap<>();
+        @SuppressLint("UseSparseArrays") Map<Integer, Integer> newSettings = new HashMap<>();
 
         // add new indicators to current settings, keeping the weight if they were already present
         for(Integer indicator : toAdd) {
-            if (!currentSettings.entrySet().contains(indicator)) {
+            if (!currentSettings.keySet().contains(indicator)) {
                 newSettings.put(indicator, 1);
             } else {
                 newSettings.put(indicator, currentSettings.get(indicator));
@@ -168,35 +171,22 @@ public class CreateRankingFragment extends Fragment {
     private void addButtonsBehavior() {
 
         // the add indicator button shows the picking dialog
-        addIndicatorBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                interactionListener.showPickIndicatorDialog(currentSettings.keySet());
-            }
-        });
+        addIndicatorBtn.setOnClickListener(v -> interactionListener.showPickIndicatorDialog(currentSettings.keySet()));
 
         // the generate button forwards the desired settings to the result fragment which will
         // compute the aggregation
-        generateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        generateBtn.setOnClickListener(v -> {
 
-                if(currentSettings.size() == 0) {
-                    Toast.makeText(getActivity(), "Choose at least one indicator", Toast.LENGTH_LONG).show();
-                } else {
-                    interactionListener.onPressGenerate(currentSettings);
-                }
-
+            if(currentSettings.size() == 0) {
+                Toast.makeText(getActivity(), "Choose at least one indicator", Toast.LENGTH_LONG).show();
+            } else {
+                interactionListener.onPressGenerate(currentSettings);
             }
+
         });
 
         // opens the picking dialog for saved aggregations
-        loadBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                interactionListener.showLoadSaveDialog();
-            }
-        });
+        loadBtn.setOnClickListener(v -> interactionListener.showLoadSaveDialog());
 
     }
 

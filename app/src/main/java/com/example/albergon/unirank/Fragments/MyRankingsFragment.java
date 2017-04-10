@@ -18,30 +18,28 @@ import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.R;
 import com.example.albergon.unirank.TabbedActivity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-
+/**
+ * This fragment implements the navigation through locally saved rankings. It allows to open and
+ * modify an old save after getting a preview of its settings.
+ */
 public class MyRankingsFragment extends Fragment {
 
+    // Interaction listener
     private MyRankingsFragmentInteractionListener interactionListener = null;
 
+    // UI elements
     private Button openBtn = null;
-    private TextView dateTemproary = null;
+    private TextView dateTemporary = null;
     private ListView savesList = null;
-    private DatabaseHelper databaseHelper = null;
 
+    private DatabaseHelper databaseHelper = null;
     private SaveRank currentlySelectedSave = null;
 
-    public MyRankingsFragment() {
-        // Required empty public constructor
-    }
-
+    // Static factory method
     public static MyRankingsFragment newInstance() {
-        MyRankingsFragment fragment = new MyRankingsFragment();
-        return fragment;
+        return new MyRankingsFragment();
     }
 
     @Override
@@ -53,47 +51,45 @@ public class MyRankingsFragment extends Fragment {
         databaseHelper = ((TabbedActivity) getActivity()).getDatabase();
 
         //TODO: just for test
-        dateTemproary = (TextView) view.findViewById(R.id.selected_save_date);
+        dateTemporary = (TextView) view.findViewById(R.id.selected_save_date);
 
         //UI
+        savesList = (ListView) view.findViewById(R.id.saves_list);
         openBtn = (Button) view.findViewById(R.id.open_save);
-        openBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(currentlySelectedSave == null) {
-                    Toast.makeText(getContext(), "You must select a save to open", Toast.LENGTH_LONG).show();
-                } else {
-                    interactionListener.openSaveFromMyRanking(currentlySelectedSave);
-                }
+        openBtn.setOnClickListener(v -> {
+            if(currentlySelectedSave == null) {
+                Toast.makeText(getContext(), "You must select a save to open", Toast.LENGTH_LONG).show();
+            } else {
+                interactionListener.openSaveFromMyRanking(currentlySelectedSave);
             }
         });
 
-        //addSavesToDB();
-        savesList = (ListView) view.findViewById(R.id.saves_list);
         displaySaves();
 
         return view;
     }
 
+    /**
+     * Display all saves present in the local database
+     */
     private void displaySaves() {
 
+        // fetch from database
         final List<String> saves = databaseHelper.fetchAllSavesName();
 
-        View.OnClickListener rowListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String name = ((SavesListAdapter.SaveHolder)v.getTag()).getName().getText().toString();
-                currentlySelectedSave = databaseHelper.getSave(name);
-                dateTemproary.setText(currentlySelectedSave.getDate());
-            }
+        // click listener
+        View.OnClickListener rowListener = v -> {
+            // preview currently selected save
+            String name = ((SavesListAdapter.SaveHolder)v.getTag()).getName().getText().toString();
+            currentlySelectedSave = databaseHelper.getSave(name);
+            dateTemporary.setText(currentlySelectedSave.getDate());
         };
 
+        // Setup ListView adapter
         SavesListAdapter adapter = new SavesListAdapter(getContext(),
                 R.layout.saving_list_cell,
                 saves,
                 rowListener);
-
         savesList.setAdapter(adapter);
     }
 
@@ -114,6 +110,9 @@ public class MyRankingsFragment extends Fragment {
         interactionListener = null;
     }
 
+    /**
+     * Interaction listener for implementing activity
+     */
     public interface MyRankingsFragmentInteractionListener {
 
         void openSaveFromMyRanking(SaveRank toOpen);
