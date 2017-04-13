@@ -104,8 +104,8 @@ public class CreateRankingFragment extends Fragment {
             CustomSeekBarListener listener = new CustomSeekBarListener();
             Integer newIndicator = entry.getKey();
             listener.bindToIndicator(newIndicator);
-            AsyncIndicatorListAdd.AsyncTuple tuple =
-                    new AsyncIndicatorListAdd.AsyncTuple(newIndicator, listener);
+            AsyncIndicatorListAdd.IndicatorCellContent tuple =
+                    new AsyncIndicatorListAdd.IndicatorCellContent(newIndicator, listener, entry.getValue());
             task.execute(tuple);
         }
     }

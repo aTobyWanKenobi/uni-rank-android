@@ -21,7 +21,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
 
             <TextView
                 android:id="@+id/add_indicator_txt"
@@ -33,6 +34,8 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
             <Button
+                android:textAppearance="@style/ButtonTextAppearance"
+                android:background="@drawable/button_shape_blue"
                 android:id="@+id/add_indicator_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -41,6 +44,10 @@
         </LinearLayout>
 
         <ListView
+            android:background="@drawable/rectangle_black_border"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10sp"
+            android:padding="10dp"
             android:id="@+id/indicator_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -57,17 +64,25 @@
         android:orientation="horizontal">
 
         <Button
+            android:textAppearance="@style/ButtonTextAppearance"
             android:id="@+id/generate_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Generate" />
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="Generate"
+            android:background="@drawable/button_shape_blue"/>
 
         <Button
+            android:textAppearance="@style/ButtonTextAppearance"
             android:id="@+id/load_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Load" />
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="Load"
+            android:background="@drawable/button_shape_blue"/>
     </LinearLayout>
 </LinearLayout>

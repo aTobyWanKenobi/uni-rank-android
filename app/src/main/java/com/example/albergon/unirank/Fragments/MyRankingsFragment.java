@@ -31,8 +31,11 @@ public class MyRankingsFragment extends Fragment {
 
     // UI elements
     private Button openBtn = null;
-    private TextView dateTemporary = null;
+    private Button deleteBtn = null;
     private ListView savesList = null;
+    private TextView selectedNameTxt = null;
+    private TextView selectedDateTxt = null;
+    private TextView selectedSettingsTxt = null;
 
     private DatabaseHelper databaseHelper = null;
     private SaveRank currentlySelectedSave = null;
@@ -51,7 +54,9 @@ public class MyRankingsFragment extends Fragment {
         databaseHelper = ((TabbedActivity) getActivity()).getDatabase();
 
         //TODO: just for test
-        dateTemporary = (TextView) view.findViewById(R.id.selected_save_date);
+        selectedNameTxt = (TextView) view.findViewById(R.id.selected_save_name);
+        selectedDateTxt = (TextView) view.findViewById(R.id.selected_save_date);
+        selectedSettingsTxt = (TextView) view.findViewById(R.id.selected_save_settings);
 
         //UI
         savesList = (ListView) view.findViewById(R.id.saves_list);
@@ -61,6 +66,17 @@ public class MyRankingsFragment extends Fragment {
                 Toast.makeText(getContext(), "You must select a save to open", Toast.LENGTH_LONG).show();
             } else {
                 interactionListener.openSaveFromMyRanking(currentlySelectedSave);
+            }
+        });
+
+        deleteBtn = (Button) view.findViewById(R.id.delete_save);
+        deleteBtn.setOnClickListener(v -> {
+            if(currentlySelectedSave == null) {
+                Toast.makeText(getContext(), "You must select a save to delete", Toast.LENGTH_LONG).show();
+            } else {
+                // delete save and refresh list
+                databaseHelper.deleteSavedAggregation(currentlySelectedSave.getName());
+                displaySaves();
             }
         });
 
@@ -82,7 +98,10 @@ public class MyRankingsFragment extends Fragment {
             // preview currently selected save
             String name = ((SavesListAdapter.SaveHolder)v.getTag()).getName().getText().toString();
             currentlySelectedSave = databaseHelper.getSave(name);
-            dateTemporary.setText(currentlySelectedSave.getDate());
+
+            selectedNameTxt.setText("Save name : " + currentlySelectedSave.getName());
+            selectedDateTxt.setText("Save date : " +currentlySelectedSave.getDate());
+            selectedSettingsTxt.setText("Settings :  " + currentlySelectedSave.getSettings());
         };
 
         // Setup ListView adapter

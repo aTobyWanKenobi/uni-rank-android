@@ -10,7 +10,7 @@ import com.example.albergon.unirank.LayoutAdapters.IndicatorListAdapter;
  * This AsyncTask extension updates the contents of a ListView outside of the UI thread, to allow it
  * to refresh and show the results in real time.
  */
-public class AsyncIndicatorListAdd extends AsyncTask<AsyncIndicatorListAdd.AsyncTuple, AsyncIndicatorListAdd.AsyncTuple, Void> {
+public class AsyncIndicatorListAdd extends AsyncTask<AsyncIndicatorListAdd.IndicatorCellContent, AsyncIndicatorListAdd.IndicatorCellContent, Void> {
 
     private IndicatorListAdapter arrayAdapter = null;
     private Context context = null;
@@ -35,7 +35,7 @@ public class AsyncIndicatorListAdd extends AsyncTask<AsyncIndicatorListAdd.Async
 
 
     @Override
-    protected Void doInBackground(AsyncTuple... params) {
+    protected Void doInBackground(IndicatorCellContent... params) {
 
         // arguments check
         if(params.length != 1) {
@@ -48,7 +48,7 @@ public class AsyncIndicatorListAdd extends AsyncTask<AsyncIndicatorListAdd.Async
     }
 
     @Override
-    protected void onProgressUpdate(AsyncTuple... item) {
+    protected void onProgressUpdate(IndicatorCellContent... item) {
         arrayAdapter.addIndicator(item[0]);
     }
 
@@ -61,20 +61,22 @@ public class AsyncIndicatorListAdd extends AsyncTask<AsyncIndicatorListAdd.Async
      * This nested static class serves as a container for the tuple composed by an indicator and the
      * associated SeekBar listener.
      */
-    public static class AsyncTuple {
+    public static class IndicatorCellContent {
 
         private Integer indicator = null;
+        private int initialWeight = 1;
         private SeekBar.OnSeekBarChangeListener listener = null;
 
-        public AsyncTuple(Integer indicator, SeekBar.OnSeekBarChangeListener listener) {
+        public IndicatorCellContent(Integer indicator, SeekBar.OnSeekBarChangeListener listener, int initialWeight) {
 
             // arguments check
             if(indicator == null || listener == null) {
-                throw new IllegalArgumentException("Parameters for AsyncTuple cannot be null");
+                throw new IllegalArgumentException("Parameters for IndicatorCellContent cannot be null");
             }
 
             this.indicator = indicator;
             this.listener = listener;
+            this.initialWeight = initialWeight;
         }
 
         public Integer getIndicator() {
@@ -83,6 +85,10 @@ public class AsyncIndicatorListAdd extends AsyncTask<AsyncIndicatorListAdd.Async
 
         public SeekBar.OnSeekBarChangeListener getListener() {
             return listener;
+        }
+
+        public int getInitialWeight() {
+            return initialWeight;
         }
     }
 }

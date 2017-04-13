@@ -290,8 +290,9 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
             settings.put(Tables.SavesSettings.SAVED_NAME, toSave.getName());
             settings.put(Tables.SavesSettings.SAVED_INDICATOR, e.getKey());
             settings.put(Tables.SavesSettings.SAVED_WEIGHT, e.getValue());
+            db.insert(Tables.SavesSettings.TABLE_NAME, null, settings);
+            settings = new ContentValues();
         }
-        db.insert(Tables.SavesSettings.TABLE_NAME, null, settings);
 
         // add rank list to appropriate table
         List<Integer> ranks = toSave.getResult();
@@ -299,8 +300,10 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
             ranking.put(Tables.SavesRankings.SAVED_NAME, toSave.getName());
             ranking.put(Tables.SavesRankings.SAVED_RANK, i);
             ranking.put(Tables.SavesRankings.SAVED_UNI_ID, ranks.get(i));
+            db.insert(Tables.SavesRankings.TABLE_NAME, null, ranking);
+            ranking = new ContentValues();
         }
-        db.insert(Tables.SavesRankings.TABLE_NAME, null, ranking);
+
     }
 
     public boolean saveAlreadyPresent(String name) {
@@ -334,6 +337,19 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         String query3 = "DELETE FROM " + Tables.SavesRankings.TABLE_NAME +
                 " WHERE "+Tables.SavesRankings.SAVED_NAME+" = ?;";
         db.execSQL(query3, selectionArgs);
+    }
+
+    /**
+     * This method deletes all saved aggregations and relative data in the database.
+     */
+    public void deleteAllSaves() {
+        List<String> names = fetchAllSavesName();
+
+        List<SaveRank> allSaves = new ArrayList<>();
+        //noinspection Convert2streamapi
+        for(String name : names) {
+            deleteSavedAggregation(name);
+        }
     }
 
     /**
@@ -436,8 +452,6 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
         // build rank list
         List<Integer> unsortedUniIds = new ArrayList<>();
-
-        System.out.println("Log count: " + savedAggregationSettings.getCount());
 
         @SuppressLint("UseSparseArrays") Map<Integer, Integer> idsWithRank = new HashMap<>();
         while(savedRankList.moveToNext()) {
@@ -576,6 +590,35 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
                 return 0;
             } else {
                 return 1;
+            }
+        }
+    }
+
+    //TODO: remove, debug method
+    public void retrievePrintAllSettings() {
+        String query = "SELECT " +
+                Tables.SavesSettings.SAVED_NAME + ", "+ Tables.SavesSettings.SAVED_INDICATOR + ", " + Tables.SavesSettings.SAVED_WEIGHT +
+                " FROM " + Tables.SavesSettings.TABLE_NAME + ";";
+        Cursor result = db.rawQuery(query, null);
+
+        // check
+        if(result.getCount() <= 0) {
+            // close Cursor
+            result.close();
+
+            throw new IllegalStateException("Empty settings for saved ranking, database is corrupted");
+
+        } else {
+
+            System.out.println("Log count: " + result.getCount());
+
+
+
+            while(result.moveToNext()) {
+                String row = "Log : SaveName: " + result.getString(result.getColumnIndexOrThrow(Tables.SavesSettings.SAVED_NAME)) + " , " +
+                        "SavedIndicator: " + result.getInt(result.getColumnIndexOrThrow(Tables.SavesSettings.SAVED_INDICATOR)) + " , " +
+                        "Weight: " + result.getInt(result.getColumnIndexOrThrow(Tables.SavesSettings.SAVED_WEIGHT));
+                System.out.println(row);
             }
         }
     }

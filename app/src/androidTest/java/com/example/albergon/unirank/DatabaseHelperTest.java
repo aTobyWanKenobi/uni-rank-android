@@ -78,13 +78,10 @@ public class DatabaseHelperTest {
         Assert.assertEquals(academicReputation.getIdSet().size(), academicReputation.getSize());
     }
 
-    /*
     @Test
     public void saveAndRetrieveAggregation() {
 
-        System.out.println("Log List 0: " + databaseHelper.fetchAllSavesName());
         databaseHelper.deleteSavedAggregation("TestName");
-        System.out.println("Log List 1: " + databaseHelper.fetchAllSavesName());
 
         List<Integer> rankList = new ArrayList<>();
         rankList.add(12);
@@ -92,19 +89,15 @@ public class DatabaseHelperTest {
 
         Map<Integer, Integer> settings = new HashMap<>();
         settings.put(1, 3);
+        settings.put(3, 2);
         settings.put(2, 2);
+
 
         SaveRank testSave = new SaveRank("TestName", "TestDate", settings, rankList);
 
         databaseHelper.saveAggregation(testSave);
 
-        System.out.println("Log List 2: " + databaseHelper.fetchAllSavesName());
-
         SaveRank save = databaseHelper.getSave("TestName");
-
-        System.out.println("Log Save : " + save.getName());
-        System.out.println("Log Save : " + save.getDate());
-        System.out.println("Log Save : " + save.getSettings());
 
         Assert.assertEquals("TestName", save.getName());
         Assert.assertEquals("TestDate", save.getDate());
@@ -113,7 +106,10 @@ public class DatabaseHelperTest {
         Assert.assertEquals(2, (int) save.getSettings().get(2));
 
         databaseHelper.deleteSavedAggregation("TestName");
-        System.out.println("Log List 3: " + databaseHelper.fetchAllSavesName());
     }
-    */
+
+    @Test
+    public void printSettings() {
+        databaseHelper.retrievePrintAllSettings();
+    }
 }

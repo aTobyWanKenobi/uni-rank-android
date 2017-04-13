@@ -26,7 +26,7 @@ public class IndicatorListAdapter extends BaseAdapter {
 
     private Context context = null;
     private int layoutResourceId = 0;
-    private List<AsyncIndicatorListAdd.AsyncTuple> indicators = null;
+    private List<AsyncIndicatorListAdd.IndicatorCellContent> indicators = null;
 
     public IndicatorListAdapter(@NonNull Context context, @LayoutRes int resource) {
         this.indicators = new ArrayList<>();
@@ -39,7 +39,7 @@ public class IndicatorListAdapter extends BaseAdapter {
      *
      * @param tuple     indicator and corresponding SeekBAr listener
      */
-    public void addIndicator(AsyncIndicatorListAdd.AsyncTuple tuple) {
+    public void addIndicator(AsyncIndicatorListAdd.IndicatorCellContent tuple) {
         indicators.add(tuple);
     }
 
@@ -77,9 +77,10 @@ public class IndicatorListAdapter extends BaseAdapter {
             holder = (IndicatorListAdapter.IndicatorHolder) row.getTag();
         }
 
-        AsyncIndicatorListAdd.AsyncTuple tuple = indicators.get(position);
+        AsyncIndicatorListAdd.IndicatorCellContent tuple = indicators.get(position);
         holder.getName().setText(Tables.IndicatorsList.values()[tuple.getIndicator()].NAME);
         holder.getSeekBar().setOnSeekBarChangeListener(tuple.getListener());
+        holder.getSeekBar().setProgress(tuple.getInitialWeight()-1);
 
         return row;
     }
