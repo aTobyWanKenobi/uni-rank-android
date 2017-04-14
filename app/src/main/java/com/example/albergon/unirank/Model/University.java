@@ -110,7 +110,8 @@ public class University {
     public boolean equals(Object other) {
         if (other == null || !(other instanceof University)) {
             return false;
-        } else if (other == this) {
+        } else //noinspection SimplifiableIfStatement
+            if (other == this) {
             return true;
         } else {
             return (id == ((University) other).getId()) &&

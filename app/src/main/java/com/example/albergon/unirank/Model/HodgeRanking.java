@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import flanagan.math.Matrix;
 import flanagan.math.Minimization;
 import flanagan.math.MinimizationFunction;
 
@@ -177,7 +176,6 @@ public class HodgeRanking implements RankAggregationAlgorithm {
                 }
             }
         }
-        long endTime = System.currentTimeMillis();
 
         // further process estimate
         for(int i = 0; i < numItems; i++) {

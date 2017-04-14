@@ -1,6 +1,7 @@
 package com.example.albergon.unirank.Database;
 
 import com.example.albergon.unirank.Model.Indicator;
+import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.University;
 
 /**
@@ -10,9 +11,12 @@ import com.example.albergon.unirank.Model.University;
  */
 public interface UniRankDatabase {
 
-
     University getUniversity(int id);
 
     Indicator getIndicator(int id);
+
+    void saveAggregation(SaveRank ranking);
+
+    SaveRank getSave(String name);
 
 }

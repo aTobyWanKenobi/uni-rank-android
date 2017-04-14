@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'jacoco'
 
 android {
     compileSdkVersion 24
@@ -34,20 +33,23 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile files('libs/flanagan.jar')
+    compile files('libs/Jama-1.0.3.jar')
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.android.support:recyclerview-v7:24.2.1'
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    compile 'com.github.markushi:circlebutton:1.1'
     testCompile 'junit:junit:4.12'
-    compile files('libs/flanagan.jar')
-    compile files('libs/Jama-1.0.3.jar')
 }
 
 jacoco {
     toolVersion = "0.7.7.201606060606"
 }
 
-task jacocoReport(type: JacocoReport, dependsOn: "connectedAndroidTest") {
+task jacocoReport(type: JacocoReport, dependsOn: "connectedDebugAndroidTest") {
     sourceDirectories = files(['**/src/main/java'])
 
     classDirectories = fileTree(

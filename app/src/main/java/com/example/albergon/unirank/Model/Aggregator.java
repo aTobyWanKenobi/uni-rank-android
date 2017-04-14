@@ -19,6 +19,7 @@ public class Aggregator {
     private RankAggregationAlgorithm algorithm = null;
     private Map<Integer, Integer> weightings = null;
     private List<Indicator> indicators = null;
+    private Ranking<Integer> result = null;
 
     /**
      * Public constructor that instantiates the aggregator with the desired aggregation algorithm.
@@ -73,7 +74,29 @@ public class Aggregator {
 
         // use algorithm to aggregate rankings
         Ranking<Integer> result = algorithm.aggregate(indicatorsArray, weightings);
+        this.result = result;
 
         return result;
     }
+
+    /**
+     * Getter for the settings of an aggregation, which are returned as a map that binds indicators
+     * ids with their respective weight.
+     *
+     * @return  a Map of indicators ids and weights
+     */
+    @SuppressLint("UseSparseArrays")
+    public Map<Integer, Integer> getSettings() {
+        return new HashMap<>(weightings);
+    }
+
+    /**
+     * Returns the last result of the aggregation, if it has been performed.
+     *
+     * @return  resulting ranking if aggregate() was already called, null otherwise
+     */
+    public Ranking<Integer> getResult() {
+        return result;
+    }
+
 }

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/indicator_cell_background"
+    >
+
+    <TextView
+        android:id="@+id/indicator_name_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/n1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="1"
+            android:textAlignment="center"
+            android:textColorLink="@android:color/transparent"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/n2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="2"
+            android:textAlignment="center"
+            android:textColorLink="@android:color/transparent"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/n3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="3"
+            android:textAlignment="center"
+            android:textColorLink="@android:color/transparent"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/n4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="4"
+            android:textAlignment="center"
+            android:textColorLink="@android:color/transparent"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/n5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="5"
+            android:textAlignment="center"
+            android:textColorLink="@android:color/transparent"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/n6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="6"
+            android:textAlignment="center"
+            android:textColorLink="@android:color/transparent"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/n7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text=" 7"
+            android:textAlignment="center"
+            android:textColorLink="@android:color/transparent"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/n8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text=" 8"
+            android:textAlignment="center"
+            android:textColorLink="@android:color/transparent"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/n9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text=" 9"
+            android:textAlignment="center"
+            android:textColorLink="@android:color/transparent"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/n10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text=" 10"
+            android:textAlignment="center"
+            android:textColorLink="@android:color/transparent"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <SeekBar
+        android:id="@+id/indicator_bar"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="9"
+        android:progress="0" />
+</LinearLayout>

@@ -88,4 +88,28 @@ public class AggregatorTest {
         Assert.assertEquals(1, (int) result.getList().get(2));
     }
 
+    @Test
+    public void getSettingsWork() {
+        Aggregator testAggregator = new Aggregator(new TestAlgorithm());
+
+        Map<Integer, Double> testMap = new HashMap<>();
+        testMap.put(1, 2.0);
+
+        Indicator i1 = new Indicator(testMap, 1);
+        Indicator i2 = new Indicator(testMap, 2);
+        Indicator i3 = new Indicator(testMap, 3);
+
+        testAggregator.add(i1, 1);
+        testAggregator.add(i2, 2);
+        testAggregator.add(i3, 3);
+
+        Map<Integer, Integer> settings = testAggregator.getSettings();
+
+        Assert.assertEquals(3, settings.keySet().size());
+        Assert.assertEquals(1, (int)settings.get(1));
+        Assert.assertEquals(2, (int)settings.get(2));
+        Assert.assertEquals(3, (int)settings.get(3));
+
+    }
+
 }

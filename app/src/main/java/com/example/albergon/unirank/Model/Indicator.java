@@ -30,8 +30,6 @@ public class Indicator {
     @SuppressLint("UseSparseArrays")
     public Indicator(Map<Integer, Double> entries, int id) {
 
-        //TODO: check if score is normalized between 0-100?? Or do it in another place?
-
         // arguments check
         if(entries == null) {
             throw new IllegalArgumentException("Entries map in indicator cannot be null");
@@ -100,5 +98,22 @@ public class Indicator {
         ranking.sort(new Ranking.UniIdRankComparator(entries));
 
         return new Ranking<>(ranking);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null || !(other instanceof Indicator)) {
+            return false;
+        } else //noinspection SimplifiableIfStatement
+            if (other == this) {
+            return true;
+        } else {
+            return (id == ((Indicator) other).getId());
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getId();
     }
 }

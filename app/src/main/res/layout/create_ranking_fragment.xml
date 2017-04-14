@@ -1,241 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/generated_ranking"
+    <LinearLayout
+        android:id="@+id/indicators_container"
         android:layout_width="match_parent"
-        android:layout_height="430dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/generate_button"
-        app:layout_constraintVertical_bias="0.978" />
+        android:layout_height="match_parent"
+        android:layout_gravity="top"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="10"
+        android:orientation="vertical">
 
-    <SeekBar
-        android:id="@+id/indicator1"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="368dp"
+        <LinearLayout
+            android:id="@+id/add_indicator_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/add_indicator_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Add new Indicator"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+            <Button
+                android:textAppearance="@style/ButtonTextAppearance"
+                android:background="@drawable/button_shape_blue"
+                android:id="@+id/add_indicator_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="+" />
+        </LinearLayout>
+
+        <ListView
+            android:background="@drawable/rectangle_black_border"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10sp"
+            android:padding="10dp"
+            android:id="@+id/indicator_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="10" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/generate_bottom_btns"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="64dp"
-        android:max="9"
-        android:progress="0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="bottom"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp">
 
-    <SeekBar
-        android:id="@+id/indicator2"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="368dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:max="9"
-        android:progress="0"
-        app:layout_constraintLeft_toLeftOf="@+id/indicator1"
-        app:layout_constraintTop_toBottomOf="@+id/indicator1" />
+        <Button
+            android:textAppearance="@style/ButtonTextAppearance"
+            android:id="@+id/generate_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="Generate"
+            android:background="@drawable/button_shape_blue"/>
 
-    <SeekBar
-        android:id="@+id/indicator5"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="368dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:max="9"
-        android:progress="0"
-        app:layout_constraintLeft_toLeftOf="@+id/indicator4"
-        app:layout_constraintTop_toBottomOf="@+id/indicator4" />
-
-    <SeekBar
-        android:id="@+id/indicator4"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="368dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="64dp"
-        android:max="9"
-        android:progress="0"
-        app:layout_constraintLeft_toLeftOf="@+id/indicator3"
-        app:layout_constraintTop_toBottomOf="@+id/indicator3" />
-
-    <SeekBar
-        android:id="@+id/indicator3"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
-        android:layout_width="368dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
-        android:max="9"
-        android:progress="0"
-        app:layout_constraintLeft_toLeftOf="@+id/indicator2"
-        app:layout_constraintTop_toBottomOf="@+id/indicator2" />
-
-    <TextView
-        android:id="@+id/indicator1_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:text="TextView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        app:layout_constraintBottom_toTopOf="@+id/indicator1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/i1add"
-        android:layout_marginRight="8dp" />
-
-    <TextView
-        android:id="@+id/indicator2_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:text="TextView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        app:layout_constraintBottom_toTopOf="@+id/indicator2"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/i2add"
-        android:layout_marginRight="8dp" />
-
-    <TextView
-        android:id="@+id/indicator3_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:text="TextView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        app:layout_constraintBottom_toTopOf="@+id/indicator3"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/i3add" />
-
-    <TextView
-        android:id="@+id/indicator4_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:text="TextView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        app:layout_constraintBottom_toTopOf="@+id/indicator4"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/i4add"
-        android:layout_marginRight="8dp" />
-
-    <TextView
-        android:id="@+id/indicator5_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:text="TextView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        app:layout_constraintBottom_toTopOf="@+id/indicator5"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/i5add" />
-
-    <Button
-        android:id="@+id/i1add"
-        android:layout_width="88dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:elevation="0dp"
-        android:text="Add"
-        android:textSize="10sp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/indicator1" />
-
-    <Button
-        android:id="@+id/i2add"
-        android:layout_width="88dp"
-        android:layout_height="wrap_content"
-        android:text="Add"
-        android:textSize="10sp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/indicator2" />
-
-    <Button
-        android:id="@+id/i3add"
-        android:layout_width="88dp"
-        android:layout_height="wrap_content"
-        android:text="Add"
-        android:textSize="10sp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/indicator3" />
-
-    <Button
-        android:id="@+id/i4add"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="88dp"
-        android:layout_height="wrap_content"
-        android:text="Add"
-        android:textSize="10sp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/indicator4" />
-
-    <Button
-        android:id="@+id/i5add"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="88dp"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        android:text="Add"
-        android:textAppearance="@style/TextAppearance.AppCompat.Button"
-        android:textSize="10sp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/indicator5" />
-
-    <Button
-        android:id="@+id/generate_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
-        android:text="Generate Ranking"
-        android:textSize="10sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/indicator5"
-        app:layout_constraintHorizontal_bias="0.502" />
-
-</android.support.constraint.ConstraintLayout>
+        <Button
+            android:textAppearance="@style/ButtonTextAppearance"
+            android:id="@+id/load_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="Load"
+            android:background="@drawable/button_shape_blue"/>
+    </LinearLayout>
+</LinearLayout>
