@@ -1,6 +1,7 @@
 package com.example.albergon.unirank.Fragments;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -10,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
@@ -42,7 +45,7 @@ public class ResultAggregationFragment extends Fragment {
     private ResultFragmentInteractionListener interactionListener = null;
 
     private Map<Integer, Integer> settings;
-    private Aggregator aggregator = null;
+    private Ranking<Integer> result = null;
     private DatabaseHelper databaseHelper = null;
 
     // UI elements
@@ -51,6 +54,8 @@ public class ResultAggregationFragment extends Fragment {
     private Button shareBtn = null;
     private Button modifyBtn = null;
     private Button newRankingBtn = null;
+    private ProgressBar progressCircle = null;
+    private LinearLayout progress_layout = null;
 
     /**
      * Static factory method that passes the settings of the aggregation to perform. It should be
@@ -93,8 +98,7 @@ public class ResultAggregationFragment extends Fragment {
 
         // TODO: move to async task and show progress spinner
         // perform aggregation and display it
-        Ranking<Integer> result = performAggregation();
-        displayRanking(result);
+        performAggregation();
 
         return view;
     }
@@ -106,6 +110,8 @@ public class ResultAggregationFragment extends Fragment {
         modifyBtn = (Button) view.findViewById(R.id.result_modify_btn);
         newRankingBtn = (Button) view.findViewById(R.id.result_new_button);
         shareBtn = (Button) view.findViewById(R.id.result_share_btn);
+        progressCircle = (ProgressBar) view.findViewById(R.id.progress_circle);
+        progress_layout = (LinearLayout) view.findViewById(R.id.progress_layout);
     }
 
     /**
@@ -180,7 +186,7 @@ public class ResultAggregationFragment extends Fragment {
         String date = dateFormat.format(new Date());
 
         // instantiate and save aggregation
-        SaveRank save = new SaveRank(name, date, settings, aggregator.getResult().getList());
+        SaveRank save = new SaveRank(name, date, settings, result.getList());
         databaseHelper.saveAggregation(save);
 
         // disable save button
@@ -190,30 +196,21 @@ public class ResultAggregationFragment extends Fragment {
     // TODO: move computation to async task and implement progress spinner in fragment
     /**
      * This method performs the aggregation with the input settings and returns the resulting ranking.
-     *
-     * @return  the result of the aggregation
      */
-    private Ranking<Integer> performAggregation() {
+    private void performAggregation() {
 
-        aggregator = new Aggregator(new HodgeRanking());
-
-        // Add settings to Aggregator object
-        for(Map.Entry<Integer, Integer> entry : settings.entrySet()) {
-            Indicator indicator = databaseHelper.getIndicator(entry.getKey());
-            aggregator.add(indicator, entry.getValue());
-        }
-
-        return aggregator.aggregate();
+        AsyncAggregation aggregationTask = new AsyncAggregation();
+        aggregationTask.execute(settings);
+        AsyncSpinningProgress uiUpdater = new AsyncSpinningProgress();
+        uiUpdater.execute();
     }
 
     /**
      * Displays the result into a scrollable ListView.
-     *
-     * @param ranking   ranking to display
      */
-    private void displayRanking(Ranking<Integer> ranking) {
+    private void displayRanking() {
 
-        List<Integer> idList = ranking.getList();
+        List<Integer> idList = result.getList();
         List<University> uniList = new ArrayList<>();
 
         // retrieve Universities from database thanks to ids
@@ -255,6 +252,74 @@ public class ResultAggregationFragment extends Fragment {
         void restartGeneration();
 
         void startGenerationWithSettings(Map<Integer, Integer> settings);
+    }
+
+    /**
+     * This async task is used to perform the aggregation in a separate thread to avoid blocking the UI
+     * thread for a long period of time.
+     */
+    private class AsyncAggregation extends AsyncTask<Map<Integer, Integer>, Void, Ranking<Integer>> {
+
+        @Override
+        protected void onPreExecute() {
+            progress_layout.setVisibility(View.VISIBLE);
+            resultList.setVisibility(View.INVISIBLE);
+            saveBtn.setEnabled(false);
+            shareBtn.setEnabled(false);
+            modifyBtn.setEnabled(false);
+            newRankingBtn.setEnabled(false);
+        }
+
+        @Override
+        protected Ranking<Integer> doInBackground(Map<Integer, Integer>... params) {
+
+            Aggregator aggregator = new Aggregator(new HodgeRanking());
+
+            // Add settings to Aggregator object
+            for(Map.Entry<Integer, Integer> entry : params[0].entrySet()) {
+                Indicator indicator = databaseHelper.getIndicator(entry.getKey());
+                aggregator.add(indicator, entry.getValue());
+            }
+
+            return aggregator.aggregate();
+        }
+
+        @Override
+        protected void onPostExecute(Ranking<Integer> ranking) {
+            result = ranking;
+            progress_layout.setVisibility(View.GONE);
+            resultList.setVisibility(View.VISIBLE);
+            saveBtn.setEnabled(true);
+            shareBtn.setEnabled(true);
+            modifyBtn.setEnabled(true);
+            newRankingBtn.setEnabled(true);
+            displayRanking();
+        }
+
+    }
+
+    private class AsyncSpinningProgress extends AsyncTask<Void, Integer, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            long oldTime = System.currentTimeMillis();
+            long actualTime;
+            int progressValue = 0;
+            while(result == null) {
+                actualTime = System.currentTimeMillis();
+                if(actualTime - oldTime >= 1000) {
+                    publishProgress(progressValue);
+                    oldTime = actualTime;
+                    progressValue = (progressValue + 10)%100;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            progressCircle.setProgress(progress[0]);
+        }
     }
 
 }

@@ -171,7 +171,9 @@ public class CreateRankingFragment extends Fragment {
     private void addButtonsBehavior() {
 
         // the add indicator button shows the picking dialog
-        addIndicatorBtn.setOnClickListener(v -> interactionListener.showPickIndicatorDialog(currentSettings.keySet()));
+        addIndicatorBtn.setOnClickListener(v -> {
+            interactionListener.showPickIndicatorDialog(currentSettings.keySet());
+        });
 
         // the generate button forwards the desired settings to the result fragment which will
         // compute the aggregation
