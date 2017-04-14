@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.example.albergon.unirank.Fragments.BrowseFragment;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
 import com.example.albergon.unirank.Fragments.GreenFragment;
 import com.example.albergon.unirank.Fragments.MyRankingsFragment;
@@ -55,7 +56,7 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
                     break;
             case 1: toRet = MyRankingsFragment.newInstance();
                 break;
-            case 2: toRet = GreenFragment.newInstance();
+            case 2: toRet = new BrowseFragment();
                 break;
             case 3: toRet = GreenFragment.newInstance();
                 break;

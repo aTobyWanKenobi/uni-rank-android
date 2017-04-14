@@ -26,6 +26,7 @@ import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
 import com.example.albergon.unirank.TabbedActivity;
+import com.google.firebase.database.DatabaseReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class ResultAggregationFragment extends Fragment {
     private Map<Integer, Integer> settings;
     private Ranking<Integer> result = null;
     private DatabaseHelper databaseHelper = null;
+    private DatabaseReference firebase = null;
 
     // UI elements
     private ListView resultList = null;

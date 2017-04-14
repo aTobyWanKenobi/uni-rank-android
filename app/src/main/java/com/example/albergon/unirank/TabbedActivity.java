@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Fragments.BrowseFragment;
 import com.example.albergon.unirank.Fragments.ChooseIndicatorsDialog;
 import com.example.albergon.unirank.Fragments.ChooseLoadDialog;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
@@ -19,6 +20,8 @@ import com.example.albergon.unirank.Fragments.MyRankingsFragment;
 import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
 import com.example.albergon.unirank.Model.SaveRank;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,10 +39,14 @@ public class TabbedActivity extends AppCompatActivity implements
         ResultAggregationFragment.ResultFragmentInteractionListener,
         ChooseIndicatorsDialog.ChooseIndicatorDialogInteractionListener,
         MyRankingsFragment.MyRankingsFragmentInteractionListener,
-        ChooseLoadDialog.OnChooseLoadDialogInteractionListener {
+        ChooseLoadDialog.OnChooseLoadDialogInteractionListener,
+        BrowseFragment.OnBrowseFragmentInteractionListener {
 
     // Database instance, unique for the entire application
     private DatabaseHelper databaseHelper = null;
+
+    // Firebase
+    DatabaseReference firebase = null;
 
     // Layout elements
     private TabLayout tabLayout = null;
@@ -75,6 +82,14 @@ public class TabbedActivity extends AppCompatActivity implements
         changeFragment(new CreateRankingFragment());
 
         databaseHelper = DatabaseHelper.getInstance(this);
+        firebase = FirebaseDatabase.getInstance().getReference();
+    }
+
+    /**
+     * Getter for fragments to communicate with unique firebase database instance
+     */
+    public DatabaseReference getFirebaseInstance() {
+        return firebase;
     }
 
 
