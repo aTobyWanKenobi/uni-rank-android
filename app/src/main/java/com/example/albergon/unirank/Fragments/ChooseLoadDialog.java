@@ -49,7 +49,7 @@ public class ChooseLoadDialog extends DialogFragment {
         Button cancelBtn = (Button) view.findViewById(R.id.cancel_load_dialog);
 
         // Get database and fetch all save names
-        DatabaseHelper databaseHelper = ((TabbedActivity) getActivity()).getDatabase();
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getContext());
         List<String> saveList = databaseHelper.fetchAllSavesName();
 
         // Set ListView adapter

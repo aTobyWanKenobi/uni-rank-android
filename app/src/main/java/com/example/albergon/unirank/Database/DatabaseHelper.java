@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.example.albergon.unirank.Model.Indicator;
@@ -37,6 +38,9 @@ import java.util.NoSuchElementException;
  */
 public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase {
 
+    // Database follows singleton pattern
+    private static DatabaseHelper singletonInstance;
+
     private Context context = null;
     private SQLiteDatabase db = null;
 
@@ -46,13 +50,38 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
     private final static String DB_NAME = "uni_rank.db";
 
     /**
-     * Public constructor that takes a Context as parameter and stores it in the proper field for
+     * Implement singleton pattern. There is a unique instance of DatabaseHelper across the application
+     * and this factory method creates it at the first invocation and then returns always the same instance.
+     *
+     * @param context   activity's context
+     * @return          database instance, already opened
+     */
+    public static synchronized DatabaseHelper getInstance(Context context) {
+
+        // Use application context to avoid leaking one of the activities context
+        if(singletonInstance == null) {
+            // create and open database
+            singletonInstance = new DatabaseHelper(context.getApplicationContext());
+            try {
+                singletonInstance.createDatabase();
+            } catch (IOException e) {
+                Log.e("Database startup", e.getMessage());
+            }
+            singletonInstance.openDatabase();
+        }
+
+        return singletonInstance;
+
+    }
+
+    /**
+     * Private constructor that takes a Context as parameter and stores it in the proper field for
      * future usage. Then it simply calls the superclass constructor to initialize an
      * SQLiteOpenHelper.
      *
      * @param context caller's context
      */
-    public DatabaseHelper(Context context) {
+    private DatabaseHelper(Context context) {
 
         super(context, DB_NAME, null, 1);
         this.context = context;
@@ -79,7 +108,6 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         if(databaseExists()) {
             Log.i(TAG, "Database already exists");
         } else {
-            // TODO: remember to implement calls to this method as background service (long-running)
             // create empty database in default system folder
             this.getWritableDatabase();
             // overwrite it with desired database
@@ -87,7 +115,6 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         }
     }
 
-    // TODO: verify that it has been created?
     /**
      * Open local database in read/write mode.
      *
@@ -100,11 +127,11 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
 
     /**
-     * Utility method to check if database initialization has already been performed.
+     * Utility static method to check if database initialization has already been performed.
      *
      * @return  true if it exists, false otherwise
      */
-    public boolean databaseExists() {
+    public static boolean databaseExists() {
 
         SQLiteDatabase DBCheck = null;
 

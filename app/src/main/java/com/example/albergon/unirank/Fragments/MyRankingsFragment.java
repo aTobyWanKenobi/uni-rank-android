@@ -51,7 +51,7 @@ public class MyRankingsFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view =  inflater.inflate(R.layout.fragment_my_rankings, container, false);
 
-        databaseHelper = ((TabbedActivity) getActivity()).getDatabase();
+        databaseHelper = DatabaseHelper.getInstance(getContext());
 
         //TODO: just for test
         selectedNameTxt = (TextView) view.findViewById(R.id.selected_save_name);

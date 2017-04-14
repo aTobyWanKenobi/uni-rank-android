@@ -74,27 +74,9 @@ public class TabbedActivity extends AppCompatActivity implements
 
         changeFragment(new CreateRankingFragment());
 
-        // TODO: move it to service
-        // open database
-        databaseHelper = new DatabaseHelper(this);
-        try {
-            databaseHelper.createDatabase();
-        } catch (IOException e) {
-            Log.e("TabbedActivity", e.getMessage());
-        }
-        databaseHelper.openDatabase();
-
+        databaseHelper = DatabaseHelper.getInstance(this);
     }
 
-    /**
-     * Getter for the unique database instance. Fragments should access the database through this
-     * method only.
-     *
-     * @return      open database instance
-     */
-    public DatabaseHelper getDatabase() {
-        return databaseHelper;
-    }
 
     /**
      * This method creates the selection listener that implements fragments and tab switching.

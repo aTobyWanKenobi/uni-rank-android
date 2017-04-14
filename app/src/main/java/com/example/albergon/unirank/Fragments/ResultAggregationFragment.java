@@ -90,7 +90,7 @@ public class ResultAggregationFragment extends Fragment {
             settings = (HashMap<Integer, Integer>) getArguments().getSerializable(SETTINGS);
         }
 
-        databaseHelper = ((TabbedActivity) getActivity()).getDatabase();
+        databaseHelper = DatabaseHelper.getInstance(getContext());
 
         // UI instantiation and behavior
         setupUI(view);
