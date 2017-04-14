@@ -11,7 +11,6 @@ import java.util.Map;
  */
 public class ShareRank {
 
-    public String name = null;
     public String date = null;
     public ArrayList<Integer> ranking = null;
     public HashMap<String, Integer> settings = null;
@@ -21,11 +20,10 @@ public class ShareRank {
 
     }
 
-    public ShareRank(String name, String date, List<Integer> ranking, Map<Integer, Integer> settings) {
+    public ShareRank(String date, List<Integer> ranking, Map<Integer, Integer> settings) {
 
         //TODO: args check
 
-        this.name = name;
         this.date = date;
         this.ranking = new ArrayList<>(ranking);
         this.settings = processSettings(settings);

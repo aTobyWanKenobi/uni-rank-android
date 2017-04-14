@@ -44,7 +44,7 @@ public class BrowseFragment extends Fragment {
         rank.add(3);
         rank.add(2);
 
-        final ShareRank demoShare = new ShareRank("demoName", "demoDate", rank, settings);
+        final ShareRank demoShare = new ShareRank("demoDate", rank, settings);
         final DatabaseReference firebase = ((TabbedActivity) getActivity()).getFirebaseInstance();
 
         final TextView demoTxt = (TextView) view.findViewById(R.id.demo_txt);

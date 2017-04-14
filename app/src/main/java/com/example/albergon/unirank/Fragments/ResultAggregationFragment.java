@@ -23,10 +23,15 @@ import com.example.albergon.unirank.Model.HodgeRanking;
 import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.Ranking;
 import com.example.albergon.unirank.Model.SaveRank;
+import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
 import com.example.albergon.unirank.TabbedActivity;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * This class is used to compute and display the results of an aggregation.
@@ -93,6 +99,7 @@ public class ResultAggregationFragment extends Fragment {
         }
 
         databaseHelper = DatabaseHelper.getInstance(getContext());
+        firebase = ((TabbedActivity) getActivity()).getFirebaseInstance();
 
         // UI instantiation and behavior
         setupUI(view);
@@ -129,9 +136,40 @@ public class ResultAggregationFragment extends Fragment {
 
         //TODO: implement sharing mechanism
         shareBtn.setOnClickListener(v -> {
-
+            uploadToFirebase();
         });
 
+    }
+
+    private void uploadToFirebase() {
+
+        ShareRank toShare = new ShareRank(generateDate(), result.getList(), settings);
+        String randomId = String.valueOf(generateRandomId());
+
+        firebase.child("shared").child(randomId).setValue(toShare);
+        firebase.child("shared").child(randomId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                shareBtn.setEnabled(false);
+                Toast.makeText(getContext(), "Upload succesful", Toast.LENGTH_LONG).show();
+                //Todo: implement correct flow when uploading
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //TODO: better firebase error handling
+                Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
+                throw new DatabaseException(databaseError.getMessage());
+            }
+        });
+
+    }
+
+    private int generateRandomId() {
+        Random rnd = new Random();
+        int rndNumber = 100000 + rnd.nextInt(900000);
+
+        return rndNumber;
     }
 
     //TODO: implement naming conflict resolution
@@ -176,6 +214,14 @@ public class ResultAggregationFragment extends Fragment {
         showSaveDialog();
     }
 
+    private String generateDate() {
+        // generate date in string format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
+        String date = dateFormat.format(new Date());
+
+        return date;
+    }
+
     /**
      * Save the current aggregation with the desired name and the current date.
      *
@@ -183,9 +229,7 @@ public class ResultAggregationFragment extends Fragment {
      */
     private void saveAggregation(String name) {
 
-        // generate date in string format
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
-        String date = dateFormat.format(new Date());
+        String date = generateDate();
 
         // instantiate and save aggregation
         SaveRank save = new SaveRank(name, date, settings, result.getList());
