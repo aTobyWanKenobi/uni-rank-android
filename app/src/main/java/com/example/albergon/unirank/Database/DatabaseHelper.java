@@ -7,11 +7,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.SaveRank;
+import com.example.albergon.unirank.Model.Settings;
 import com.example.albergon.unirank.Model.University;
 
 import java.io.FileOutputStream;
@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
+// TODO: move all methods not concerning initialization to a separate class?
 
 /**
  * This helper class provides methods to interact with a local SQLite database.
@@ -179,7 +181,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      * @return      a University object containing all the database information
      */
     @Override
-    public University getUniversity(int id) {
+    public University retrieveUniversity(int id) {
 
         // check arguments
         if(id < 0) {
@@ -235,7 +237,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      * @return      an Indicator containing all the respective table data
      */
     @Override
-    public Indicator getIndicator(int id) {
+    public Indicator retrieveIndicator(int id) {
 
         // check arguments
         if(id < 0) {
@@ -370,7 +372,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      * This method deletes all saved aggregations and relative data in the database.
      */
     public void deleteAllSaves() {
-        List<String> names = fetchAllSavesName();
+        List<String> names = retrieveAllSavesName();
 
         List<SaveRank> allSaves = new ArrayList<>();
         //noinspection Convert2streamapi
@@ -384,20 +386,20 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      *
      * @return  a list of SaveRank
      */
-    public List<SaveRank> fetchAllSaves() {
+    public List<SaveRank> retrieveAllSaves() {
 
-        List<String> names = fetchAllSavesName();
+        List<String> names = retrieveAllSavesName();
 
         List<SaveRank> allSaves = new ArrayList<>();
         //noinspection Convert2streamapi
         for(String name : names) {
-            allSaves.add(getSave(name));
+            allSaves.add(retrieveSave(name));
         }
 
         return allSaves;
     }
 
-    public List<String> fetchAllSavesName() {
+    public List<String> retrieveAllSavesName() {
         // specifies which database columns we want from the query
         String[] projection = {
                 Tables.Saves.RANKING_NAME
@@ -439,7 +441,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
      * @return          a SaveRank object containing aggregation information
      */
     @Override
-    public SaveRank getSave(String name) {
+    public SaveRank retrieveSave(String name) {
 
         // arguments check
         //noinspection ConstantConditions
@@ -621,32 +623,62 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         }
     }
 
-    //TODO: remove, debug method
-    public void retrievePrintAllSettings() {
-        String query = "SELECT " +
-                Tables.SavesSettings.SAVED_NAME + ", "+ Tables.SavesSettings.SAVED_INDICATOR + ", " + Tables.SavesSettings.SAVED_WEIGHT +
-                " FROM " + Tables.SavesSettings.TABLE_NAME + ";";
-        Cursor result = db.rawQuery(query, null);
+    public void saveSettings(Settings settings, boolean test) {
 
-        // check
-        if(result.getCount() <= 0) {
-            // close Cursor
-            result.close();
-
-            throw new IllegalStateException("Empty settings for saved ranking, database is corrupted");
-
-        } else {
-
-            System.out.println("Log count: " + result.getCount());
-
-
-
-            while(result.moveToNext()) {
-                String row = "Log : SaveName: " + result.getString(result.getColumnIndexOrThrow(Tables.SavesSettings.SAVED_NAME)) + " , " +
-                        "SavedIndicator: " + result.getInt(result.getColumnIndexOrThrow(Tables.SavesSettings.SAVED_INDICATOR)) + " , " +
-                        "Weight: " + result.getInt(result.getColumnIndexOrThrow(Tables.SavesSettings.SAVED_WEIGHT));
-                System.out.println(row);
-            }
+        // check arguments
+        if(settings == null) {
+            throw new IllegalArgumentException("Settings to be saved cannot be null");
         }
+
+        // initialize rows to insert
+        ContentValues settingsRow = new ContentValues();
+
+        // add settings information to appropriate table, id always 0 to override current settings
+        // except for testing
+        int id = test?1:0;
+        settingsRow.put(Tables.Settings._ID, id);
+        settingsRow.put(Tables.Settings.COUNTRY, settings.getCountryCode());
+        settingsRow.put(Tables.Settings.GENDER, settings.getGender());
+        settingsRow.put(Tables.Settings.BIRTH_YEAR, settings.getYearOfBirth());
+        settingsRow.put(Tables.Settings.USER_TYPE, settings.getType().toString());
+
+        db.insert(Tables.Settings.TABLE_NAME, null, settingsRow);
+
+    }
+
+    public Settings retriveSettings(boolean test) {
+
+        String query = "SELECT " +
+                Tables.Settings.COUNTRY + ", " +
+                Tables.Settings.GENDER + ", " +
+                Tables.Settings.BIRTH_YEAR + ", " +
+                Tables.Settings.USER_TYPE +
+                " FROM " + Tables.Settings.TABLE_NAME +
+                " WHERE "+ Tables.Settings._ID +" = ?;";
+        String id = test?"1":"0";
+        String[] selectionArgs = {id};
+        Cursor result = db.rawQuery(query, selectionArgs);
+
+        if(result.getCount() != 1) {
+            throw new IllegalArgumentException("Retrieved incorrect settings, database corrupt");
+        } else {
+            result.moveToNext();
+
+            String countryCode = result.getString(result.getColumnIndexOrThrow(Tables.Settings.COUNTRY));
+            String gender = result.getString(result.getColumnIndexOrThrow(Tables.Settings.GENDER));
+            int year = result.getInt(result.getColumnIndexOrThrow(Tables.Settings.BIRTH_YEAR));
+
+            String userType = result.getString(result.getColumnIndexOrThrow(Tables.Settings.USER_TYPE));
+            Settings.TypesOfUsers enumType = null;
+            for(Settings.TypesOfUsers type : Settings.TypesOfUsers.values()) {
+                if(type.toString().equals(userType)) {
+                    enumType = type;
+                }
+            }
+
+            Settings retrievedSettings = new Settings(countryCode, gender, year, enumType);
+            return retrievedSettings;
+        }
+
     }
 }

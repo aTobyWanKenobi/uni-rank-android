@@ -16,7 +16,6 @@ import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.SavesListAdapter;
 import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.R;
-import com.example.albergon.unirank.TabbedActivity;
 
 import java.util.List;
 
@@ -91,13 +90,13 @@ public class MyRankingsFragment extends Fragment {
     private void displaySaves() {
 
         // fetch from database
-        final List<String> saves = databaseHelper.fetchAllSavesName();
+        final List<String> saves = databaseHelper.retrieveAllSavesName();
 
         // click listener
         View.OnClickListener rowListener = v -> {
             // preview currently selected save
             String name = ((SavesListAdapter.SaveHolder)v.getTag()).getName().getText().toString();
-            currentlySelectedSave = databaseHelper.getSave(name);
+            currentlySelectedSave = databaseHelper.retrieveSave(name);
 
             selectedNameTxt.setText("Save name : " + currentlySelectedSave.getName());
             selectedDateTxt.setText("Save date : " +currentlySelectedSave.getDate());

@@ -262,7 +262,7 @@ public class ResultAggregationFragment extends Fragment {
         // retrieve Universities from database thanks to ids
         for(int i = 0; i < idList.size(); i++) {
             int id = idList.get(i);
-            University uni = databaseHelper.getUniversity(id);
+            University uni = databaseHelper.retrieveUniversity(id);
             uniList.add(uni);
         }
 
@@ -323,7 +323,7 @@ public class ResultAggregationFragment extends Fragment {
 
             // Add settings to Aggregator object
             for(Map.Entry<Integer, Integer> entry : params[0].entrySet()) {
-                Indicator indicator = databaseHelper.getIndicator(entry.getKey());
+                Indicator indicator = databaseHelper.retrieveIndicator(entry.getKey());
                 aggregator.add(indicator, entry.getValue());
             }
 

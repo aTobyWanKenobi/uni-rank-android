@@ -8,8 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Fragments.BrowseFragment;
@@ -23,7 +21,6 @@ import com.example.albergon.unirank.Model.SaveRank;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -228,7 +225,7 @@ public class TabbedActivity extends AppCompatActivity implements
      */
     @Override
     public void openSaveFromLoadDialog(String name) {
-        SaveRank toOpen = databaseHelper.getSave(name);
+        SaveRank toOpen = databaseHelper.retrieveSave(name);
         @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settings = new HashMap<>(toOpen.getSettings());
 
         //noinspection ConstantConditions

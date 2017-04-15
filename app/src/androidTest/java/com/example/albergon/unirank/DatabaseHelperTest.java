@@ -4,8 +4,10 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Database.Tables;
 import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.SaveRank;
+import com.example.albergon.unirank.Model.Settings;
 import com.example.albergon.unirank.Model.University;
 
 import org.junit.Assert;
@@ -29,13 +31,7 @@ public class DatabaseHelperTest {
     @Before
     public void setUp() {
         Context testContext = InstrumentationRegistry.getTargetContext();
-        databaseHelper = new DatabaseHelper(testContext);
-        try {
-            databaseHelper.createDatabase();
-        } catch (IOException e) {
-
-        }
-        databaseHelper.openDatabase();
+        databaseHelper = DatabaseHelper.getInstance(testContext);
     }
 
     @Test
@@ -45,7 +41,7 @@ public class DatabaseHelperTest {
 
     @Test
     public void canRetrieveUniversity() {
-        University harvard = databaseHelper.getUniversity(3);
+        University harvard = databaseHelper.retrieveUniversity(3);
 
         Assert.assertEquals("Harvard University", harvard.getName());
         Assert.assertEquals("USA", harvard.getCountry());
@@ -55,24 +51,24 @@ public class DatabaseHelperTest {
 
     @Test
     public void canRetrieveUniversityWithAcronym() {
-        University epfl = databaseHelper.getUniversity(14);
+        University epfl = databaseHelper.retrieveUniversity(14);
 
         Assert.assertEquals("EPFL", epfl.getAcronym());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getUniversityThrowsIllegal() {
-        databaseHelper.getUniversity(-1);
+        databaseHelper.retrieveUniversity(-1);
     }
 
     @Test(expected = NoSuchElementException.class)
     public void getUniversityThrowsNoSuch() {
-        databaseHelper.getUniversity(59999);
+        databaseHelper.retrieveUniversity(59999);
     }
 
     @Test
     public void getIndicatorWorks() {
-        Indicator academicReputation = databaseHelper.getIndicator(0);
+        Indicator academicReputation = databaseHelper.retrieveIndicator(0);
 
         Assert.assertEquals(0, academicReputation.getId());
         Assert.assertEquals(academicReputation.getIdSet().size(), academicReputation.getSize());
@@ -97,7 +93,7 @@ public class DatabaseHelperTest {
 
         databaseHelper.saveAggregation(testSave);
 
-        SaveRank save = databaseHelper.getSave("TestName");
+        SaveRank save = databaseHelper.retrieveSave("TestName");
 
         Assert.assertEquals("TestName", save.getName());
         Assert.assertEquals("TestDate", save.getDate());
@@ -108,8 +104,19 @@ public class DatabaseHelperTest {
         databaseHelper.deleteSavedAggregation("TestName");
     }
 
+
     @Test
-    public void printSettings() {
-        databaseHelper.retrievePrintAllSettings();
+    public void saveAndRetrieveSettingsWorks() {
+
+        Settings toSave = new Settings("Tes", "Male", 1994, Settings.TypesOfUsers.HighSchoolStudent);
+
+        databaseHelper.saveSettings(toSave, true);
+
+        Settings retrieved = databaseHelper.retriveSettings(true);
+
+        Assert.assertEquals(toSave.getCountryCode(), retrieved.getCountryCode());
+        Assert.assertEquals(toSave.getGender(), retrieved.getGender());
+        Assert.assertEquals(toSave.getYearOfBirth(), retrieved.getYearOfBirth());
+        Assert.assertEquals(toSave.getType(), retrieved.getType());
     }
 }

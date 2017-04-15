@@ -15,7 +15,6 @@ import android.widget.ListView;
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.LoadListAdapter;
 import com.example.albergon.unirank.R;
-import com.example.albergon.unirank.TabbedActivity;
 
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class ChooseLoadDialog extends DialogFragment {
 
         // Get database and fetch all save names
         DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getContext());
-        List<String> saveList = databaseHelper.fetchAllSavesName();
+        List<String> saveList = databaseHelper.retrieveAllSavesName();
 
         // Set ListView adapter
         LoadListAdapter adapter = new LoadListAdapter(getContext(),
