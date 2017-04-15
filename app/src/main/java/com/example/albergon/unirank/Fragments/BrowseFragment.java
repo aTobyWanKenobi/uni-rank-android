@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Model.Settings;
 import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.R;
 import com.example.albergon.unirank.TabbedActivity;
@@ -44,7 +46,10 @@ public class BrowseFragment extends Fragment {
         rank.add(3);
         rank.add(2);
 
-        final ShareRank demoShare = new ShareRank("demoDate", rank, settings);
+        DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getContext());
+        Settings userSettings = databaseHelper.retriveSettings(false);
+
+        final ShareRank demoShare = new ShareRank("demoDate", rank, settings, userSettings);
         final DatabaseReference firebase = ((TabbedActivity) getActivity()).getFirebaseInstance();
 
         final TextView demoTxt = (TextView) view.findViewById(R.id.demo_txt);

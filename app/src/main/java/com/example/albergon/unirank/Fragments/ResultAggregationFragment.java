@@ -23,6 +23,7 @@ import com.example.albergon.unirank.Model.HodgeRanking;
 import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.Ranking;
 import com.example.albergon.unirank.Model.SaveRank;
+import com.example.albergon.unirank.Model.Settings;
 import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
@@ -141,9 +142,11 @@ public class ResultAggregationFragment extends Fragment {
 
     }
 
+    //TODO: move to a firebase helper
     private void uploadToFirebase() {
 
-        ShareRank toShare = new ShareRank(generateDate(), result.getList(), settings);
+        Settings userSettings = databaseHelper.retriveSettings(false);
+        ShareRank toShare = new ShareRank(generateDate(), result.getList(), settings, userSettings);
         String randomId = String.valueOf(generateRandomId());
 
         firebase.child("shared").child(randomId).setValue(toShare);
@@ -239,7 +242,6 @@ public class ResultAggregationFragment extends Fragment {
         saveBtn.setEnabled(false);
     }
 
-    // TODO: move computation to async task and implement progress spinner in fragment
     /**
      * This method performs the aggregation with the input settings and returns the resulting ranking.
      */

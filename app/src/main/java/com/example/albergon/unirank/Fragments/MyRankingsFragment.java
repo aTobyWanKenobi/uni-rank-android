@@ -3,6 +3,7 @@ package com.example.albergon.unirank.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +16,21 @@ import android.widget.Toast;
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.SavesListAdapter;
 import com.example.albergon.unirank.Model.SaveRank;
+import com.example.albergon.unirank.Model.Settings;
+import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.R;
+import com.example.albergon.unirank.TabbedActivity;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
 /**
  * This fragment implements the navigation through locally saved rankings. It allows to open and
@@ -31,6 +44,7 @@ public class MyRankingsFragment extends Fragment {
     // UI elements
     private Button openBtn = null;
     private Button deleteBtn = null;
+    private Button shareBtn = null;
     private ListView savesList = null;
     private TextView selectedNameTxt = null;
     private TextView selectedDateTxt = null;
@@ -79,9 +93,70 @@ public class MyRankingsFragment extends Fragment {
             }
         });
 
+        shareBtn = (Button) view.findViewById(R.id.share_save);
+        shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentlySelectedSave == null) {
+                    Toast.makeText(getContext(), "You must select a save to share", Toast.LENGTH_LONG).show();
+                } else {
+                    uploadToFirebase();
+                    shareBtn.setEnabled(false);
+                }
+            }
+        });
+
         displaySaves();
 
         return view;
+    }
+
+    //TODO: move to a firebase helper
+    private void uploadToFirebase() {
+
+        DatabaseReference firebase = ((TabbedActivity) getActivity()).getFirebaseInstance();
+
+        Settings userSettings = databaseHelper.retriveSettings(false);
+        ShareRank toShare = new ShareRank(generateDate(),
+                currentlySelectedSave.getResult(),
+                currentlySelectedSave.getSettings(),
+                userSettings);
+        String randomId = String.valueOf(generateRandomId());
+
+        firebase.child("shared").child(randomId).setValue(toShare);
+        firebase.child("shared").child(randomId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                shareBtn.setEnabled(false);
+                Toast.makeText(getContext(), "Upload succesful", Toast.LENGTH_LONG).show();
+                //Todo: implement correct flow when uploading
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //TODO: better firebase error handling
+                Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
+                throw new DatabaseException(databaseError.getMessage());
+            }
+        });
+
+    }
+
+    //TODO: move to a firebase helper
+    private int generateRandomId() {
+        Random rnd = new Random();
+        int rndNumber = 100000 + rnd.nextInt(900000);
+
+        return rndNumber;
+    }
+
+    //TODO: move to a firebase helper
+    private String generateDate() {
+        // generate date in string format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
+        String date = dateFormat.format(new Date());
+
+        return date;
     }
 
     /**

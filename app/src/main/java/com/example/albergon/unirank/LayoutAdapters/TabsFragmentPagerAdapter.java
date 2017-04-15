@@ -9,6 +9,7 @@ import com.example.albergon.unirank.Fragments.BrowseFragment;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
 import com.example.albergon.unirank.Fragments.GreenFragment;
 import com.example.albergon.unirank.Fragments.MyRankingsFragment;
+import com.example.albergon.unirank.Fragments.SettingsFragment;
 
 /**
  * This adapter is assigned to the main activity TabLayout to manage number and names of tabs, on top
@@ -58,7 +59,7 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
                 break;
             case 2: toRet = new BrowseFragment();
                 break;
-            case 3: toRet = GreenFragment.newInstance();
+            case 3: toRet = new SettingsFragment();
                 break;
             default: throw new IllegalStateException("A non-existing tab was selected");
         }

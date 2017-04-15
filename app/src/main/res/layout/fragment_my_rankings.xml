@@ -75,9 +75,29 @@
             android:padding="5dp">
 
             <Button
+                android:id="@+id/share_save"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_shape_blue"
+                android:text="Share"
+                android:textAppearance="@style/ButtonTextAppearance" />
+
+            <Button
+                android:id="@+id/delete_save"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_shape_blue"
+                android:text="Delete"
+                android:textAppearance="@style/ButtonTextAppearance" />
+
+            <Button
                 android:id="@+id/open_save"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="20dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
@@ -85,16 +105,6 @@
                 android:text="Open"
                 android:textAppearance="@style/ButtonTextAppearance" />
 
-            <Button
-                android:id="@+id/delete_save"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                android:background="@drawable/button_shape_blue"
-                android:text="Delete"
-                android:textAppearance="@style/ButtonTextAppearance" />
         </LinearLayout>
     </LinearLayout>
 

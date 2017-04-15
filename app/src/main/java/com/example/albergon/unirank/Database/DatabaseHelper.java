@@ -625,6 +625,8 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
     public void saveSettings(Settings settings, boolean test) {
 
+        deleteSettings(test);
+
         // check arguments
         if(settings == null) {
             throw new IllegalArgumentException("Settings to be saved cannot be null");
@@ -644,6 +646,16 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
         db.insert(Tables.Settings.TABLE_NAME, null, settingsRow);
 
+    }
+
+    private void deleteSettings(boolean test) {
+
+        String row = test?"1":"0";
+        String[] selectionArgs = {row};
+
+        String query1 = "DELETE FROM " + Tables.Settings.TABLE_NAME +
+                " WHERE "+Tables.Settings._ID+" = ?;";
+        db.execSQL(query1, selectionArgs);
     }
 
     public Settings retriveSettings(boolean test) {

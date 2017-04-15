@@ -2,17 +2,20 @@ package com.example.albergon.unirank.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 
+import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Model.Settings;
 import com.example.albergon.unirank.R;
 
@@ -28,6 +31,8 @@ import java.util.List;
  */
 public class AskSettingsDialog extends DialogFragment {
 
+    private OnAskSettingsInteractionListener interactionListener = null;
+
     // UI elements
     Spinner countrySpinner = null;
     Spinner genderSpinner = null;
@@ -39,7 +44,7 @@ public class AskSettingsDialog extends DialogFragment {
     String currentCountry = null;
     String currentGender = null;
     int currentYear = 0;
-    Settings.TypesOfUsers currentType = null;
+    String currentType = null;
 
     @NonNull
     @Override
@@ -52,12 +57,33 @@ public class AskSettingsDialog extends DialogFragment {
 
         // UI setup
         setupUI(view);
+        addBehavior();
 
         // Setup the dialog builder
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCancelable(false);
         builder.setView(view);
         final AlertDialog dialog = builder.create();
+
+        // needed here to dismiss dialog
+        confirmBtn.setOnClickListener(v -> {
+
+            Settings.TypesOfUsers userSelectedType = null;
+            for(Settings.TypesOfUsers type : Settings.TypesOfUsers.values()) {
+                if(currentType.equals(type.toString())) {
+                    userSelectedType = type;
+                }
+            }
+
+            currentYear = yearPicker.getValue();
+
+            Settings selectedSettings = new Settings(currentCountry, currentGender, currentYear, userSelectedType);
+
+            DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getContext());
+            databaseHelper.saveSettings(selectedSettings, false);
+            interactionListener.goToApp();
+            dialog.dismiss();
+        });
 
         return dialog;
     }
@@ -88,7 +114,7 @@ public class AskSettingsDialog extends DialogFragment {
 
         // Set type adapter
         List<String> typesList = new ArrayList<>();
-        for(Settings.TypesOfUsers type : Settings.TypesOfUsers.values()) {
+        for (Settings.TypesOfUsers type : Settings.TypesOfUsers.values()) {
             typesList.add(type.toString());
         }
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(
@@ -104,4 +130,67 @@ public class AskSettingsDialog extends DialogFragment {
         yearPicker.setMaxValue(currentYear);
         yearPicker.setWrapSelectorWheel(true);
     }
+
+    public void addBehavior() {
+
+        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                currentCountry = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+        genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                currentGender = (String) parent.getItemAtPosition(position);            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                currentType = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnAskSettingsInteractionListener) {
+            interactionListener = (OnAskSettingsInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnAskSettingsInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        interactionListener = null;
+    }
+
+    public interface OnAskSettingsInteractionListener {
+
+        void goToApp();
+    }
+
+
 }
