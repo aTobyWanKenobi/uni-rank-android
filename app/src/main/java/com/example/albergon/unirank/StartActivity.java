@@ -1,8 +1,10 @@
 package com.example.albergon.unirank;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Fragments.AskSettingsDialog;
+import com.example.albergon.unirank.Fragments.ChooseLoadDialog;
 
 public class StartActivity extends AppCompatActivity {
 
@@ -47,6 +51,9 @@ public class StartActivity extends AppCompatActivity {
 
     public void askSettings() {
         feedback.setText("Ask Settings!");
+
+        DialogFragment dialog = new AskSettingsDialog();
+        dialog.show(getSupportFragmentManager(), "AskSettingsDialog");
     }
 
     private class AsyncOpenDatabase extends AsyncTask<Context, Integer, Boolean> {
@@ -96,7 +103,8 @@ public class StartActivity extends AppCompatActivity {
             if(!exists) {
                 askSettings();
             } else {
-                proceedInApplication();
+                askSettings();
+                //proceedInApplication();
             }
         }
     }

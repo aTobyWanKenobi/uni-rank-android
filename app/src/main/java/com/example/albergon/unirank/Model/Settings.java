@@ -24,7 +24,7 @@ public class Settings {
         // arguments validation
         if(country == null || gender == null || type == null) {
             throw new IllegalArgumentException("Arguments for Settings cannot be null");
-        } else if(country.length() < 3 || country.length() > 3 || !countryCodesSet.contains(country)) {
+        } else if(country.length() < 3 || country.length() > 3 || !countryCodes.contains(country)) {
             throw new IllegalArgumentException("Country has to be one of application's country codes");
         } else if(!gender.equals("Male") && !gender.equals("Female")) {
             throw new IllegalArgumentException("Gender has to be either Male or Female");
@@ -87,8 +87,7 @@ public class Settings {
         return codeToName;
     }
 
-    private static final String[] countryCodesArray = {"Tes"};
-    private static final Set<String> countryCodesSet = new HashSet<>(Arrays.asList(countryCodesArray));
+    public static final List<String> countryCodes = Arrays.asList("Tes");
 }
 
 
