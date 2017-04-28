@@ -9,7 +9,7 @@ public class Enums {
     private Enums() {}
 
     public enum PopularIndicatorsCategories {
-        GENDER, TYPE, BIRTHYEAR;
+        GENDER, TYPE, BIRTHYEAR, MONTH, YEAR, COUNTRY;
     }
 
     public enum GenderEnum {

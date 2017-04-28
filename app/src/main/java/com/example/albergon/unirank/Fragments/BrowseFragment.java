@@ -112,8 +112,25 @@ public class BrowseFragment extends Fragment {
         return indicatorsScores;
     }
 
+    private int[] popularIndicatorsByCategory(Enums.PopularIndicatorsCategories category, Object param) {
+
+        switch()
+    }
+
     private int[] popularIndicatorsByUserType(Enums.TypesOfUsers type, List<ShareRank> sharedPool) {
-        
+
+        int[] indicatorsScores = new int[Tables.IndicatorsList.values().length];
+
+        for(ShareRank sharedAggregation : sharedPool) {
+            if(sharedAggregation.userType.equals(type.toString())) {
+                Map<Integer, Integer> settings = ShareRank.reprocessSettings(sharedAggregation.settings);
+                for(Map.Entry<Integer, Integer> entries : settings.entrySet()) {
+                    indicatorsScores[entries.getKey()] += entries.getValue();
+                }
+            }
+        }
+
+        return indicatorsScores;
     }
 
     @Override
