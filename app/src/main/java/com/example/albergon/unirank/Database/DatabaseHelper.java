@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.Settings;
@@ -640,7 +641,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         int id = test?1:0;
         settingsRow.put(Tables.Settings._ID, id);
         settingsRow.put(Tables.Settings.COUNTRY, settings.getCountryCode());
-        settingsRow.put(Tables.Settings.GENDER, settings.getGender());
+        settingsRow.put(Tables.Settings.GENDER, settings.getGender().toString());
         settingsRow.put(Tables.Settings.BIRTH_YEAR, settings.getYearOfBirth());
         settingsRow.put(Tables.Settings.USER_TYPE, settings.getType().toString());
 
@@ -681,14 +682,18 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
             int year = result.getInt(result.getColumnIndexOrThrow(Tables.Settings.BIRTH_YEAR));
 
             String userType = result.getString(result.getColumnIndexOrThrow(Tables.Settings.USER_TYPE));
-            Settings.TypesOfUsers enumType = null;
-            for(Settings.TypesOfUsers type : Settings.TypesOfUsers.values()) {
+            Enums.TypesOfUsers enumType = null;
+            for(Enums.TypesOfUsers type : Enums.TypesOfUsers.values()) {
                 if(type.toString().equals(userType)) {
                     enumType = type;
                 }
             }
 
-            Settings retrievedSettings = new Settings(countryCode, gender, year, enumType);
+            Enums.GenderEnum genderEnum = gender.equals(Enums.GenderEnum.MALE.toString())?
+                    Enums.GenderEnum.MALE:
+                    Enums.GenderEnum.FEMALE;
+
+            Settings retrievedSettings = new Settings(countryCode, genderEnum, year, enumType);
             return retrievedSettings;
         }
 

@@ -22,7 +22,6 @@ import com.example.albergon.unirank.R;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
 
 /**

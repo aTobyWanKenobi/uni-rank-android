@@ -18,8 +18,6 @@ import com.example.albergon.unirank.Fragments.MyRankingsFragment;
 import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
 import com.example.albergon.unirank.Model.SaveRank;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,9 +39,6 @@ public class TabbedActivity extends AppCompatActivity implements
 
     // Database instance, unique for the entire application
     private DatabaseHelper databaseHelper = null;
-
-    // Firebase
-    DatabaseReference firebase = null;
 
     // Layout elements
     private TabLayout tabLayout = null;
@@ -79,16 +74,7 @@ public class TabbedActivity extends AppCompatActivity implements
         changeFragment(new CreateRankingFragment());
 
         databaseHelper = DatabaseHelper.getInstance(this);
-        firebase = FirebaseDatabase.getInstance().getReference();
     }
-
-    /**
-     * Getter for fragments to communicate with unique firebase database instance
-     */
-    public DatabaseReference getFirebaseInstance() {
-        return firebase;
-    }
-
 
     /**
      * This method creates the selection listener that implements fragments and tab switching.

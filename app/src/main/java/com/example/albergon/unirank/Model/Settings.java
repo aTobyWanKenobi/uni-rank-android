@@ -3,10 +3,8 @@ package com.example.albergon.unirank.Model;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This class models the set of settings present in the local database and is used to store them in
@@ -15,18 +13,18 @@ import java.util.Set;
 public class Settings {
 
     private String country = null;
-    private String gender = null;
+    private Enums.GenderEnum gender = null;
     public int yearOfBirth = 0;
-    public TypesOfUsers type = null;
+    public Enums.TypesOfUsers type = null;
 
-    public Settings(String country, String gender, int year, TypesOfUsers type) {
+    public Settings(String country, Enums.GenderEnum gender, int year, Enums.TypesOfUsers type) {
 
         // arguments validation
         if(country == null || gender == null || type == null) {
             throw new IllegalArgumentException("Arguments for Settings cannot be null");
         } else if(country.length() < 3 || country.length() > 3 || !countryCodes.contains(country)) {
             throw new IllegalArgumentException("Country has to be one of application's country codes");
-        } else if(!gender.equals("Male") && !gender.equals("Female")) {
+        } else if(!gender.toString().equals("Male") && !gender.toString().equals("Female")) {
             throw new IllegalArgumentException("Gender has to be either Male or Female");
         } else if(year < 1900 || year > Calendar.getInstance().get(Calendar.YEAR)) {
             throw new IllegalArgumentException("Year of birth not plausible");
@@ -47,7 +45,7 @@ public class Settings {
         return countryMap.get(country);
     }
 
-    public String getGender() {
+    public Enums.GenderEnum getGender() {
         return gender;
     }
 
@@ -55,25 +53,8 @@ public class Settings {
         return yearOfBirth;
     }
 
-    public TypesOfUsers getType() {
+    public Enums.TypesOfUsers getType() {
         return type;
-    }
-
-    public enum TypesOfUsers {
-        HighSchoolStudent("High school student"),
-        UniversityStudent("University student"),
-        Parent("Parent"),
-        NoType("No type");
-
-        private String STRING_REP = null;
-
-        public String toString() {
-            return STRING_REP;
-        }
-
-        private TypesOfUsers(String toString) {
-            STRING_REP = toString;
-        }
     }
 
     private static final Map<String, String> countryMap = createCountryMap();

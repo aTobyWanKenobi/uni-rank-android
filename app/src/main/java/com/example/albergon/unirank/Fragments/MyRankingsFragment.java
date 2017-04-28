@@ -3,7 +3,6 @@ package com.example.albergon.unirank.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,24 +12,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.albergon.unirank.Database.CallbackHandlers.OnShareRankUploadListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.SavesListAdapter;
 import com.example.albergon.unirank.Model.SaveRank;
-import com.example.albergon.unirank.Model.Settings;
-import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.R;
-import com.example.albergon.unirank.TabbedActivity;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseException;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Random;
 
 /**
  * This fragment implements the navigation through locally saved rankings. It allows to open and
@@ -51,6 +40,7 @@ public class MyRankingsFragment extends Fragment {
     private TextView selectedSettingsTxt = null;
 
     private DatabaseHelper databaseHelper = null;
+    private FirebaseHelper firebaseHelper = null;
     private SaveRank currentlySelectedSave = null;
 
     // Static factory method
@@ -65,6 +55,7 @@ public class MyRankingsFragment extends Fragment {
         final View view =  inflater.inflate(R.layout.fragment_my_rankings, container, false);
 
         databaseHelper = DatabaseHelper.getInstance(getContext());
+        firebaseHelper = new FirebaseHelper(getContext());
 
         //TODO: just for test
         selectedNameTxt = (TextView) view.findViewById(R.id.selected_save_name);
@@ -101,7 +92,6 @@ public class MyRankingsFragment extends Fragment {
                     Toast.makeText(getContext(), "You must select a save to share", Toast.LENGTH_LONG).show();
                 } else {
                     uploadToFirebase();
-                    shareBtn.setEnabled(false);
                 }
             }
         });
@@ -111,52 +101,23 @@ public class MyRankingsFragment extends Fragment {
         return view;
     }
 
-    //TODO: move to a firebase helper
     private void uploadToFirebase() {
 
-        DatabaseReference firebase = ((TabbedActivity) getActivity()).getFirebaseInstance();
-
-        Settings userSettings = databaseHelper.retriveSettings(false);
-        ShareRank toShare = new ShareRank(generateDate(),
-                currentlySelectedSave.getResult(),
-                currentlySelectedSave.getSettings(),
-                userSettings);
-        String randomId = String.valueOf(generateRandomId());
-
-        firebase.child("shared").child(randomId).setValue(toShare);
-        firebase.child("shared").child(randomId).addListenerForSingleValueEvent(new ValueEventListener() {
+        OnShareRankUploadListener callbackHandler = new OnShareRankUploadListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                shareBtn.setEnabled(false);
-                Toast.makeText(getContext(), "Upload succesful", Toast.LENGTH_LONG).show();
-                //Todo: implement correct flow when uploading
+            public void onUploadCompleted(boolean successful) {
+
+                if(successful) {
+                    shareBtn.setEnabled(false);
+                    Toast.makeText(getContext(), "Upload successful", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
+                }
             }
+        };
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //TODO: better firebase error handling
-                Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
-                throw new DatabaseException(databaseError.getMessage());
-            }
-        });
+        firebaseHelper.uploadAggregation(currentlySelectedSave.getResult(), currentlySelectedSave.getSettings(), callbackHandler);
 
-    }
-
-    //TODO: move to a firebase helper
-    private int generateRandomId() {
-        Random rnd = new Random();
-        int rndNumber = 100000 + rnd.nextInt(900000);
-
-        return rndNumber;
-    }
-
-    //TODO: move to a firebase helper
-    private String generateDate() {
-        // generate date in string format
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
-        String date = dateFormat.format(new Date());
-
-        return date;
     }
 
     /**

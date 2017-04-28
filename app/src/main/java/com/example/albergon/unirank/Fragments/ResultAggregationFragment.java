@@ -16,32 +16,22 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.albergon.unirank.Database.CallbackHandlers.OnShareRankUploadListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.UniversityListAdapter;
 import com.example.albergon.unirank.Model.Aggregator;
 import com.example.albergon.unirank.Model.HodgeRanking;
 import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.Ranking;
 import com.example.albergon.unirank.Model.SaveRank;
-import com.example.albergon.unirank.Model.Settings;
-import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
-import com.example.albergon.unirank.TabbedActivity;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseException;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * This class is used to compute and display the results of an aggregation.
@@ -54,8 +44,8 @@ public class ResultAggregationFragment extends Fragment {
 
     private Map<Integer, Integer> settings;
     private Ranking<Integer> result = null;
-    private DatabaseHelper databaseHelper = null;
-    private DatabaseReference firebase = null;
+    FirebaseHelper firebaseHelper = null;
+    DatabaseHelper databaseHelper = null;
 
     // UI elements
     private ListView resultList = null;
@@ -99,14 +89,13 @@ public class ResultAggregationFragment extends Fragment {
             settings = (HashMap<Integer, Integer>) getArguments().getSerializable(SETTINGS);
         }
 
-        databaseHelper = DatabaseHelper.getInstance(getContext());
-        firebase = ((TabbedActivity) getActivity()).getFirebaseInstance();
+        firebaseHelper = new FirebaseHelper(getActivity());
+        databaseHelper = DatabaseHelper.getInstance(getActivity());
 
         // UI instantiation and behavior
         setupUI(view);
         addButtonsBehavior();
 
-        // TODO: move to async task and show progress spinner
         // perform aggregation and display it
         performAggregation();
 
@@ -135,44 +124,23 @@ public class ResultAggregationFragment extends Fragment {
 
         saveBtn.setOnClickListener(v -> showSaveDialog());
 
-        //TODO: implement sharing mechanism
         shareBtn.setOnClickListener(v -> {
-            uploadToFirebase();
+            OnShareRankUploadListener callbackHandler = new OnShareRankUploadListener() {
+                @Override
+                public void onUploadCompleted(boolean successful) {
+
+                    if(successful) {
+                        shareBtn.setEnabled(false);
+                        Toast.makeText(getContext(), "Upload successful", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
+                    }
+                }
+            };
+
+            firebaseHelper.uploadAggregation(result.getList(), settings, callbackHandler);
         });
 
-    }
-
-    //TODO: move to a firebase helper
-    private void uploadToFirebase() {
-
-        Settings userSettings = databaseHelper.retriveSettings(false);
-        ShareRank toShare = new ShareRank(generateDate(), result.getList(), settings, userSettings);
-        String randomId = String.valueOf(generateRandomId());
-
-        firebase.child("shared").child(randomId).setValue(toShare);
-        firebase.child("shared").child(randomId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                shareBtn.setEnabled(false);
-                Toast.makeText(getContext(), "Upload succesful", Toast.LENGTH_LONG).show();
-                //Todo: implement correct flow when uploading
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //TODO: better firebase error handling
-                Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
-                throw new DatabaseException(databaseError.getMessage());
-            }
-        });
-
-    }
-
-    private int generateRandomId() {
-        Random rnd = new Random();
-        int rndNumber = 100000 + rnd.nextInt(900000);
-
-        return rndNumber;
     }
 
     //TODO: implement naming conflict resolution
@@ -217,14 +185,6 @@ public class ResultAggregationFragment extends Fragment {
         showSaveDialog();
     }
 
-    private String generateDate() {
-        // generate date in string format
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
-        String date = dateFormat.format(new Date());
-
-        return date;
-    }
-
     /**
      * Save the current aggregation with the desired name and the current date.
      *
@@ -232,7 +192,7 @@ public class ResultAggregationFragment extends Fragment {
      */
     private void saveAggregation(String name) {
 
-        String date = generateDate();
+        String date = firebaseHelper.generateDate();
 
         // instantiate and save aggregation
         SaveRank save = new SaveRank(name, date, settings, result.getList());
@@ -369,5 +329,4 @@ public class ResultAggregationFragment extends Fragment {
             progressCircle.setProgress(progress[0]);
         }
     }
-
 }
