@@ -9,7 +9,21 @@ public class Enums {
     private Enums() {}
 
     public enum PopularIndicatorsCategories {
-        GENDER, TYPE, BIRTHYEAR, TIMEFRAME, COUNTRY;
+        GENDER("Gender"),
+        TYPE("User type"),
+        BIRTHYEAR("User age"),
+        TIMEFRAME("Upload date"),
+        COUNTRY("Country");
+
+        private String TO_STRING;
+
+        PopularIndicatorsCategories(final String toString) {
+            TO_STRING = toString;
+        }
+
+        public String toString() {
+            return TO_STRING;
+        }
     }
 
     public enum GenderEnum {
@@ -46,6 +60,24 @@ public class Enums {
 
     public enum TimeFrame {
         MONTH, YEAR;
+    }
+
+    public enum UserAgeCategories {
+        KIDS("Less than 15 years old"),
+        TEENS("15-20 years old"),
+        YOUNGS("20-27 years old"),
+        ADULTS("27-50 years old"),
+        OLD("More than 50 years old");
+
+        private String TO_STRING = null;
+
+        UserAgeCategories(String toString) {
+            TO_STRING = toString;
+        }
+
+        public String toString() {
+            return TO_STRING;
+        }
     }
 
 

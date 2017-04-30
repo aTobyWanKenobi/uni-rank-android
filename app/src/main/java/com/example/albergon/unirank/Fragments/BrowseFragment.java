@@ -2,12 +2,17 @@ package com.example.albergon.unirank.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorListener;
@@ -15,13 +20,16 @@ import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrie
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.Database.Tables;
+import com.example.albergon.unirank.Model.Countries;
 import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Range;
-import com.example.albergon.unirank.Model.Settings;
 import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.R;
 import com.example.albergon.unirank.ShareRankFilter;
+import com.google.firebase.database.DatabaseException;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +40,19 @@ public class BrowseFragment extends Fragment {
     private FirebaseHelper firebaseHelper = null;
     private DatabaseHelper databaseHelper = null;
 
+    private Enums.PopularIndicatorsCategories currentCategory = null;
+
+    // General layout
+    private RadioButton popularIndicatorRadio = null;
+    private RadioButton generalStatisticsRadio = null;
+    private FrameLayout queryContainer = null;
+
+    // Popular indicators layout
+    private Spinner categorySpinner = null;
+    private Spinner parameterSpinner = null;
+    private ListView queryResult = null;
+
+    // demo
     private  TextView i1 = null;
     private  TextView i2 = null;
     private  TextView i3 = null;
@@ -48,18 +69,210 @@ public class BrowseFragment extends Fragment {
         databaseHelper = DatabaseHelper.getInstance(getContext());
         firebaseHelper = new FirebaseHelper(getContext());
 
-        demo(view);
+        // setup common elements
+        setupUI(view);
+
+        // popular indicators selected by default for now
+        initializePopularIndicators(view);
+
+        //demo(view);
 
         return view;
     }
 
+    private void setupUI(View view) {
+
+        popularIndicatorRadio = (RadioButton) view.findViewById(R.id.popular_indicators_radio);
+        generalStatisticsRadio = (RadioButton) view.findViewById(R.id.general_queries_radio);
+        queryResult = (ListView) view.findViewById(R.id.indicators_result_list);
+        queryContainer = (FrameLayout) view.findViewById(R.id.query_layout_container);
+    }
+
+    private void initializePopularIndicators(View view) {
+
+        popularIndicatorRadio.setChecked(true);
+
+        // inflate correct layout
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View popularIndicatorsLayout = inflater.inflate(R.layout.popular_indicators_query, null, false);
+        queryContainer.addView(popularIndicatorsLayout);
+
+        // disable parameter spinner until category is chosen
+        parameterSpinner.setEnabled(false);
+
+        // set category spinner adapter
+        List<String> categoriesList = new ArrayList<>();
+        for(Enums.PopularIndicatorsCategories category : Enums.PopularIndicatorsCategories.values()) {
+            categoriesList.add(category.toString());
+        }
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
+                getContext(),
+                R.layout.simple_dropdown_text_cell,
+                categoriesList);
+        categorySpinner.setAdapter(categoryAdapter);
+
+        // set category spinner listener
+        categorySpinner.setOnItemSelectedListener(createCategorySpinnerListener());
+    }
+
+    private void updateCurrentCategory(Enums.PopularIndicatorsCategories category) {
+
+        // update current category
+
+
+        // prepare spinner list by category
+        List<String> spinnerList = new ArrayList<>();
+        switch(category) {
+            case GENDER:
+                for(Enums.GenderEnum gender : Enums.GenderEnum.values()) {
+                    spinnerList.add(gender.toString());
+                }
+                break;
+            case TYPE:
+                for(Enums.TypesOfUsers type : Enums.TypesOfUsers.values()) {
+                    spinnerList.add(type.toString());
+                }
+                break;
+            case BIRTHYEAR:
+                for(Enums.UserAgeCategories age : Enums.UserAgeCategories.values()) {
+                    spinnerList.add(age.toString());
+                }
+                break;
+            case TIMEFRAME:
+                for(Enums.TimeFrame timeFrame : Enums.TimeFrame.values()) {
+                    spinnerList.add(timeFrame.toString());
+                }
+                break;
+            case COUNTRY:
+                List<String> countryNames = new ArrayList<>(Countries.countryMap.values());
+                Collections.sort(countryNames, String.CASE_INSENSITIVE_ORDER);
+                spinnerList = countryNames;
+                break;
+            default:
+                throw new IllegalStateException("Unknown element in categories enumeration");
+        }
+
+        // set category spinner adapter and enable it
+        ArrayAdapter<String> parameterAdapter = new ArrayAdapter<>(
+                getContext(),
+                R.layout.simple_dropdown_text_cell,
+                spinnerList);
+        parameterSpinner.setAdapter(parameterAdapter);
+        parameterSpinner.setEnabled(true);
+
+        // set category parameter listener
+        parameterSpinner.setOnItemSelectedListener(createParameterSpinnerListener());
+
+    }
+
+    private AdapterView.OnItemSelectedListener createCategorySpinnerListener() {
+
+        return new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                // retrieve selected category and call UI updates
+                String chosenCategory = (String) parent.getItemAtPosition(position);
+                for(Enums.PopularIndicatorsCategories c : Enums.PopularIndicatorsCategories.values()) {
+                    if(c.toString().equals(chosenCategory)) {
+                        updateCurrentCategory(c);
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // do nothing
+            }
+        };
+    }
+
+    private AdapterView.OnItemSelectedListener createParameterSpinnerListener() {
+
+        return new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                // retrieve selected parameter and call UI updates
+                String chosenParameter = (String) parent.getItemAtPosition(position);
+
+                // safety check, should never happen
+                if(currentCategory != null) {
+                    launchQuery(chosenParameter);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // do nothing
+            }
+        };
+    }
+
+    private void launchQuery(String parameter) {
+
+        final OnFirebaseErrorListener errorListener = createErrorListener();
+
+        switch(currentCategory) {
+
+            case GENDER:
+
+                // retrieve gender parameter
+                Enums.GenderEnum gender = null;
+                for(Enums.GenderEnum g : Enums.GenderEnum.values()) {
+                    if(g.toString().equals(parameter)) {
+                        gender = g;
+                    }
+                }
+
+                pop
+                break;
+            case TYPE:
+                for(Enums.TypesOfUsers type : Enums.TypesOfUsers.values()) {
+                    spinnerList.add(type.toString());
+                }
+                break;
+            case BIRTHYEAR:
+                for(Enums.UserAgeCategories age : Enums.UserAgeCategories.values()) {
+                    spinnerList.add(age.toString());
+                }
+                break;
+            case TIMEFRAME:
+                for(Enums.TimeFrame timeFrame : Enums.TimeFrame.values()) {
+                    spinnerList.add(timeFrame.toString());
+                }
+                break;
+            case COUNTRY:
+                List<String> countryNames = new ArrayList<>(Countries.countryMap.values());
+                Collections.sort(countryNames, String.CASE_INSENSITIVE_ORDER);
+                spinnerList = countryNames;
+                break;
+            default:
+                throw new IllegalStateException("Unknown element in categories enumeration");
+        }
+
+    }
+
+
+    private void displayListResult() {
+
+    }
+
+    private OnFirebaseErrorListener createErrorListener() {
+
+        return new OnFirebaseErrorListener() {
+            
+            @Override
+            public void onError(String message) {
+                throw new DatabaseException(message);
+            }
+        };
+    }
+
     private void demo(View view) {
 
-        i1 = (TextView) view.findViewById(R.id.i1);
-        i2 = (TextView) view.findViewById(R.id.i2);
-        i3 = (TextView) view.findViewById(R.id.i3);
-        i4 = (TextView) view.findViewById(R.id.i4);
-        i5 = (TextView) view.findViewById(R.id.i5);
 
         final OnSharedPoolRetrievalListener listener = new OnSharedPoolRetrievalListener() {
             @Override
@@ -83,7 +296,7 @@ public class BrowseFragment extends Fragment {
             }
         };
 
-        Button demoButton = (Button) view.findViewById(R.id.demoButton);
+        Button demoButton = null;
         demoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,7 +330,7 @@ public class BrowseFragment extends Fragment {
                 categoryFilter = createBirthyearFilter();
                 break;
             case TIMEFRAME:
-                categoryFilter = createTimeframeFilter();
+                categoryFilter = createTimeFrameFilter();
                 break;
             case COUNTRY:
                 categoryFilter = createCountryFilter();
@@ -194,7 +407,7 @@ public class BrowseFragment extends Fragment {
         };
     }
 
-    private ShareRankFilter createTimeframeFilter() {
+    private ShareRankFilter createTimeFrameFilter() {
 
         return (param, sharedAggregation) -> {
 
