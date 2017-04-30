@@ -59,7 +59,18 @@ public class Enums {
     }
 
     public enum TimeFrame {
-        MONTH, YEAR;
+        MONTH("This month"),
+        YEAR("This year");
+
+        private String TO_STRING = null;
+
+        TimeFrame(String toString) {
+            TO_STRING = toString;
+        }
+
+        public String toString() {
+            return TO_STRING;
+        }
     }
 
     public enum UserAgeCategories {

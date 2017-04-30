@@ -10,12 +10,14 @@
         android:layout_weight="1"
         android:text="Choose the category for which you want to obtain the most popular indicators"
         android:textAlignment="center"
+        android:padding="10dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:padding="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -23,6 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginLeft="10dp"
             android:text="Category" />
 
         <Spinner
@@ -36,6 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:padding="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -43,6 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginLeft="10dp"
             android:gravity="left"
             android:text="Query parameter" />
 
@@ -58,6 +63,9 @@
         android:id="@+id/indicators_result_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10sp"
+        android:padding="10dp"
         android:layout_weight="200" />
 
 </LinearLayout>

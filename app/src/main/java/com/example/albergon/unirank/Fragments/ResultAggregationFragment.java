@@ -192,7 +192,7 @@ public class ResultAggregationFragment extends Fragment {
      */
     private void saveAggregation(String name) {
 
-        String date = firebaseHelper.generateDate();
+        String date = FirebaseHelper.generateDate();
 
         // instantiate and save aggregation
         SaveRank save = new SaveRank(name, date, settings, result.getList());

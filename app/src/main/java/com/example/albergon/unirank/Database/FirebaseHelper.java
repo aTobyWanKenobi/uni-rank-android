@@ -110,7 +110,7 @@ public class FirebaseHelper {
         retrieveSharedPool(successHandler, error);
     }
 
-    public String generateDate() {
+    public static String generateDate() {
         // generate date in string format
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
         String date = dateFormat.format(new Date());
@@ -118,7 +118,7 @@ public class FirebaseHelper {
         return date;
     }
 
-    public int generateRandomId() {
+    public static int generateRandomId() {
         Random rnd = new Random();
         int rndNumber = 100000 + rnd.nextInt(900000);
 
