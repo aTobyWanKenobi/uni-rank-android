@@ -22,7 +22,7 @@ public class Settings {
         // arguments validation
         if(country == null || gender == null || type == null) {
             throw new IllegalArgumentException("Arguments for Settings cannot be null");
-        } else if(country.length() < 3 || country.length() > 3 || !countryCodes.contains(country)) {
+        } else if(country.length() < 3 || country.length() > 3 || !Countries.countryMap.keySet().contains(country)) {
             throw new IllegalArgumentException("Country has to be one of application's country codes");
         } else if(!gender.toString().equals("Male") && !gender.toString().equals("Female")) {
             throw new IllegalArgumentException("Gender has to be either Male or Female");
@@ -42,7 +42,7 @@ public class Settings {
     }
 
     public String getCountryName() {
-        return countryMap.get(country);
+        return Countries.countryMap.get(country);
     }
 
     public Enums.GenderEnum getGender() {
@@ -57,18 +57,5 @@ public class Settings {
         return type;
     }
 
-    private static final Map<String, String> countryMap = createCountryMap();
 
-    private static Map<String, String> createCountryMap() {
-
-        Map<String, String> codeToName = new HashMap<>();
-        // TODO: insert all country mappings
-        // TODO: create country codes list
-
-        return codeToName;
-    }
-
-    public static final List<String> countryCodes = Arrays.asList("Tes");
 }
-
-

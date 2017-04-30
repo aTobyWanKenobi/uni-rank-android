@@ -9,7 +9,7 @@ public class Enums {
     private Enums() {}
 
     public enum PopularIndicatorsCategories {
-        GENDER, TYPE, BIRTHYEAR, MONTH, YEAR, COUNTRY;
+        GENDER, TYPE, BIRTHYEAR, TIMEFRAME, COUNTRY;
     }
 
     public enum GenderEnum {
@@ -42,6 +42,10 @@ public class Enums {
         public String toString() {
             return TO_STRING;
         }
+    }
+
+    public enum TimeFrame {
+        MONTH, YEAR;
     }
 
 

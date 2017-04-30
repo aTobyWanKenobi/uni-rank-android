@@ -16,13 +16,18 @@ import android.widget.NumberPicker;
 import android.widget.Spinner;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Model.Countries;
+import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Settings;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This fragment defines a dialog which purpose is to ask to the user to input some meaningful information
@@ -67,16 +72,19 @@ public class AskSettingsDialog extends DialogFragment {
         // needed here to dismiss dialog
         confirmBtn.setOnClickListener(v -> {
 
-            Settings.TypesOfUsers userSelectedType = null;
-            for(Settings.TypesOfUsers type : Settings.TypesOfUsers.values()) {
+            Enums.TypesOfUsers userSelectedType = null;
+            for(Enums.TypesOfUsers type : Enums.TypesOfUsers.values()) {
                 if(currentType.equals(type.toString())) {
                     userSelectedType = type;
                 }
             }
 
             currentYear = yearPicker.getValue();
+            Enums.GenderEnum gender = currentGender.equals(Enums.GenderEnum.MALE.toString())?
+                    Enums.GenderEnum.MALE:
+                    Enums.GenderEnum.FEMALE;
 
-            Settings selectedSettings = new Settings(currentCountry, currentGender, currentYear, userSelectedType);
+            Settings selectedSettings = new Settings(currentCountry, gender, currentYear, userSelectedType);
 
             DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getContext());
             databaseHelper.saveSettings(selectedSettings, false);
@@ -97,14 +105,19 @@ public class AskSettingsDialog extends DialogFragment {
         confirmBtn = (Button) view.findViewById(R.id.ask_settings_confirm_btn);
 
         // Set country adapter
+        List<String> countryNames = new ArrayList<>(Countries.countryMap.values());
+        Collections.sort(countryNames, String.CASE_INSENSITIVE_ORDER);
         ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(
                 getContext(),
                 R.layout.simple_dropdown_text_cell,
-                Settings.countryCodes);
+                countryNames);
         countrySpinner.setAdapter(countryAdapter);
 
         // Set gender adapter
-        List<String> genderList = Arrays.asList("Male", "Female");
+        List<String> genderList = new ArrayList<>();
+        for(Enums.GenderEnum gender : Enums.GenderEnum.values()) {
+            genderList.add(gender.toString());
+        }
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(
                 getContext(),
                 R.layout.simple_dropdown_text_cell,
@@ -113,7 +126,7 @@ public class AskSettingsDialog extends DialogFragment {
 
         // Set type adapter
         List<String> typesList = new ArrayList<>();
-        for (Settings.TypesOfUsers type : Settings.TypesOfUsers.values()) {
+        for (Enums.TypesOfUsers type : Enums.TypesOfUsers.values()) {
             typesList.add(type.toString());
         }
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(
@@ -135,7 +148,12 @@ public class AskSettingsDialog extends DialogFragment {
         countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                currentCountry = (String) parent.getItemAtPosition(position);
+                String currentCountryName = (String) parent.getItemAtPosition(position);
+                for(Map.Entry<String, String> entry : Countries.countryMap.entrySet()) {
+                    if(entry.getValue().equals(currentCountryName)) {
+                        currentCountry = entry.getKey();
+                    }
+                }
             }
 
             @Override

@@ -34,7 +34,7 @@ public class SettingsFragment extends Fragment {
         yearTxt = (TextView) view.findViewById(R.id.test_year_txt);
         typeTxt = (TextView) view.findViewById(R.id.test_type_txt);
 
-        genderTxt.setText(settings.getGender());
+        genderTxt.setText(settings.getGender().toString());
         countryTxt.setText(settings.getCountryCode());
         yearTxt.setText(Integer.toString(settings.getYearOfBirth()));
         typeTxt.setText(settings.getType().toString());
