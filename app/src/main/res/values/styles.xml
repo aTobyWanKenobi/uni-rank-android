@@ -47,4 +47,22 @@
         <item name="android:textColorPrimary">@android:color/black</item>
     </style>
 
+    <!-- Layout refactor -->
+
+    <style name="PageTitleTextBox" parent="TextAppearance.AppCompat.Headline">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/palette2</item>
+    </style>
+
+    <style name="TextBox" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/palette2</item>
+    </style>
+
+    <style name="SpinnerStyle" parent="android:Widget.TextView.SpinnerItem">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/palette2</item>
+        <item name="android:minHeight">25dp</item>
+    </style>
+
 </resources>

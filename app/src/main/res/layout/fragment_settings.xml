@@ -2,24 +2,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.albergon.unirank.Fragments.SettingsFragment">
+    tools:context="com.example.albergon.unirank.Fragments.SettingsFragment"
+    android:background="@drawable/tab_background">
 
-    <!-- TODO: Update blank fragment layout -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
+        android:orientation="vertical"
         android:padding="5dp">
 
         <TextView
             android:id="@+id/settings_dialog_title"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="10dp"
+            android:background="@drawable/page_title_shape"
+            android:gravity="top"
+            android:layout_marginTop="20dp"
+            android:padding="15dp"
             android:text="Change your settings"
             android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+            android:textAppearance="@style/PageTitleTextBox" />
+
+        <TextView
+            android:id="@+id/spacing"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,8 +38,10 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="5dp"
+                android:background="@drawable/settings_horizontal_layout">
 
                 <TextView
                     android:id="@+id/change_country_txt"
@@ -37,6 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
+                    android:textAppearance="@style/TextBox"
                     android:text="Your country" />
 
                 <Spinner
@@ -48,7 +61,9 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/settings_horizontal_layout"
+                android:layout_margin="5dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -57,6 +72,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
+                    android:textAppearance="@style/TextBox"
                     android:text="Your gender" />
 
                 <Spinner
@@ -68,7 +84,9 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/settings_horizontal_layout"
+                android:layout_margin="5dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -77,6 +95,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
+                    android:textAppearance="@style/TextBox"
                     android:text="Your birth year" />
 
                 <NumberPicker
@@ -90,7 +109,9 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/settings_horizontal_layout"
+                android:layout_margin="5dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -99,6 +120,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
+                    android:textAppearance="@style/TextBox"
                     android:text="Type of user" />
 
                 <Spinner

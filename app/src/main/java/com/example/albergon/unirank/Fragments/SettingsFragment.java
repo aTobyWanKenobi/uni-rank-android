@@ -79,8 +79,9 @@ public class SettingsFragment extends Fragment {
         Collections.sort(countryNames, String.CASE_INSENSITIVE_ORDER);
         ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(
                 getContext(),
-                R.layout.simple_dropdown_text_cell,
+                R.layout.spinner_layout,
                 countryNames);
+        countryAdapter.setDropDownViewResource(R.layout.simple_dropdown_text_cell);
         countrySpinner.setAdapter(countryAdapter);
 
         // Set gender adapter
@@ -90,8 +91,9 @@ public class SettingsFragment extends Fragment {
         }
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(
                 getContext(),
-                R.layout.simple_dropdown_text_cell,
+                R.layout.spinner_layout,
                 genderList);
+        genderAdapter.setDropDownViewResource(R.layout.simple_dropdown_text_cell);
         genderSpinner.setAdapter(genderAdapter);
 
         // Set type adapter
@@ -101,8 +103,9 @@ public class SettingsFragment extends Fragment {
         }
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(
                 getContext(),
-                R.layout.simple_dropdown_text_cell,
+                R.layout.spinner_layout,
                 typesList);
+        typeAdapter.setDropDownViewResource(R.layout.simple_dropdown_text_cell);
         typeSpinner.setAdapter(typeAdapter);
 
         // Set year picker values
