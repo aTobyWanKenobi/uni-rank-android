@@ -286,7 +286,7 @@ public class SharedPoolFilter {
             switch(timeWindow) {
                 case MONTH:
                     // keep month and year from dates so that we can check for month equality
-                    belongs = currentDate.substring(3).equals(sharedDate.substring(3));
+                    belongs = currentDate.split(" ", 2)[1].equals(sharedDate.split(" ", 2)[1]);
                     break;
                 case YEAR:
                     // cast years and compare

@@ -5,6 +5,7 @@ import android.support.test.InstrumentationRegistry;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.Tables;
+import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.Settings;
@@ -108,7 +109,7 @@ public class DatabaseHelperTest {
     @Test
     public void saveAndRetrieveSettingsWorks() {
 
-        Settings toSave = new Settings("Tes", "Male", 1994, Settings.TypesOfUsers.HighSchoolStudent);
+        Settings toSave = new Settings("CHE", Enums.GenderEnum.MALE, 1994, Enums.TypesOfUsers.HighSchoolStudent);
 
         databaseHelper.saveSettings(toSave, true);
 

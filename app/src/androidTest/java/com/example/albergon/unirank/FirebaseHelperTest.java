@@ -7,7 +7,12 @@ import android.support.test.InstrumentationRegistry;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
 import com.example.albergon.unirank.Database.FirebaseHelper;
+import com.example.albergon.unirank.Model.ShareGeneralStats;
 import com.example.albergon.unirank.Model.ShareRank;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -51,5 +56,24 @@ public class FirebaseHelperTest {
         SystemClock.sleep(5000);
         System.out.print("Ci arrivo");
 
+    }
+
+    @Test
+    public void initialGeneralStatsUpload() {
+
+        ShareGeneralStats toShare = new ShareGeneralStats();
+
+        FirebaseDatabase.getInstance().getReference().child(FirebaseHelper.GENERAL_STATISTICS_NODE).setValue(toShare);
+        FirebaseDatabase.getInstance().getReference().child(FirebaseHelper.GENERAL_STATISTICS_NODE).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // nothing, just a test
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // nothing, just a test
+            }
+        });
     }
 }

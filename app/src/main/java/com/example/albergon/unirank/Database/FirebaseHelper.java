@@ -6,6 +6,7 @@ import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorLis
 import com.example.albergon.unirank.Database.CallbackHandlers.OnShareRankUploadListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
 import com.example.albergon.unirank.Model.Settings;
+import com.example.albergon.unirank.Model.ShareGeneralStats;
 import com.example.albergon.unirank.Model.ShareRank;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,8 +27,8 @@ import java.util.Random;
  */
 public class FirebaseHelper {
 
-    final static String SHARED_NODE = "shared";
-
+    public final static String SHARED_NODE = "shared";
+    public final static String GENERAL_STATISTICS_NODE = "general_statistics";
 
     private DatabaseHelper databaseHelper = null;
     private DatabaseReference firebase = null;
@@ -50,12 +51,72 @@ public class FirebaseHelper {
     public void uploadAggregation(List<Integer> result, Map<Integer, Integer> settings,
                                   OnShareRankUploadListener callbackHandler) {
 
+        // arguments check
+        if(result == null || settings == null || callbackHandler == null) {
+            throw new IllegalArgumentException("Arguments for an aggregation upload cannot be null");
+        } else if(result.isEmpty() || settings.isEmpty()) {
+            throw new IllegalArgumentException(("Cannot upload an empty aggregation"));
+        }
+
         Settings userSettings = databaseHelper.retriveSettings(false);
         ShareRank toShare = new ShareRank(generateDate(), result, settings, userSettings);
         String randomId = String.valueOf(generateRandomId());
 
+
         firebase.child(SHARED_NODE).child(randomId).setValue(toShare);
         firebase.child(SHARED_NODE).child(randomId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    // update pool statistics
+                    updateGeneralStatistics(userSettings, callbackHandler);
+                } else {
+                    callbackHandler.onUploadCompleted(false);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callbackHandler.onUploadCompleted(false);
+            }
+        });
+
+    }
+
+    private void updateGeneralStatistics(Settings userSettings, OnShareRankUploadListener callbackHandler) {
+
+        firebase.child(GENERAL_STATISTICS_NODE).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    ShareGeneralStats stats = dataSnapshot.getValue(ShareGeneralStats.class);
+                    stats.update(
+                            userSettings.getGender(),
+                            userSettings.getType(),
+                            userSettings.getYearOfBirth(),
+                            generateDate(),
+                            userSettings.getCountryCode());
+                    uploadNewStats(stats, callbackHandler);
+                } else {
+                    callbackHandler.onUploadCompleted(false);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callbackHandler.onUploadCompleted(false);
+            }
+        });
+
+
+    }
+
+    private void uploadNewStats(ShareGeneralStats toShare, OnShareRankUploadListener callbackHandler) {
+
+        firebase.child(GENERAL_STATISTICS_NODE).setValue(toShare);
+        firebase.child(GENERAL_STATISTICS_NODE).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {

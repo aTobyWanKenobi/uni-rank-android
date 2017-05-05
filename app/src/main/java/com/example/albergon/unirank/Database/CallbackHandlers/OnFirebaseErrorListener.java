@@ -1,7 +1,7 @@
 package com.example.albergon.unirank.Database.CallbackHandlers;
 
 /**
- * Created by Tobia Albergoni on 28.04.2017.
+ * Callback interface for firebase database errors.
  */
 public interface OnFirebaseErrorListener {
 
