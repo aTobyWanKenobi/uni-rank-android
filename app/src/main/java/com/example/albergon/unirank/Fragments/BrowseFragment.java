@@ -29,6 +29,7 @@ import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.Model.SharedPoolFilter;
 import com.example.albergon.unirank.R;
 import com.example.albergon.unirank.ShareRankFilter;
+import com.github.mikephil.charting.charts.PieChart;
 import com.google.firebase.database.DatabaseException;
 
 import java.util.ArrayList;
@@ -56,6 +57,8 @@ public class BrowseFragment extends Fragment {
     private Spinner parameterSpinner = null;
     private ListView queryResult = null;
 
+    // General statistics layout
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -81,6 +84,38 @@ public class BrowseFragment extends Fragment {
         popularIndicatorRadio = (RadioButton) view.findViewById(R.id.popular_indicators_radio);
         generalStatisticsRadio = (RadioButton) view.findViewById(R.id.general_queries_radio);
         queryContainer = (FrameLayout) view.findViewById(R.id.query_layout_container);
+
+        popularIndicatorRadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initializePopularIndicators(v);
+            }
+        });
+
+        generalStatisticsRadio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initializeGeneralStatistics(v);
+            }
+        });
+    }
+
+    private void initializeGeneralStatistics(View view) {
+
+        generalStatisticsRadio.setChecked(true);
+
+        // inflate correct layout
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        View generalStatsLayout = inflater.inflate(R.layout.general_statistics_layout, null, false);
+        queryContainer.addView(generalStatsLayout);
+
+        //TODO: move above?
+        //TODO: use piecharts
+        // initialize layout elements
+
+        categorySpinner = (Spinner) popularIndicatorsLayout.findViewById(R.id.query_type_spinner);
+        parameterSpinner = (Spinner) popularIndicatorsLayout.findViewById(R.id.query_parameter_spinner);
+        queryResult = (ListView) popularIndicatorsLayout.findViewById(R.id.indicators_result_list);
     }
 
     private void initializePopularIndicators(View view) {
