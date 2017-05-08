@@ -45,7 +45,6 @@
                 android:layout_gravity="right"
                 android:layout_weight="1"
                 android:text="Cancel"
-                android:background="@drawable/button_shape_blue"
                 style="@style/ButtonTextAppearance"
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="5dp"

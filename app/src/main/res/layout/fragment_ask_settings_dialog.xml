@@ -124,7 +124,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Confirm"
-            android:background="@drawable/button_shape_blue"
             style="@style/ButtonTextAppearance"
             android:layout_margin="5dp"/>
 

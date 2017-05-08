@@ -3,6 +3,7 @@ package com.example.albergon.unirank.Database;
 import android.content.Context;
 
 import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorListener;
+import com.example.albergon.unirank.Database.CallbackHandlers.OnGeneralStatisticsRetrievalListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnShareRankUploadListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
 import com.example.albergon.unirank.Model.Settings;
@@ -135,6 +136,29 @@ public class FirebaseHelper {
 
     }
 
+    public void retrieveGeneralStats(OnGeneralStatisticsRetrievalListener successListener,
+                                     OnFirebaseErrorListener errorListener) {
+
+        // retrieve from general stats node
+        firebase.child(GENERAL_STATISTICS_NODE).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    ShareGeneralStats stats = dataSnapshot.getValue(ShareGeneralStats.class);
+                    successListener.onGeneralStatisticsRetrieved(stats);
+                } else {
+                    errorListener.onError("Retrieved empty snapshot from Firebase. Corrupted remote database.");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                errorListener.onError(databaseError.getMessage());
+            }
+        });
+    }
+
     public void retrieveSharedPool(OnSharedPoolRetrievalListener successHandler,
                                                OnFirebaseErrorListener errorListener) {
 
@@ -165,6 +189,7 @@ public class FirebaseHelper {
 
     }
 
+    //TODO remove
     public void testDateRetriever(OnSharedPoolRetrievalListener successHandler,
                                   OnFirebaseErrorListener error) {
 

@@ -79,7 +79,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:layout_weight="1"
-                android:background="@drawable/button_shape_blue"
                 android:text="Share"
                 android:textAppearance="@style/ButtonTextAppearance" />
 
@@ -90,7 +89,6 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/button_shape_blue"
                 android:text="Delete"
                 android:textAppearance="@style/ButtonTextAppearance" />
 
@@ -101,7 +99,6 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:background="@drawable/button_shape_blue"
                 android:text="Open"
                 android:textAppearance="@style/ButtonTextAppearance" />
 
