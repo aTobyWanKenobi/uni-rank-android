@@ -28,6 +28,7 @@ import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,9 +41,11 @@ public class ResultAggregationFragment extends Fragment {
 
     // Factory parameter and interaction listener
     private static final String SETTINGS = "settings";
+    private static final String RANKING = "ranking";
     private ResultFragmentInteractionListener interactionListener = null;
 
     private Map<Integer, Integer> settings;
+    private ArrayList<Integer> oldResult;
     private Ranking<Integer> result = null;
     FirebaseHelper firebaseHelper = null;
     DatabaseHelper databaseHelper = null;
@@ -57,13 +60,15 @@ public class ResultAggregationFragment extends Fragment {
     private LinearLayout progress_layout = null;
 
     /**
-     * Static factory method that passes the settings of the aggregation to perform. It should be
-     * the only way this fragment class is instantiated.
+     * Static factory method that passes the settings and possibly an old resulting ranking of the
+     * aggregation to perform. It should be the only way this fragment class is instantiated.
      *
-     * @param settings  settings from the CreateRankingFragment
-     * @return          a result fragment with the desired settings
+     * @param settings      settings from the CreateRankingFragment
+     * @param oldRanking    old result if it exists, null otherwise
+     * @return              a result fragment with the desired settings
      */
-    public static ResultAggregationFragment newInstance(HashMap<Integer, Integer> settings) {
+    public static ResultAggregationFragment newInstance(HashMap<Integer, Integer> settings,
+                                                        ArrayList<Integer> oldRanking) {
 
         // arguments check
         if(settings == null) {
@@ -74,6 +79,8 @@ public class ResultAggregationFragment extends Fragment {
         Bundle args = new Bundle();
         // assume hash map usage since it's serializable
         args.putSerializable(SETTINGS, settings);
+        // assume array list usage since it's serializable
+        args.putSerializable(RANKING, oldRanking);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,6 +94,8 @@ public class ResultAggregationFragment extends Fragment {
         if (getArguments() != null) {
             //noinspection unchecked
             settings = (HashMap<Integer, Integer>) getArguments().getSerializable(SETTINGS);
+            //noinspection unchecked
+            oldResult = (ArrayList<Integer>) getArguments().getSerializable(RANKING);
         }
 
         firebaseHelper = new FirebaseHelper(getActivity());
@@ -120,7 +129,7 @@ public class ResultAggregationFragment extends Fragment {
 
         newRankingBtn.setOnClickListener(v -> interactionListener.restartGeneration());
 
-        modifyBtn.setOnClickListener(v -> interactionListener.startGenerationWithSettings(settings));
+        modifyBtn.setOnClickListener(v -> interactionListener.startGenerationWithSettings(settings, result.getList()));
 
         saveBtn.setOnClickListener(v -> showSaveDialog());
 
@@ -231,7 +240,7 @@ public class ResultAggregationFragment extends Fragment {
         // Setup ListView adapter
         UniversityListAdapter adapter = new UniversityListAdapter(getContext(),
                 R.layout.ranking_list_cell,
-                uniList);
+                uniList, oldResult);
         resultList.setAdapter(adapter);
     }
 
@@ -259,7 +268,7 @@ public class ResultAggregationFragment extends Fragment {
 
         void restartGeneration();
 
-        void startGenerationWithSettings(Map<Integer, Integer> settings);
+        void startGenerationWithSettings(Map<Integer, Integer> settings, List<Integer> oldRanking);
     }
 
     /**
