@@ -240,7 +240,7 @@ public class ResultAggregationFragment extends Fragment {
         // Setup ListView adapter
         UniversityListAdapter adapter = new UniversityListAdapter(getContext(),
                 R.layout.ranking_list_cell,
-                uniList, oldResult);
+                uniList, oldResult, result.getNormalizedScores(1000.0));
         resultList.setAdapter(adapter);
     }
 

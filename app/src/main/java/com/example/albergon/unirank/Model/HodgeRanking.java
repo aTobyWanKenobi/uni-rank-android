@@ -258,7 +258,7 @@ public class HodgeRanking implements RankAggregationAlgorithm {
         //noinspection Since15
         sortedIds.sort(new Ranking.UniIdRankComparator(uniScores));
 
-        return new Ranking<>(sortedIds);
+        return new Ranking<>(sortedIds, uniScores);
     }
 
     /**

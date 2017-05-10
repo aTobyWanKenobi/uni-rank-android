@@ -97,7 +97,7 @@ public class Indicator {
         List<Integer> ranking = new ArrayList<>(getIdSet());
         ranking.sort(new Ranking.UniIdRankComparator(entries));
 
-        return new Ranking<>(ranking);
+        return new Ranking<>(ranking, entries);
     }
 
     @Override

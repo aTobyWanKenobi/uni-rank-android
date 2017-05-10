@@ -12,12 +12,15 @@ import java.util.Map;
  * This class models a ranking of a generic type. It simply encapsulates a sorted list and provides
  * only the necessary access methods to prevent accidental modifications.
  *
+ * It additionally allows to store a score for each item of the ranking through a map
+ *
  * This class also has a static nested class which is a Comparator specific for a rank of universities
  * ids given a score for each university.
  */
 public class Ranking<T> {
 
     private List<T> ranking = null;
+    private Map<T, Double> scores;
 
     /**
      * Public constructor which correctly encapsulates the argument sorted list.
@@ -32,6 +35,21 @@ public class Ranking<T> {
         }
 
         this.ranking = new ArrayList<>(ranks);
+        this.scores = new HashMap<>();
+    }
+
+    /**
+     * Public constructor with scores.
+     */
+    public Ranking(List<T> ranks, Map<T, Double> scores) {
+
+        // arguments check
+        if(ranks == null || scores == null) {
+            throw new IllegalArgumentException("Arguments for Ranking cannot be null");
+        }
+
+        this.ranking = new ArrayList<>(ranks);
+        this.scores = new HashMap<>(scores);
     }
 
     /**
@@ -52,7 +70,37 @@ public class Ranking<T> {
         return new ArrayList<>(ranking);
     }
 
-    //TODO: change ranking representation?
+    /**
+     * Return the associated scores to the ranking.
+     *
+     * @return  score map if it exists, null otherwise
+     */
+    public Map<T, Double> getScores() {
+        return new HashMap<>(scores);
+    }
+
+    /**
+     * Return the associated scores to the ranking, normalized within the desired bound.
+     *
+     * @return  score map if it exists, null otherwise
+     */
+    public Map<T, Double> getNormalizedScores(double max) {
+
+        return (scores == null) ? null : normalizeScores(max);
+    }
+
+    public Map<T, Double> normalizeScores(double max) {
+
+        double maxScore = scores.get(ranking.get(0));
+
+        Map<T, Double> normalizedScores = new HashMap<>();
+        for(Map.Entry<T, Double> entry : scores.entrySet()) {
+            normalizedScores.put(entry.getKey(), max*entry.getValue()/maxScore);
+        }
+
+        return normalizedScores;
+    }
+
     @Override
     public String toString() {
         return ranking.toString();

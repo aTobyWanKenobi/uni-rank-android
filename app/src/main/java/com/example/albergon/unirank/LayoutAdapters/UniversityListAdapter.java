@@ -16,7 +16,9 @@ import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This ListView adapter implementation defines the behavior of a ListView containing universities
@@ -28,15 +30,18 @@ public class UniversityListAdapter extends ArrayAdapter {
     private int layoutResourceId = 0;
     private List<University> universities = null;
     private List<Integer> oldResult = null;
+    private Map<Integer, Double> scores = null;
 
     public UniversityListAdapter(@NonNull Context context, @LayoutRes int resource,
-                                 @NonNull List<University> universities, List<Integer> oldResult) {
+                                 @NonNull List<University> universities, List<Integer> oldResult,
+                                 @NonNull Map<Integer, Double> scores) {
         //noinspection unchecked
         super(context, resource, universities);
 
         this.context = context;
         this.layoutResourceId = resource;
         this.universities = new ArrayList<>(universities);
+        this.scores = new HashMap<>(scores);
         this.oldResult = (oldResult == null) ? null : new ArrayList<>(oldResult);
     }
 
@@ -54,7 +59,8 @@ public class UniversityListAdapter extends ArrayAdapter {
             holder = new UniHolder( (TextView)row.findViewById(R.id.rank),
                                     (TextView)row.findViewById(R.id.uni_name),
                                     (ImageView) row.findViewById(R.id.rank_change_icon),
-                                    (TextView) row.findViewById(R.id.rank_change_number));
+                                    (TextView) row.findViewById(R.id.rank_change_number),
+                                    (ProgressBar) row.findViewById(R.id.rank_score_bar));
             row.setTag(holder);
         }
         else
@@ -68,6 +74,7 @@ public class UniversityListAdapter extends ArrayAdapter {
         }
         holder.getRank().setText(String.valueOf(position+1));
         holder.getName().setText(uni.getName());
+        holder.getScoreBar().setProgress(scores.getOrDefault(uni.getId(), 0.0).intValue());
 
         return row;
     }
@@ -100,10 +107,10 @@ public class UniversityListAdapter extends ArrayAdapter {
         private TextView changeNumber = null;
         private ProgressBar scoreBar = null;
 
-        public UniHolder(TextView rank, TextView name, ImageView changeIcon, TextView changeNumber) {
+        public UniHolder(TextView rank, TextView name, ImageView changeIcon, TextView changeNumber, ProgressBar scoreBar) {
 
             // arguments check
-            if(rank == null || name == null || changeIcon == null || changeNumber == null) {
+            if(rank == null || name == null || changeIcon == null || changeNumber == null || scoreBar == null) {
                 throw new IllegalArgumentException("UniHolder parameters cannot be null");
             }
 
@@ -111,6 +118,7 @@ public class UniversityListAdapter extends ArrayAdapter {
             this.name = name;
             this.changeIcon = changeIcon;
             this.changeNumber = changeNumber;
+            this.scoreBar = scoreBar;
         }
 
         public TextView getRank() {
@@ -127,6 +135,10 @@ public class UniversityListAdapter extends ArrayAdapter {
 
         public TextView getChangeNumber() {
             return changeNumber;
+        }
+
+        public ProgressBar getScoreBar() {
+            return scoreBar;
         }
     }
 }
