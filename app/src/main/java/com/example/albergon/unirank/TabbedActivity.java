@@ -8,10 +8,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Fragments.BrowseFragment;
 import com.example.albergon.unirank.Fragments.ChooseIndicatorsDialog;
 import com.example.albergon.unirank.Fragments.ChooseLoadDialog;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
@@ -20,9 +19,10 @@ import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
 import com.example.albergon.unirank.Model.SaveRank;
 
-import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,7 +36,8 @@ public class TabbedActivity extends AppCompatActivity implements
         ResultAggregationFragment.ResultFragmentInteractionListener,
         ChooseIndicatorsDialog.ChooseIndicatorDialogInteractionListener,
         MyRankingsFragment.MyRankingsFragmentInteractionListener,
-        ChooseLoadDialog.OnChooseLoadDialogInteractionListener {
+        ChooseLoadDialog.OnChooseLoadDialogInteractionListener,
+        BrowseFragment.OnBrowseFragmentInteractionListener {
 
     // Database instance, unique for the entire application
     private DatabaseHelper databaseHelper = null;
@@ -76,7 +77,6 @@ public class TabbedActivity extends AppCompatActivity implements
 
         databaseHelper = DatabaseHelper.getInstance(this);
     }
-
 
     /**
      * This method creates the selection listener that implements fragments and tab switching.
@@ -122,7 +122,7 @@ public class TabbedActivity extends AppCompatActivity implements
      * @param settings  settings for the aggregation
      */
     @Override
-    public void onPressGenerate(Map<Integer, Integer> settings) {
+    public void onPressGenerate(Map<Integer, Integer> settings, List<Integer> oldRanking) {
 
         // arguments check
         if(settings == null) {
@@ -130,7 +130,8 @@ public class TabbedActivity extends AppCompatActivity implements
         }
 
         @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settingsCopy = new HashMap<>(settings);
-        changeFragment(ResultAggregationFragment.newInstance(settingsCopy));
+        ArrayList<Integer> oldResult = (oldRanking == null)? null : new ArrayList<>(oldRanking);
+        changeFragment(ResultAggregationFragment.newInstance(settingsCopy, oldResult));
     }
 
     @Override
@@ -162,8 +163,9 @@ public class TabbedActivity extends AppCompatActivity implements
      *
      * @param settings      desired starting settings
      */
+
     @Override
-    public void startGenerationWithSettings(Map<Integer, Integer> settings) {
+    public void startGenerationWithSettings(Map<Integer, Integer> settings, List<Integer> oldRanking) {
 
         // arguments check
         if(settings == null) {
@@ -171,7 +173,8 @@ public class TabbedActivity extends AppCompatActivity implements
         }
 
         @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settingsCopy = new HashMap<>(settings);
-        changeFragment(CreateRankingFragment.newInstanceFromSettings(settingsCopy));
+        ArrayList<Integer> oldRankingCopy = new ArrayList<>(oldRanking);
+        changeFragment(CreateRankingFragment.newInstanceFromSettings(settingsCopy, oldRankingCopy));
     }
 
     /**
@@ -197,15 +200,9 @@ public class TabbedActivity extends AppCompatActivity implements
      */
     @Override
     public void openSaveFromMyRanking(SaveRank toOpen) {
-        @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settings = new HashMap<>(toOpen.getSettings());
-
-        //noinspection ConstantConditions
-        tabLayout.getTabAt(0).select();
-        changeFragment(CreateRankingFragment.newInstanceFromSettings(settings));
-
+        launchCreationWithData(toOpen);
     }
 
-    //TODO: copy paste of method above, refactor?
     /**
      * Opens a saved aggregation in the CreateRankingFragment
      *
@@ -213,11 +210,16 @@ public class TabbedActivity extends AppCompatActivity implements
      */
     @Override
     public void openSaveFromLoadDialog(String name) {
-        SaveRank toOpen = databaseHelper.getSave(name);
+        SaveRank toOpen = databaseHelper.retrieveSave(name);
+        launchCreationWithData(toOpen);
+    }
+
+    private void launchCreationWithData(SaveRank toOpen) {
         @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settings = new HashMap<>(toOpen.getSettings());
+        ArrayList<Integer> oldRanking = new ArrayList<>(toOpen.getResult());
 
         //noinspection ConstantConditions
         tabLayout.getTabAt(0).select();
-        changeFragment(CreateRankingFragment.newInstanceFromSettings(settings));
+        changeFragment(CreateRankingFragment.newInstanceFromSettings(settings, oldRanking));
     }
 }

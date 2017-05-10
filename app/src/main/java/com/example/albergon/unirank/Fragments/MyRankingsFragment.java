@@ -12,11 +12,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.albergon.unirank.Database.CallbackHandlers.OnShareRankUploadListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.SavesListAdapter;
 import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.R;
-import com.example.albergon.unirank.TabbedActivity;
 
 import java.util.List;
 
@@ -32,12 +33,14 @@ public class MyRankingsFragment extends Fragment {
     // UI elements
     private Button openBtn = null;
     private Button deleteBtn = null;
+    private Button shareBtn = null;
     private ListView savesList = null;
     private TextView selectedNameTxt = null;
     private TextView selectedDateTxt = null;
     private TextView selectedSettingsTxt = null;
 
     private DatabaseHelper databaseHelper = null;
+    private FirebaseHelper firebaseHelper = null;
     private SaveRank currentlySelectedSave = null;
 
     // Static factory method
@@ -52,6 +55,7 @@ public class MyRankingsFragment extends Fragment {
         final View view =  inflater.inflate(R.layout.fragment_my_rankings, container, false);
 
         databaseHelper = DatabaseHelper.getInstance(getContext());
+        firebaseHelper = new FirebaseHelper(getContext());
 
         //TODO: just for test
         selectedNameTxt = (TextView) view.findViewById(R.id.selected_save_name);
@@ -80,9 +84,40 @@ public class MyRankingsFragment extends Fragment {
             }
         });
 
+        shareBtn = (Button) view.findViewById(R.id.share_save);
+        shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentlySelectedSave == null) {
+                    Toast.makeText(getContext(), "You must select a save to share", Toast.LENGTH_LONG).show();
+                } else {
+                    uploadToFirebase();
+                }
+            }
+        });
+
         displaySaves();
 
         return view;
+    }
+
+    private void uploadToFirebase() {
+
+        OnShareRankUploadListener callbackHandler = new OnShareRankUploadListener() {
+            @Override
+            public void onUploadCompleted(boolean successful) {
+
+                if(successful) {
+                    shareBtn.setEnabled(false);
+                    Toast.makeText(getContext(), "Upload successful", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+
+        firebaseHelper.uploadAggregation(currentlySelectedSave.getResult(), currentlySelectedSave.getSettings(), callbackHandler);
+
     }
 
     /**
@@ -91,13 +126,13 @@ public class MyRankingsFragment extends Fragment {
     private void displaySaves() {
 
         // fetch from database
-        final List<String> saves = databaseHelper.fetchAllSavesName();
+        final List<String> saves = databaseHelper.retrieveAllSavesName();
 
         // click listener
         View.OnClickListener rowListener = v -> {
             // preview currently selected save
             String name = ((SavesListAdapter.SaveHolder)v.getTag()).getName().getText().toString();
-            currentlySelectedSave = databaseHelper.getSave(name);
+            currentlySelectedSave = databaseHelper.retrieveSave(name);
 
             selectedNameTxt.setText("Save name : " + currentlySelectedSave.getName());
             selectedDateTxt.setText("Save date : " +currentlySelectedSave.getDate());

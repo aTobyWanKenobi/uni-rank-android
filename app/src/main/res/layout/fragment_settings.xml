@@ -1,0 +1,147 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.albergon.unirank.Fragments.SettingsFragment"
+    android:background="@drawable/tab_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/settings_dialog_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/page_title_shape"
+            android:gravity="top"
+            android:layout_marginTop="20dp"
+            android:padding="15dp"
+            android:text="Change your settings"
+            android:textAlignment="center"
+            android:textAppearance="@style/PageTitleTextBox" />
+
+        <TextView
+            android:id="@+id/spacing"
+            android:layout_width="match_parent"
+            android:layout_height="50dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/settings_horizontal_layout"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/change_country_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:text="Your country"
+                    android:textAppearance="@style/TextBox" />
+
+                <Spinner
+                    android:id="@+id/change_country_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/settings_horizontal_layout"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/change_gender_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:text="Your gender"
+                    android:textAppearance="@style/TextBox" />
+
+                <Spinner
+                    android:id="@+id/change_gender_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/settings_horizontal_layout"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/change_year_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:text="Your birth year"
+                    android:textAppearance="@style/TextBox" />
+
+                <NumberPicker
+                    android:id="@+id/change_year_picker"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:theme="@style/AppTheme.Picker" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/settings_horizontal_layout"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/change_type_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:text="Type of user"
+                    android:textAppearance="@style/TextBox" />
+
+                <Spinner
+                    android:id="@+id/change_type_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/change_settings_confirm_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:text="Confirm" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

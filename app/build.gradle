@@ -35,6 +35,8 @@ dependencies {
     })
     compile files('libs/flanagan.jar')
     compile files('libs/Jama-1.0.3.jar')
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -42,6 +44,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
     compile 'com.github.markushi:circlebutton:1.1'
+    compile 'com.google.firebase:firebase-database:10.0.1'
     testCompile 'junit:junit:4.12'
 }
 
@@ -66,3 +69,8 @@ task jacocoReport(type: JacocoReport, dependsOn: "connectedDebugAndroidTest") {
 
     executionData = files('build/outputs/code-coverage/connected/coverage.ec')
 }
+
+
+
+
+apply plugin: 'com.google.gms.google-services'

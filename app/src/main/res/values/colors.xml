@@ -6,6 +6,17 @@
     <color name="colorAccentLight">#00CCCC</color>
     <color name="colorAccentDark">#006666</color>
     <color name="gray_unselected">#A0A0A0</color>
+
+
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+
+
+    <color name="palette1">#0099CC</color>
+    <color name="palette2">#CCFFCC</color>
+    <color name="palette3">#66CCFF</color>
+    <color name="palette4">#003399</color>
+
+    <color name="gray_unselected_body">#808080</color>
+    <color name="gray_unselected_border">#C0C0C0</color>
 </resources>

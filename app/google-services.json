@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "124127743677",
+    "firebase_url": "https://uni-rank-android.firebaseio.com",
+    "project_id": "uni-rank-android",
+    "storage_bucket": "uni-rank-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:124127743677:android:7c7326aad7c3543d",
+        "android_client_info": {
+          "package_name": "com.example.albergon.unirank"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "124127743677-p633rrvjo23tcu0nhfs2m9b9kr3ht6iu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.albergon.unirank",
+            "certificate_hash": "988f8d3c1b31befbf59b8c3536cb95aeeaa812db"
+          }
+        },
+        {
+          "client_id": "124127743677-1fni3ggh9mo3iitnmc0m7fr8er001f0s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRpJFdBKFAM-Cqyea5S7K_YVinTfUdabM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "124127743677-1fni3ggh9mo3iitnmc0m7fr8er001f0s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

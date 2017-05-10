@@ -11,12 +11,12 @@ import com.example.albergon.unirank.Model.University;
  */
 public interface UniRankDatabase {
 
-    University getUniversity(int id);
+    University retrieveUniversity(int id);
 
-    Indicator getIndicator(int id);
+    Indicator retrieveIndicator(int id);
 
     void saveAggregation(SaveRank ranking);
 
-    SaveRank getSave(String name);
+    SaveRank retrieveSave(String name);
 
 }

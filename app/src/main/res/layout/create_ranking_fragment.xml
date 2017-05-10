@@ -35,7 +35,6 @@
 
             <Button
                 android:textAppearance="@style/ButtonTextAppearance"
-                android:background="@drawable/button_shape_blue"
                 android:id="@+id/add_indicator_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,8 +72,7 @@
             android:layout_weight="1"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="5dp"
-            android:text="Generate"
-            android:background="@drawable/button_shape_blue"/>
+            android:text="Generate" />
 
         <Button
             android:textAppearance="@style/ButtonTextAppearance"
@@ -84,7 +82,6 @@
             android:layout_weight="1"
             android:layout_marginLeft="5dp"
             android:layout_marginBottom="5dp"
-            android:text="Load"
-            android:background="@drawable/button_shape_blue"/>
+            android:text="Load" />
     </LinearLayout>
 </LinearLayout>

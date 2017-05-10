@@ -60,6 +60,19 @@ public final class Tables {
     }
 
     /**
+     * This nested static class models the table Settings, where some information about the user of
+     * the application is stored, in order to attach meaningful fields to every ranking he shares and
+     * create useful query possibilities on the common shared pool of aggregations.
+     */
+    public static class Settings implements BaseColumns {
+        public static final String TABLE_NAME = "Settings";
+        public static final String BIRTH_YEAR = "BirthYear";
+        public static final String COUNTRY = "Country";
+        public static final String GENDER = "Gender";
+        public static final String USER_TYPE = "UserType";
+    }
+
+    /**
      * This nested enumeration contains a list of the indicators currently present in the database.
      * Since every indicator table has the same structure, its field names can be accessed from the
      * enumeration.

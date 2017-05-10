@@ -16,7 +16,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.albergon.unirank.Database.CallbackHandlers.OnShareRankUploadListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.UniversityListAdapter;
 import com.example.albergon.unirank.Model.Aggregator;
 import com.example.albergon.unirank.Model.HodgeRanking;
@@ -25,14 +27,11 @@ import com.example.albergon.unirank.Model.Ranking;
 import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
-import com.example.albergon.unirank.TabbedActivity;
 
-import java.text.SimpleDateFormat;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -42,11 +41,14 @@ public class ResultAggregationFragment extends Fragment {
 
     // Factory parameter and interaction listener
     private static final String SETTINGS = "settings";
+    private static final String RANKING = "ranking";
     private ResultFragmentInteractionListener interactionListener = null;
 
     private Map<Integer, Integer> settings;
+    private ArrayList<Integer> oldResult;
     private Ranking<Integer> result = null;
-    private DatabaseHelper databaseHelper = null;
+    FirebaseHelper firebaseHelper = null;
+    DatabaseHelper databaseHelper = null;
 
     // UI elements
     private ListView resultList = null;
@@ -58,13 +60,15 @@ public class ResultAggregationFragment extends Fragment {
     private LinearLayout progress_layout = null;
 
     /**
-     * Static factory method that passes the settings of the aggregation to perform. It should be
-     * the only way this fragment class is instantiated.
+     * Static factory method that passes the settings and possibly an old resulting ranking of the
+     * aggregation to perform. It should be the only way this fragment class is instantiated.
      *
-     * @param settings  settings from the CreateRankingFragment
-     * @return          a result fragment with the desired settings
+     * @param settings      settings from the CreateRankingFragment
+     * @param oldRanking    old result if it exists, null otherwise
+     * @return              a result fragment with the desired settings
      */
-    public static ResultAggregationFragment newInstance(HashMap<Integer, Integer> settings) {
+    public static ResultAggregationFragment newInstance(HashMap<Integer, Integer> settings,
+                                                        ArrayList<Integer> oldRanking) {
 
         // arguments check
         if(settings == null) {
@@ -75,6 +79,8 @@ public class ResultAggregationFragment extends Fragment {
         Bundle args = new Bundle();
         // assume hash map usage since it's serializable
         args.putSerializable(SETTINGS, settings);
+        // assume array list usage since it's serializable
+        args.putSerializable(RANKING, oldRanking);
         fragment.setArguments(args);
         return fragment;
     }
@@ -88,15 +94,17 @@ public class ResultAggregationFragment extends Fragment {
         if (getArguments() != null) {
             //noinspection unchecked
             settings = (HashMap<Integer, Integer>) getArguments().getSerializable(SETTINGS);
+            //noinspection unchecked
+            oldResult = (ArrayList<Integer>) getArguments().getSerializable(RANKING);
         }
 
-        databaseHelper = DatabaseHelper.getInstance(getContext());
+        firebaseHelper = new FirebaseHelper(getActivity());
+        databaseHelper = DatabaseHelper.getInstance(getActivity());
 
         // UI instantiation and behavior
         setupUI(view);
         addButtonsBehavior();
 
-        // TODO: move to async task and show progress spinner
         // perform aggregation and display it
         performAggregation();
 
@@ -121,13 +129,25 @@ public class ResultAggregationFragment extends Fragment {
 
         newRankingBtn.setOnClickListener(v -> interactionListener.restartGeneration());
 
-        modifyBtn.setOnClickListener(v -> interactionListener.startGenerationWithSettings(settings));
+        modifyBtn.setOnClickListener(v -> interactionListener.startGenerationWithSettings(settings, result.getList()));
 
         saveBtn.setOnClickListener(v -> showSaveDialog());
 
-        //TODO: implement sharing mechanism
         shareBtn.setOnClickListener(v -> {
+            OnShareRankUploadListener callbackHandler = new OnShareRankUploadListener() {
+                @Override
+                public void onUploadCompleted(boolean successful) {
 
+                    if(successful) {
+                        shareBtn.setEnabled(false);
+                        Toast.makeText(getContext(), "Upload successful", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
+                    }
+                }
+            };
+
+            firebaseHelper.uploadAggregation(result.getList(), settings, callbackHandler);
         });
 
     }
@@ -181,9 +201,7 @@ public class ResultAggregationFragment extends Fragment {
      */
     private void saveAggregation(String name) {
 
-        // generate date in string format
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
-        String date = dateFormat.format(new Date());
+        String date = FirebaseHelper.generateDate();
 
         // instantiate and save aggregation
         SaveRank save = new SaveRank(name, date, settings, result.getList());
@@ -193,7 +211,6 @@ public class ResultAggregationFragment extends Fragment {
         saveBtn.setEnabled(false);
     }
 
-    // TODO: move computation to async task and implement progress spinner in fragment
     /**
      * This method performs the aggregation with the input settings and returns the resulting ranking.
      */
@@ -216,14 +233,14 @@ public class ResultAggregationFragment extends Fragment {
         // retrieve Universities from database thanks to ids
         for(int i = 0; i < idList.size(); i++) {
             int id = idList.get(i);
-            University uni = databaseHelper.getUniversity(id);
+            University uni = databaseHelper.retrieveUniversity(id);
             uniList.add(uni);
         }
 
         // Setup ListView adapter
         UniversityListAdapter adapter = new UniversityListAdapter(getContext(),
                 R.layout.ranking_list_cell,
-                uniList);
+                uniList, oldResult);
         resultList.setAdapter(adapter);
     }
 
@@ -251,7 +268,7 @@ public class ResultAggregationFragment extends Fragment {
 
         void restartGeneration();
 
-        void startGenerationWithSettings(Map<Integer, Integer> settings);
+        void startGenerationWithSettings(Map<Integer, Integer> settings, List<Integer> oldRanking);
     }
 
     /**
@@ -277,7 +294,7 @@ public class ResultAggregationFragment extends Fragment {
 
             // Add settings to Aggregator object
             for(Map.Entry<Integer, Integer> entry : params[0].entrySet()) {
-                Indicator indicator = databaseHelper.getIndicator(entry.getKey());
+                Indicator indicator = databaseHelper.retrieveIndicator(entry.getKey());
                 aggregator.add(indicator, entry.getValue());
             }
 
@@ -321,5 +338,4 @@ public class ResultAggregationFragment extends Fragment {
             progressCircle.setProgress(progress[0]);
         }
     }
-
 }
