@@ -56,6 +56,7 @@ public final class Tables {
         public static final String TABLE_NAME = "Saves_Rankings";
         public static final String SAVED_RANK = "Rank";
         public static final String SAVED_UNI_ID = "UniID";
+        public static final String SAVED_SCORE = "Score";
         public static final String SAVED_NAME = "SaveName";
     }
 

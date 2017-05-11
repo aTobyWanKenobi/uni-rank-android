@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Indicator;
+import com.example.albergon.unirank.Model.Ranking;
 import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.Settings;
 import com.example.albergon.unirank.Model.University;
@@ -325,11 +326,12 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         }
 
         // add rank list to appropriate table
-        List<Integer> ranks = toSave.getResult();
+        List<Integer> ranks = toSave.getResultList();
         for(int i = 0; i < ranks.size(); i++) {
             ranking.put(Tables.SavesRankings.SAVED_NAME, toSave.getName());
             ranking.put(Tables.SavesRankings.SAVED_RANK, i);
             ranking.put(Tables.SavesRankings.SAVED_UNI_ID, ranks.get(i));
+            ranking.put(Tables.SavesRankings.SAVED_SCORE, toSave.getResultScores().getOrDefault(ranks.get(i), 0.0));
             db.insert(Tables.SavesRankings.TABLE_NAME, null, ranking);
             ranking = new ContentValues();
         }
@@ -482,6 +484,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
         // build rank list
         List<Integer> unsortedUniIds = new ArrayList<>();
+        Map<Integer, Double> scores = new HashMap<>();
 
         @SuppressLint("UseSparseArrays") Map<Integer, Integer> idsWithRank = new HashMap<>();
         while(savedRankList.moveToNext()) {
@@ -491,13 +494,19 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
             int uniID = savedRankList.
                     getInt(savedRankList.
                             getColumnIndexOrThrow(Tables.SavesRankings.SAVED_UNI_ID));
+
+            double score = savedRankList.
+                    getDouble(savedRankList.
+                            getColumnIndexOrThrow(Tables.SavesRankings.SAVED_SCORE));
             idsWithRank.put(uniID, rankPos);
             unsortedUniIds.add(uniID);
         }
         unsortedUniIds.sort(new RetrieveRankComparator(idsWithRank));
 
+        Ranking<Integer> ranking = new Ranking<Integer>(unsortedUniIds, scores);
+
         // build and return a SaveRank object with the fetched parameters
-        SaveRank savedRanking = new SaveRank(rName, rDate, settings, unsortedUniIds);
+        SaveRank savedRanking = new SaveRank(rName, rDate, settings, ranking);
 
         // close Cursors
         savedRankingsResult.close();
@@ -573,7 +582,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
     private Cursor retrieveSaveRanking(String name) {
 
         String query = "SELECT " +
-                Tables.SavesRankings.SAVED_NAME + ", " + Tables.SavesRankings.SAVED_RANK + ", "+ Tables.SavesRankings.SAVED_UNI_ID +
+                Tables.SavesRankings.SAVED_NAME + ", " + Tables.SavesRankings.SAVED_RANK + ", "+ Tables.SavesRankings.SAVED_UNI_ID + ", "+ Tables.SavesRankings.SAVED_SCORE +
                 " FROM " + Tables.SavesRankings.TABLE_NAME +
                 " WHERE "+ Tables.SavesRankings.SAVED_NAME+" = ?;";
         String[] selectionArgs = {name};

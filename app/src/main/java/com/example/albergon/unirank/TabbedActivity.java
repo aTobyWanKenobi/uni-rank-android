@@ -13,13 +13,13 @@ import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Fragments.BrowseFragment;
 import com.example.albergon.unirank.Fragments.ChooseIndicatorsDialog;
 import com.example.albergon.unirank.Fragments.ChooseLoadDialog;
+import com.example.albergon.unirank.Fragments.CompareFragment;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
 import com.example.albergon.unirank.Fragments.MyRankingsFragment;
 import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
 import com.example.albergon.unirank.Model.SaveRank;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +37,8 @@ public class TabbedActivity extends AppCompatActivity implements
         ChooseIndicatorsDialog.ChooseIndicatorDialogInteractionListener,
         MyRankingsFragment.MyRankingsFragmentInteractionListener,
         ChooseLoadDialog.OnChooseLoadDialogInteractionListener,
-        BrowseFragment.OnBrowseFragmentInteractionListener {
+        BrowseFragment.OnBrowseFragmentInteractionListener,
+        CompareFragment.OnCompareFragmentInteractionListener {
 
     // Database instance, unique for the entire application
     private DatabaseHelper databaseHelper = null;
@@ -203,6 +204,35 @@ public class TabbedActivity extends AppCompatActivity implements
         launchCreationWithData(toOpen);
     }
 
+    @Override
+    public void launchCompareDialog(SaveRank currentlySelected) {
+
+        // transform collections into serializable objects
+        ArrayList<Integer> rankList = new ArrayList<>(currentlySelected.getResultList());
+        HashMap<Integer, Double> rankScores = new HashMap<>(currentlySelected.getResultScores());
+        HashMap<Integer, Integer> rankSettings = new HashMap<>(currentlySelected.getSettings());
+
+        DialogFragment dialog = ChooseLoadDialog.newInstance(currentlySelected.getName(),
+                rankList, rankScores, rankSettings);
+        dialog.show(fragmentManager, "LoadSaveDialog");
+    }
+
+    public void launchCompareFragment(SaveRank rank1, SaveRank rank2) {
+
+        // transform collections into serializable objects
+        ArrayList<Integer> rank1List = new ArrayList<>(rank1.getResultList());
+        HashMap<Integer, Double> rank1Scores = new HashMap<>(rank1.getResultScores());
+        HashMap<Integer, Integer> rank1Settings = new HashMap<>(rank1.getSettings());
+
+        ArrayList<Integer> rank2List = new ArrayList<>(rank2.getResultList());
+        HashMap<Integer, Double> rank2Scores = new HashMap<>(rank2.getResultScores());
+        HashMap<Integer, Integer> rank2Settings = new HashMap<>(rank2.getSettings());
+
+        // launch comparison
+        changeFragment(CompareFragment.newInstance(rank1.getName(), rank1List, rank1Scores, rank1Settings,
+                rank2.getName(), rank2List, rank2Scores, rank2Settings));
+    }
+
     /**
      * Opens a saved aggregation in the CreateRankingFragment
      *
@@ -214,9 +244,16 @@ public class TabbedActivity extends AppCompatActivity implements
         launchCreationWithData(toOpen);
     }
 
+    @Override
+    public void openComparisonSave(String name, SaveRank otherSave) {
+        SaveRank toOpen = databaseHelper.retrieveSave(name);
+        launchCompareFragment(toOpen, otherSave);
+    }
+
+
     private void launchCreationWithData(SaveRank toOpen) {
         @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settings = new HashMap<>(toOpen.getSettings());
-        ArrayList<Integer> oldRanking = new ArrayList<>(toOpen.getResult());
+        ArrayList<Integer> oldRanking = new ArrayList<>(toOpen.getResultList());
 
         //noinspection ConstantConditions
         tabLayout.getTabAt(0).select();

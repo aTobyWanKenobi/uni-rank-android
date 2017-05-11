@@ -204,7 +204,7 @@ public class ResultAggregationFragment extends Fragment {
         String date = FirebaseHelper.generateDate();
 
         // instantiate and save aggregation
-        SaveRank save = new SaveRank(name, date, settings, result.getList());
+        SaveRank save = new SaveRank(name, date, settings, result);
         databaseHelper.saveAggregation(save);
 
         // disable save button

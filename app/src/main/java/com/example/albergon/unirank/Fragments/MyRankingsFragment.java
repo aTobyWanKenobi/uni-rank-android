@@ -34,6 +34,7 @@ public class MyRankingsFragment extends Fragment {
     private Button openBtn = null;
     private Button deleteBtn = null;
     private Button shareBtn = null;
+    private Button compareBtn = null;
     private ListView savesList = null;
     private TextView selectedNameTxt = null;
     private TextView selectedDateTxt = null;
@@ -96,6 +97,14 @@ public class MyRankingsFragment extends Fragment {
             }
         });
 
+        compareBtn = (Button) view.findViewById(R.id.compare_save);
+        compareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                interactionListener.launchCompareDialog(currentlySelectedSave);
+            }
+        });
+
         displaySaves();
 
         return view;
@@ -116,7 +125,7 @@ public class MyRankingsFragment extends Fragment {
             }
         };
 
-        firebaseHelper.uploadAggregation(currentlySelectedSave.getResult(), currentlySelectedSave.getSettings(), callbackHandler);
+        firebaseHelper.uploadAggregation(currentlySelectedSave.getResultList(), currentlySelectedSave.getSettings(), callbackHandler);
 
     }
 
@@ -170,6 +179,9 @@ public class MyRankingsFragment extends Fragment {
     public interface MyRankingsFragmentInteractionListener {
 
         void openSaveFromMyRanking(SaveRank toOpen);
+
+        void launchCompareDialog(SaveRank currentlySelected);
+
     }
 
 }

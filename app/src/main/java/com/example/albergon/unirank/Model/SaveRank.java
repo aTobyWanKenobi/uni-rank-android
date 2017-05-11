@@ -17,7 +17,7 @@ public class SaveRank {
     private String name = null;
     private String date = null;
     private Map<Integer, Integer> settings = null;
-    private List<Integer> result = null;
+    private Ranking<Integer> result = null;
 
     /**
      * Public constructor that encapsulates the arguments.
@@ -27,19 +27,19 @@ public class SaveRank {
      * @param settings  indicators and respective weight map
      * @param result    aggregation result, list of university ids
      */
-    public SaveRank(String name, String date, Map<Integer, Integer> settings, List<Integer> result) {
+    public SaveRank(String name, String date, Map<Integer, Integer> settings, Ranking<Integer> result) {
 
         // arguments check
         if(name == null || date == null || settings == null || result == null) {
             throw new IllegalArgumentException("Cannot have null arguments in SaveRank");
-        } else if(name.isEmpty() || date.isEmpty() || settings.isEmpty() || result.isEmpty()) {
+        } else if(name.isEmpty() || date.isEmpty() || settings.isEmpty()) {
             throw new IllegalArgumentException("Cannot have empty arguments in SaveRank");
         }
 
         this.name = name;
         this.date = date;
         this.settings = settings;
-        this.result = new ArrayList<>(result);
+        this.result = result;
     }
 
     /**
@@ -72,12 +72,21 @@ public class SaveRank {
     }
 
     /**
-     * Getter for the result attribute.
+     * Getter for the result attribute list.
      *
      * @return  result of the aggregation as a sorted list of university ids
      */
-    public List<Integer> getResult() {
-        return new ArrayList<>(result);
+    public List<Integer> getResultList() {
+        return result.getList();
+    }
+
+    /**
+     * Getter for the result scores.
+     *
+     * @return  map of university ids and scores
+     */
+    public Map<Integer, Double> getResultScores() {
+        return result.getScores();
     }
 
 }
