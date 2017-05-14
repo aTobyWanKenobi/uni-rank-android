@@ -19,21 +19,28 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top"
             android:layout_weight="1"
+            android:layout_margin="5dp"
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/popular_indicators_radio"
+                android:id="@+id/general_queries_radio"
+                style="@style/AppTheme.RadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Popular Indicators" />
+                android:drawableRight="@drawable/radio_button_charts_icon_states"
+                android:paddingRight="10dp"
+                android:text="General Statistics" />
 
             <RadioButton
-                android:id="@+id/general_queries_radio"
+                android:id="@+id/popular_indicators_radio"
+                style="@style/AppTheme.RadioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="General Statistics" />
+                android:drawableRight="@drawable/radio_button_indicator_icon_states"
+                android:paddingRight="10dp"
+                android:text="Popular Indicators" />
 
         </RadioGroup>
 

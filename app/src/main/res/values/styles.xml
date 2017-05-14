@@ -72,6 +72,11 @@
         <item name="android:buttonTint">@color/palette1</item>
     </style>
 
+    <style name="AppTheme.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton" >
+        <item name="android:background">@drawable/radio_button_states</item>
+        <item name="android:textColor">@drawable/radio_button_text_states</item>
+    </style>
+
     <style name="SpinnerStyle" parent="android:Widget.TextView.SpinnerItem">
         <item name="android:textSize">15sp</item>
         <item name="android:minHeight">25dp</item>

@@ -57,6 +57,7 @@ public class BrowseFragment extends Fragment {
     private Enums.PopularIndicatorsCategories currentCategory = null;
 
     // General layout
+    private View rootView = null;
     private RadioButton popularIndicatorRadio = null;
     private RadioButton generalStatisticsRadio = null;
     private FrameLayout queryContainer = null;
@@ -74,63 +75,56 @@ public class BrowseFragment extends Fragment {
     private TextView totalCount = null;
     private TextView monthCount = null;
     private TextView yearCount = null;
-    private TextView malePercentage = null;
-    private TextView femalePercentage = null;
-    private TextView highschoolPercentage = null;
-    private TextView universityPercentage = null;
-    private TextView parentsPercentage = null;
-    private TextView othersPercentage = null;
-    private TextView kidsPercentage = null;
-    private TextView teensPercentage = null;
-    private TextView youngsPercentage = null;
-    private TextView adultsPercentage = null;
-    private TextView oldPercentage = null;
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_browse, container, false);
+        rootView = inflater.inflate(R.layout.fragment_browse, container, false);
 
         databaseHelper = DatabaseHelper.getInstance(getContext());
         firebaseHelper = new FirebaseHelper(getContext());
 
         // setup common elements
-        setupUI(view);
+        setupUI();
 
-        // popular indicators selected by default for now
+        // general statistics selected by default for now
         //initializePopularIndicators(view);
-        initializeGeneralStatistics(view);
+        initializeGeneralStatistics();
 
-        //demo(view);
 
-        return view;
+        return rootView;
     }
 
-    private void setupUI(View view) {
+    /**
+     * Sets up common UI for the fragment, independent of the choice in the radio group.
+     */
+    private void setupUI() {
 
-        popularIndicatorRadio = (RadioButton) view.findViewById(R.id.popular_indicators_radio);
-        generalStatisticsRadio = (RadioButton) view.findViewById(R.id.general_queries_radio);
-        queryContainer = (FrameLayout) view.findViewById(R.id.query_layout_container);
+        popularIndicatorRadio = (RadioButton) rootView.findViewById(R.id.popular_indicators_radio);
+        generalStatisticsRadio = (RadioButton) rootView.findViewById(R.id.general_queries_radio);
+        queryContainer = (FrameLayout) rootView.findViewById(R.id.query_layout_container);
 
         popularIndicatorRadio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initializePopularIndicators(v);
+                initializePopularIndicators();
             }
         });
 
         generalStatisticsRadio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initializeGeneralStatistics(v);
+                initializeGeneralStatistics();
             }
         });
     }
 
-    private void initializeGeneralStatistics(View view) {
+    /**
+     * Sets up the fragment UI when the user chooses to display the "general statistics" part, inflating
+     * the correct layout.
+     */
+    private void initializeGeneralStatistics() {
 
         generalStatisticsRadio.setChecked(true);
 
@@ -141,29 +135,15 @@ public class BrowseFragment extends Fragment {
         queryContainer.addView(generalStatsLayout);
 
         // initialize pie charts
-        genderChart = (PieChart) view.findViewById(R.id.gender_pie_chart);
-        userTypeChart = (PieChart) view.findViewById(R.id.user_type_pie_chart);
-        userAgeChart = (PieChart) view.findViewById(R.id.user_age_pie_chart);
+        genderChart = (PieChart) generalStatsLayout.findViewById(R.id.gender_pie_chart);
+        userTypeChart = (PieChart) generalStatsLayout.findViewById(R.id.user_type_pie_chart);
+        userAgeChart = (PieChart) generalStatsLayout.findViewById(R.id.user_age_pie_chart);
 
-        /*
-        //TODO: move above?
-        //TODO: use piecharts
         // initialize layout elements
         totalCount = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_total_count_number);
-        monthCount = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_month_number);
-        yearCount = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_year_number);
-        malePercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_male_percentage);
-        femalePercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_female_percentage);
-        highschoolPercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_highschool_percentage);
-        universityPercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_university_percentage);
-        parentsPercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_parents_percentage);
-        othersPercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_others_percentage);
-        kidsPercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_kids_percentage);
-        teensPercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_teens_percentage);
-        youngsPercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_youngs_percentage);
-        adultsPercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_adults_percentage);
-        oldPercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_old_percentage);
-        */
+        monthCount = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_last_month_number);
+        yearCount = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_last_year_number);
+
 
         // create error listener
         OnFirebaseErrorListener errorListener = new OnFirebaseErrorListener() {
@@ -181,7 +161,11 @@ public class BrowseFragment extends Fragment {
         firebaseHelper.retrieveGeneralStats(successListener, errorListener);
     }
 
-    private void initializePopularIndicators(View view) {
+    /**
+     * Sets up the fragment UI when the user chooses to display the "popular indicators" part, inflating
+     * the correct layout.
+     */
+    private void initializePopularIndicators() {
 
         popularIndicatorRadio.setChecked(true);
 
@@ -226,6 +210,16 @@ public class BrowseFragment extends Fragment {
 
     }
 
+    /***********************************************************************************************
+     *  GENERAL STATS
+     **********************************************************************************************/
+
+    /**
+     * Creates the callback listener responsible for triggering UI updates when the general statistics
+     * are retrieved from the remote database
+     *
+     * @return  a retrieval listener for the general statistics node
+     */
     private OnGeneralStatisticsRetrievalListener createOnStatsSuccessListener() {
         return new OnGeneralStatisticsRetrievalListener() {
             @Override
@@ -236,15 +230,21 @@ public class BrowseFragment extends Fragment {
         };
     }
 
+    /**
+     * Interface update method, called when new general statistics are retrieved from the database.
+     * It is responsible for calling chart styling methods and updating the views with data.
+     *
+     * @param stats the container objects for the stats to display
+     */
     private void setGeneralStatsValues(ShareGeneralStats stats) {
+
         // upload counts
-        //totalCount.setText(String.valueOf(stats.totalCount));
+        totalCount.setText(String.valueOf(stats.totalCount));
 
         String currentDate = FirebaseHelper.generateDate();
         String currentMonth = currentDate.split(" ", 2)[1];
         String currentYear = currentDate.substring(currentDate.lastIndexOf(' ') + 1);
 
-        /*
         monthCount.setText(String.valueOf(stats.byMonth.getOrDefault(currentMonth, 0)));
 
         int yearSum = 0;
@@ -252,13 +252,16 @@ public class BrowseFragment extends Fragment {
             yearSum += stats.byMonth.getOrDefault(Enums.MonthsAbbreviations.values()[i].toString() + " " + currentYear, 0);
         }
         yearCount.setText(String.valueOf(yearSum));
-        */
 
+        // style charts
         setAndStyleGender(stats);
         setAndStyleType(stats);
         setAndStyleAge(stats, currentYear);
     }
 
+    /**
+     * Private method responsible for filling and styling the gender distribution pie chart.
+     */
     private void setAndStyleGender(ShareGeneralStats stats) {
 
         // gender entries
@@ -287,6 +290,9 @@ public class BrowseFragment extends Fragment {
         genderChart.invalidate();
     }
 
+    /**
+     * Private method responsible for filling and styling the user type distribution pie chart.
+     */
     private void setAndStyleType(ShareGeneralStats stats) {
 
         // type entries
@@ -324,6 +330,9 @@ public class BrowseFragment extends Fragment {
         userTypeChart.invalidate();
     }
 
+    /**
+     * Private method responsible for filling and styling the user age distribution pie chart.
+     */
     private void setAndStyleAge(ShareGeneralStats stats, String currentYear) {
 
         int currIntYear = Integer.valueOf(currentYear);
@@ -394,7 +403,13 @@ public class BrowseFragment extends Fragment {
         userAgeChart.invalidate();
     }
 
-
+    /**
+     * Private method that styles a pie chart uniformly for the whole fragment, called for each pie
+     * chart. It is responsible for center text, hole size and color and other parameters.
+     *
+     * @param chart         pie chart to style
+     * @param centerText    text to display in the center
+     */
     private void stylePieChart(PieChart chart, String centerText) {
 
         // style texts
@@ -413,6 +428,11 @@ public class BrowseFragment extends Fragment {
         chart.getDescription().setEnabled(false);
     }
 
+    /**
+     * Private method responsible for styling the value data displayed on a pie chart.
+     *
+     * @param data  data to format
+     */
     private void stylePieData(PieData data) {
 
         data.setValueTextSize(15f);
@@ -421,6 +441,13 @@ public class BrowseFragment extends Fragment {
         data.setValueFormatter(new PercentFormatter());
     }
 
+    /**
+     * Private method responsible for styling a pie chart legend, principally for what concerns its
+     * position relative to the chart and the looks of its text.
+     *
+     * @param legend    legend to style
+     * @param left      specifies whether we desire left or right alignment
+     */
     private void styleLegend(Legend legend, boolean left) {
 
         // enable legend
@@ -428,7 +455,7 @@ public class BrowseFragment extends Fragment {
 
         // set position
         legend.setOrientation(Legend.LegendOrientation.VERTICAL);
-        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
         if(left) {
             legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         } else {
@@ -437,10 +464,14 @@ public class BrowseFragment extends Fragment {
 
 
         // set attributes
-        legend.setDrawInside(true);
+        legend.setDrawInside(false);
         legend.setTextColor(ChartColors.PALETTE3);
         legend.setTextSize(10f);
     }
+
+    /***********************************************************************************************
+     *  POPULAR INDICATORS
+     **********************************************************************************************/
 
     private AdapterView.OnItemSelectedListener createCategorySpinnerListener() {
 
@@ -586,6 +617,10 @@ public class BrowseFragment extends Fragment {
                 indicatorsWeights);
         queryResult.setAdapter(adapter);
     }
+
+    /***********************************************************************************************
+     *  BOILERPLATE
+     **********************************************************************************************/
 
     @Override
     public void onAttach(Context context) {

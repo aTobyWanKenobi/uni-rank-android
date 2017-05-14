@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/icon_pie_drawable_black"
+        android:drawable="@drawable/icon_pie_black"
+        android:width="20dp"
+        android:height="20dp"
+        />
+
+</layer-list>
