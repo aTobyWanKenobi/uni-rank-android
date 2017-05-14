@@ -22,9 +22,7 @@ import com.example.albergon.unirank.Model.Settings;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +55,7 @@ public class AskSettingsDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.fragment_ask_settings_dialog, null);
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.dialog_ask_settings, null);
 
         // UI setup
         setupUI(view);
@@ -109,7 +107,7 @@ public class AskSettingsDialog extends DialogFragment {
         Collections.sort(countryNames, String.CASE_INSENSITIVE_ORDER);
         ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(
                 getContext(),
-                R.layout.simple_dropdown_text_cell,
+                R.layout.cell_simple_dropdown_text,
                 countryNames);
         countrySpinner.setAdapter(countryAdapter);
 
@@ -120,7 +118,7 @@ public class AskSettingsDialog extends DialogFragment {
         }
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(
                 getContext(),
-                R.layout.simple_dropdown_text_cell,
+                R.layout.cell_simple_dropdown_text,
                 genderList);
         genderSpinner.setAdapter(genderAdapter);
 
@@ -131,7 +129,7 @@ public class AskSettingsDialog extends DialogFragment {
         }
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(
                 getContext(),
-                R.layout.simple_dropdown_text_cell,
+                R.layout.cell_simple_dropdown_text,
                 typesList);
         typeSpinner.setAdapter(typeAdapter);
 

@@ -5,125 +5,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/fragment_background">
 
-    <ListView
-        android:id="@+id/saves_list"
+    <ExpandableListView
+        android:id="@+id/saves_exp_list"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:clickable="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="10"/>
-
-    <LinearLayout
-        android:id="@+id/save_informations_box"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/rectangle_black_border"
-        android:gravity="bottom"
-        android:orientation="vertical"
-        android:layout_gravity="bottom">
-
-        <TextView
-            android:id="@+id/selected_save_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" />
-
-        <TextView
-            android:id="@+id/selected_save_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" />
-
-        <TextView
-            android:id="@+id/selected_save_settings"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:orientation="horizontal"
-            android:padding="5dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/compare_save"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Button" />
-
-                <Button
-                    android:id="@+id/open_save"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:text="Open"
-                    android:textAppearance="@style/ButtonTextAppearance" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/delete_save"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:text="Delete"
-                    android:textAppearance="@style/ButtonTextAppearance" />
-
-                <Button
-                    android:id="@+id/share_save"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Share"
-                    android:textAppearance="@style/ButtonTextAppearance" />
-            </LinearLayout>
-
-        </LinearLayout>
-    </LinearLayout>
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10sp"
+        android:layout_weight="10" />
 
 </LinearLayout>

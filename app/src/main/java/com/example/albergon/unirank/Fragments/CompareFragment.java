@@ -1,7 +1,6 @@
 package com.example.albergon.unirank.Fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -138,12 +137,12 @@ public class CompareFragment extends Fragment {
 
         //show settings recaps
         DisplaySettingsAdapter adapter1 = new DisplaySettingsAdapter(getContext(),
-                R.layout.settings_recap_small_cell,
+                R.layout.cell_settings_recap_small,
                 settings1);
         rank1Settings.setAdapter(adapter1);
 
         DisplaySettingsAdapter adapter2 = new DisplaySettingsAdapter(getContext(),
-                R.layout.settings_recap_small_cell,
+                R.layout.cell_settings_recap_small,
                 settings2);
         rank2Settings.setAdapter(adapter2);
 
@@ -159,14 +158,14 @@ public class CompareFragment extends Fragment {
         switch(rank) {
             case RANK1:
                 adapter = new UniversityListAdapter(getContext(),
-                        R.layout.ranking_list_cell,
+                        R.layout.cell_ranking_list,
                         uniList1,
                         rank2,
                         score1);
                 break;
             case RANK2:
                 adapter = new UniversityListAdapter(getContext(),
-                        R.layout.ranking_list_cell,
+                        R.layout.cell_ranking_list,
                         uniList2,
                         rank1,
                         score2);

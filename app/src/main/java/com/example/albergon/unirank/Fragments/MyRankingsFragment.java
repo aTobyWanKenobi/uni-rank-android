@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,11 +16,14 @@ import android.widget.Toast;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnShareRankUploadListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
+import com.example.albergon.unirank.Database.Tables;
 import com.example.albergon.unirank.LayoutAdapters.SavesListAdapter;
 import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.R;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This fragment implements the navigation through locally saved rankings. It allows to open and
@@ -31,18 +35,10 @@ public class MyRankingsFragment extends Fragment {
     private MyRankingsFragmentInteractionListener interactionListener = null;
 
     // UI elements
-    private Button openBtn = null;
-    private Button deleteBtn = null;
-    private Button shareBtn = null;
-    private Button compareBtn = null;
-    private ListView savesList = null;
-    private TextView selectedNameTxt = null;
-    private TextView selectedDateTxt = null;
-    private TextView selectedSettingsTxt = null;
+    private ExpandableListView savesList = null;
 
     private DatabaseHelper databaseHelper = null;
     private FirebaseHelper firebaseHelper = null;
-    private SaveRank currentlySelectedSave = null;
 
     // Static factory method
     public static MyRankingsFragment newInstance() {
@@ -58,66 +54,22 @@ public class MyRankingsFragment extends Fragment {
         databaseHelper = DatabaseHelper.getInstance(getContext());
         firebaseHelper = new FirebaseHelper(getContext());
 
-        //TODO: just for test
-        selectedNameTxt = (TextView) view.findViewById(R.id.selected_save_name);
-        selectedDateTxt = (TextView) view.findViewById(R.id.selected_save_date);
-        selectedSettingsTxt = (TextView) view.findViewById(R.id.selected_save_settings);
-
         //UI
-        savesList = (ListView) view.findViewById(R.id.saves_list);
-        openBtn = (Button) view.findViewById(R.id.open_save);
-        openBtn.setOnClickListener(v -> {
-            if(currentlySelectedSave == null) {
-                Toast.makeText(getContext(), "You must select a save to open", Toast.LENGTH_LONG).show();
-            } else {
-                interactionListener.openSaveFromMyRanking(currentlySelectedSave);
-            }
-        });
-
-        deleteBtn = (Button) view.findViewById(R.id.delete_save);
-        deleteBtn.setOnClickListener(v -> {
-            if(currentlySelectedSave == null) {
-                Toast.makeText(getContext(), "You must select a save to delete", Toast.LENGTH_LONG).show();
-            } else {
-                // delete save and refresh list
-                databaseHelper.deleteSavedAggregation(currentlySelectedSave.getName());
-                displaySaves();
-            }
-        });
-
-        shareBtn = (Button) view.findViewById(R.id.share_save);
-        shareBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(currentlySelectedSave == null) {
-                    Toast.makeText(getContext(), "You must select a save to share", Toast.LENGTH_LONG).show();
-                } else {
-                    uploadToFirebase();
-                }
-            }
-        });
-
-        compareBtn = (Button) view.findViewById(R.id.compare_save);
-        compareBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                interactionListener.launchCompareDialog(currentlySelectedSave);
-            }
-        });
+        savesList = (ExpandableListView) view.findViewById(R.id.saves_exp_list);
 
         displaySaves();
 
         return view;
     }
 
-    private void uploadToFirebase() {
+    private void uploadToFirebase(String name) {
 
         OnShareRankUploadListener callbackHandler = new OnShareRankUploadListener() {
             @Override
             public void onUploadCompleted(boolean successful) {
 
                 if(successful) {
-                    shareBtn.setEnabled(false);
+                    // TODO disable upload of same ranking
                     Toast.makeText(getContext(), "Upload successful", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
@@ -125,8 +77,8 @@ public class MyRankingsFragment extends Fragment {
             }
         };
 
-        firebaseHelper.uploadAggregation(currentlySelectedSave.getResultList(), currentlySelectedSave.getSettings(), callbackHandler);
-
+        SaveRank toUpload = databaseHelper.retrieveSave(name);
+        firebaseHelper.uploadAggregation(toUpload.getResultList(), toUpload.getSettings(), callbackHandler);
     }
 
     /**
@@ -137,24 +89,53 @@ public class MyRankingsFragment extends Fragment {
         // fetch from database
         final List<String> saves = databaseHelper.retrieveAllSavesName();
 
-        // click listener
-        View.OnClickListener rowListener = v -> {
-            // preview currently selected save
-            String name = ((SavesListAdapter.SaveHolder)v.getTag()).getName().getText().toString();
-            currentlySelectedSave = databaseHelper.retrieveSave(name);
-
-            selectedNameTxt.setText("Save name : " + currentlySelectedSave.getName());
-            selectedDateTxt.setText("Save date : " +currentlySelectedSave.getDate());
-            selectedSettingsTxt.setText("Settings :  " + currentlySelectedSave.getSettings());
-        };
+        // construct settings mapping
+        final Map<String, Map<Integer, Integer>> settingsMap = new HashMap<>();
+        for(String save : saves) {
+            Map<Integer, Integer> saveSettings = databaseHelper.retrieveSave(save).getSettings();
+            Map<Integer, Integer> completeSettings = new HashMap<>();
+            for(int i = 0; i < Tables.IndicatorsList.values().length; i++) {
+                completeSettings.put(i, saveSettings.getOrDefault(i, 0));
+            }
+            settingsMap.put(save, completeSettings);
+        }
 
         // Setup ListView adapter
         SavesListAdapter adapter = new SavesListAdapter(getContext(),
-                R.layout.saving_list_cell,
                 saves,
-                rowListener);
+                settingsMap,
+                createButtonHandler());
         savesList.setAdapter(adapter);
     }
+
+    private MyRankingButtonHandler createButtonHandler() {
+        return new MyRankingButtonHandler() {
+            @Override
+            public void open(String name) {
+                SaveRank toOpen = databaseHelper.retrieveSave(name);
+                interactionListener.openSaveFromMyRanking(toOpen);
+            }
+
+            @Override
+            public void compare(String name) {
+                SaveRank toCompare = databaseHelper.retrieveSave(name);
+                interactionListener.launchCompareDialog(toCompare);
+            }
+
+            @Override
+            public void share(String name) {
+                uploadToFirebase(name);
+            }
+
+            @Override
+            public void delete(String name) {
+                // delete save and refresh list
+                databaseHelper.deleteSavedAggregation(name);
+                displaySaves();
+            }
+        };
+    }
+
 
     @Override
     public void onAttach(Context context) {

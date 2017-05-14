@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.albergon.unirank.Fragments.SettingsFragment"
-    android:background="@drawable/tab_background">
+    android:background="@drawable/fragment_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -49,8 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:text="Your country"
-                    android:textAppearance="@style/TextBox" />
+                    android:text="Your country" />
 
                 <Spinner
                     android:id="@+id/change_country_spinner"
@@ -72,8 +71,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:text="Your gender"
-                    android:textAppearance="@style/TextBox" />
+                    android:text="Your gender" />
 
                 <Spinner
                     android:id="@+id/change_gender_spinner"
@@ -95,8 +93,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:text="Your birth year"
-                    android:textAppearance="@style/TextBox" />
+                    android:text="Your birth year" />
 
                 <NumberPicker
                     android:id="@+id/change_year_picker"
@@ -120,8 +117,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:text="Type of user"
-                    android:textAppearance="@style/TextBox" />
+                    android:text="Type of user" />
 
                 <Spinner
                     android:id="@+id/change_type_spinner"

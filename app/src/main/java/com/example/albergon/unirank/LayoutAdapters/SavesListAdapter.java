@@ -8,89 +8,158 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.albergon.unirank.Database.Tables;
+import com.example.albergon.unirank.Fragments.MyRankingButtonHandler;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This ListView adapter implementation defines the behavior of a ListView containing the names of
  * local aggregation saves. It's used in MyRankingsFragment.
  */
-public class SavesListAdapter extends ArrayAdapter {
+public class SavesListAdapter extends BaseExpandableListAdapter {
 
     private Context context = null;
-    private int layoutResourceId = 0;
     private List<String> savings = null;
-    private View.OnClickListener rowListener = null;
+    private Map<String, Map<Integer, Integer>> settings;
+
+    private MyRankingButtonHandler buttonHandler = null;
 
     public SavesListAdapter(@NonNull Context context,
-                            @LayoutRes int resource,
                             @NonNull List<String> savings,
-                            View.OnClickListener rowListener) {
-        //noinspection unchecked
-        super(context, resource, savings);
+                            @NonNull Map<String, Map<Integer, Integer>> settings,
+                            MyRankingButtonHandler buttonHandler) {
 
         // arguments check
-        if(rowListener == null) {
-            throw new IllegalArgumentException("RowListener cannot be null");
+        if(buttonHandler == null) {
+            throw new IllegalArgumentException("Button handler cannot be null");
         }
 
         this.context = context;
-        this.layoutResourceId = resource;
         this.savings = new ArrayList<>(savings);
-        this.rowListener = rowListener;
+        this.settings = new HashMap<>(settings);
+        this.buttonHandler = buttonHandler;
     }
 
-    @NonNull
     @Override
-    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        View row = convertView;
-        SaveHolder holder;
+    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 
-        if(row == null)
-        {
-            LayoutInflater inflater = ((Activity)context).getLayoutInflater();
-            row = inflater.inflate(layoutResourceId, parent, false);
+        String saveName = savings.get(groupPosition);
 
-            holder = new SaveHolder((TextView)row.findViewById(R.id.save_name));
-            row.setTag(holder);
-        }
-        else
-        {
-            holder = (SaveHolder) row.getTag();
+        if(convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.cell_saving_list, null);
         }
 
-        holder.getName().setText(savings.get(position));
+        // set save name
+        TextView saveNameTxt = (TextView) convertView.findViewById(R.id.save_name);
+        saveNameTxt.setText(saveName);
 
-        row.setOnClickListener(rowListener);
-
-        return row;
-    }
-
-    /**
-     * Object which will be set as the row's tag and that contains the instantiated layout elements
-     * of a list cell.
-     */
-    public static class SaveHolder {
-
-        private TextView name = null;
-
-        public SaveHolder(TextView name) {
-
-            // arguments check
-            if(name == null) {
-                throw new IllegalArgumentException("TextView for SaveHolder cannot be null");
+        ImageView openIcon = (ImageView) convertView.findViewById(R.id.open_icon_myrank);
+        openIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonHandler.open(saveName);
             }
+        });
 
-            this.name = name;
-        }
+        ImageView compareIcon = (ImageView) convertView.findViewById(R.id.compare_icon_myrank);
+        compareIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonHandler.compare(saveName);
+            }
+        });
 
-        public TextView getName() {
-            return name;
-        }
+        ImageView shareIcon = (ImageView) convertView.findViewById(R.id.share_icon_myrank);
+        shareIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonHandler.share(saveName);
+            }
+        });
 
+        ImageView deleteIcon = (ImageView) convertView.findViewById(R.id.delete_icon_myrank);
+        deleteIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                buttonHandler.delete(saveName);
+            }
+        });
+
+        //convertView.setOnClickListener(rowListener);
+        convertView.setTag(saveNameTxt);
+
+        return convertView;
     }
+
+    @Override
+    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+
+        String indicatorName = Tables.IndicatorsList.values()[childPosition].toString();
+        int weight = settings.get(savings.get(groupPosition)).get(childPosition);
+
+        if(convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.cell_settings_recap, null);
+        }
+
+        TextView indicatorNameTxt = (TextView) convertView.findViewById(R.id.indicator_name_compare_recap);
+        indicatorNameTxt.setText(indicatorName);
+
+        ProgressBar indicatorWeightBar = (ProgressBar) convertView.findViewById(R.id.indicator_weight_compare_recap);
+        indicatorWeightBar.setProgress(weight);
+
+        return convertView;
+    }
+
+    @Override
+    public int getGroupCount() {
+        return savings.size();
+    }
+
+    @Override
+    public int getChildrenCount(int groupPosition) {
+        return settings.get(savings.get(groupPosition)).size();
+    }
+
+    @Override
+    public Object getGroup(int groupPosition) {
+        return settings.get(savings.get(groupPosition));
+    }
+
+    @Override
+    public Object getChild(int groupPosition, int childPosition) {
+        return ((Map<Integer, Integer>) getGroup(groupPosition)).get(childPosition);
+    }
+
+    @Override
+    public long getGroupId(int groupPosition) {
+        return groupPosition;
+    }
+
+    @Override
+    public long getChildId(int groupPosition, int childPosition) {
+        return childPosition;
+    }
+
+    @Override
+    public boolean hasStableIds() {
+        return false;
+    }
+
+    @Override
+    public boolean isChildSelectable(int groupPosition, int childPosition) {
+        return false;
+    }
+
 }

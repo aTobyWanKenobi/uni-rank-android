@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
@@ -81,7 +80,7 @@ public class SettingsFragment extends Fragment {
                 getContext(),
                 R.layout.spinner_layout,
                 countryNames);
-        countryAdapter.setDropDownViewResource(R.layout.simple_dropdown_text_cell);
+        countryAdapter.setDropDownViewResource(R.layout.cell_simple_dropdown_text);
         countrySpinner.setAdapter(countryAdapter);
 
         // Set gender adapter
@@ -93,7 +92,7 @@ public class SettingsFragment extends Fragment {
                 getContext(),
                 R.layout.spinner_layout,
                 genderList);
-        genderAdapter.setDropDownViewResource(R.layout.simple_dropdown_text_cell);
+        genderAdapter.setDropDownViewResource(R.layout.cell_simple_dropdown_text);
         genderSpinner.setAdapter(genderAdapter);
 
         // Set type adapter
@@ -105,7 +104,7 @@ public class SettingsFragment extends Fragment {
                 getContext(),
                 R.layout.spinner_layout,
                 typesList);
-        typeAdapter.setDropDownViewResource(R.layout.simple_dropdown_text_cell);
+        typeAdapter.setDropDownViewResource(R.layout.cell_simple_dropdown_text);
         typeSpinner.setAdapter(typeAdapter);
 
         // Set year picker values

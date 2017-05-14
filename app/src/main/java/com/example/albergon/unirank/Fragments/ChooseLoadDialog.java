@@ -65,7 +65,7 @@ public class ChooseLoadDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.fragment_choose_load_dialog, null);
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.dialog_choose_load, null);
 
         // get arguments if fragment was launched for comparison
         if (getArguments() != null) {
@@ -95,7 +95,7 @@ public class ChooseLoadDialog extends DialogFragment {
 
         // Set ListView adapter
         LoadListAdapter adapter = new LoadListAdapter(getContext(),
-                R.layout.pick_load_list_cell,
+                R.layout.cell_pick_load_list,
                 saveList,
                 v -> {
                     // Open save when its row is clicked

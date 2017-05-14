@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -20,9 +19,7 @@ import com.example.albergon.unirank.Database.CallbackHandlers.OnGeneralStatistic
 import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
-import com.example.albergon.unirank.Database.Tables;
 import com.example.albergon.unirank.LayoutAdapters.PopularIndicatorListAdapter;
-import com.example.albergon.unirank.LayoutAdapters.SavesListAdapter;
 import com.example.albergon.unirank.Model.Countries;
 import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Range;
@@ -30,8 +27,6 @@ import com.example.albergon.unirank.Model.ShareGeneralStats;
 import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.Model.SharedPoolFilter;
 import com.example.albergon.unirank.R;
-import com.example.albergon.unirank.ShareRankFilter;
-import com.github.mikephil.charting.charts.PieChart;
 import com.google.firebase.database.DatabaseException;
 
 import java.util.ArrayList;
@@ -184,7 +179,7 @@ public class BrowseFragment extends Fragment {
         noParametersList.add("not selected");
         ArrayAdapter<String> parameterAdapter = new ArrayAdapter<>(
                 getContext(),
-                R.layout.simple_dropdown_text_cell,
+                R.layout.cell_simple_dropdown_text,
                 noParametersList);
         parameterSpinner.setAdapter(parameterAdapter);
 
@@ -199,7 +194,7 @@ public class BrowseFragment extends Fragment {
 
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
                 getContext(),
-                R.layout.simple_dropdown_text_cell,
+                R.layout.cell_simple_dropdown_text,
                 categoriesList);
         categorySpinner.setAdapter(categoryAdapter);
 
@@ -377,7 +372,7 @@ public class BrowseFragment extends Fragment {
         // set category spinner adapter and enable it
         ArrayAdapter<String> parameterAdapter = new ArrayAdapter<>(
                 getContext(),
-                R.layout.simple_dropdown_text_cell,
+                R.layout.cell_simple_dropdown_text,
                 spinnerList);
         parameterSpinner.setAdapter(parameterAdapter);
         parameterSpinner.setEnabled(true);
@@ -427,7 +422,7 @@ public class BrowseFragment extends Fragment {
         // Setup ListView adapter
         PopularIndicatorListAdapter adapter = new PopularIndicatorListAdapter(
                 getContext(),
-                R.layout.popular_indicator_cell,
+                R.layout.cell_popular_indicator,
                 indicatorsWeights);
         queryResult.setAdapter(adapter);
     }

@@ -86,11 +86,11 @@ public class UniversityListAdapter extends ArrayAdapter {
         holder.getChangeNumber().setText(String.valueOf(change));
 
         if(change > 0) {
-            holder.getChangeIcon().setBackgroundResource(R.drawable.green_arrow_up);
+            holder.getChangeIcon().setBackgroundResource(R.drawable.icon_green_arrow_up);
         } else if(change < 0) {
-            holder.getChangeIcon().setBackgroundResource(R.drawable.red_arrow_down);
+            holder.getChangeIcon().setBackgroundResource(R.drawable.icon_red_arrow_down);
         } else {
-            holder.getChangeIcon().setBackgroundResource(R.drawable.yellow_equal_sign);
+            holder.getChangeIcon().setBackgroundResource(R.drawable.icon_yellow_equal_sign);
         }
 
     }

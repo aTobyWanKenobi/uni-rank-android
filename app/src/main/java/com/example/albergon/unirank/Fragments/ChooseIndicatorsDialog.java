@@ -70,7 +70,7 @@ public class ChooseIndicatorsDialog extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.fragment_choose_indicators_dialog, null);
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.dialog_choose_indicators, null);
 
         // Get optional arguments if the factory method was used
         if (getArguments() == null) {
@@ -121,7 +121,7 @@ public class ChooseIndicatorsDialog extends DialogFragment {
         }
 
         PickListAdapter adapter = new PickListAdapter(getContext(),
-                R.layout.pick_indicators_list_cell,
+                R.layout.cell_pick_indicators_list,
                 indicatorsIdList);
 
         pickingList.setAdapter(adapter);

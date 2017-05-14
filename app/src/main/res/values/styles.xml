@@ -3,6 +3,8 @@
     <!--  Application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:buttonStyle">@style/Button</item>
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:textColor">@color/palette3</item>
 
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -59,21 +61,13 @@
         <item name="android:clickable">true</item>
     </style>
 
+    <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressBackgroundTint">@color/gray_unselected_body</item>
+        <item name="android:progressTint">@color/palette1</item>
+    </style>
+
     <style name="PageTitleTextBox" parent="TextAppearance.AppCompat.Headline">
         <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@color/palette2</item>
-    </style>
-
-    <style name="ButtonTextAppearance2" parent="TextAppearance.AppCompat.Button">
-        <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/palette2</item>
-        <item name="textAllCaps">true</item>
-        <item name="android:shadowColor">@color/black</item>
-        <item name="android:shadowRadius">5</item>
-    </style>
-
-    <style name="TextBox" parent="TextAppearance.AppCompat.Body1">
-        <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/palette2</item>
     </style>
 

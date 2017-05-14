@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.albergon.unirank.Fragments.CompareFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/fragment_background">
 
     <ListView
         android:id="@+id/compare_current_rank"

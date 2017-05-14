@@ -28,7 +28,6 @@ import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,7 +87,7 @@ public class ResultAggregationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.result_ranking_fragment, container, false);
+        final View view = inflater.inflate(R.layout.fragment_result, container, false);
 
         // Get settings deriving from factory method parameter
         if (getArguments() != null) {
@@ -239,7 +238,7 @@ public class ResultAggregationFragment extends Fragment {
 
         // Setup ListView adapter
         UniversityListAdapter adapter = new UniversityListAdapter(getContext(),
-                R.layout.ranking_list_cell,
+                R.layout.cell_ranking_list,
                 uniList, oldResult, result.getNormalizedScores(1000.0));
         resultList.setAdapter(adapter);
     }

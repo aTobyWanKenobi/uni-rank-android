@@ -80,7 +80,7 @@ public class CreateRankingFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate layout for this fragment
-        final View view = inflater.inflate(R.layout.create_ranking_fragment, container, false);
+        final View view = inflater.inflate(R.layout.fragment_create, container, false);
 
         // structures and helpers setup
         currentSettings = new HashMap<>();
@@ -148,7 +148,7 @@ public class CreateRankingFragment extends Fragment {
 
         // reset adapter to clean ListView
         adapter = null;
-        adapter = new IndicatorListAdapter(getContext(), R.layout.indicator_list_cell);
+        adapter = new IndicatorListAdapter(getContext(), R.layout.cell_indicator_list);
         indicatorList.setAdapter(adapter);
         currentSettings = newSettings;
 
@@ -165,7 +165,7 @@ public class CreateRankingFragment extends Fragment {
     private void setupUI(View view) {
 
         // setup UI updating mechanism
-        adapter = new IndicatorListAdapter(getContext(), R.layout.indicator_list_cell);
+        adapter = new IndicatorListAdapter(getContext(), R.layout.cell_indicator_list);
         indicatorList = (ListView) view.findViewById(R.id.indicator_list);
         indicatorList.setAdapter(adapter);
 
