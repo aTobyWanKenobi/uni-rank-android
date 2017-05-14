@@ -124,25 +124,20 @@ public class CompareFragment extends Fragment {
     private void setupUI(View view) {
 
         shownRank = (ListView) view.findViewById(R.id.compare_current_rank);
-        rank1Name = (TextView) view.findViewById(R.id.compare_name_rank1);
         rank1Settings = (ListView) view.findViewById(R.id.compare_settings_rank1);
-        rank2Name = (TextView) view.findViewById(R.id.compare_name_rank2);
         rank2Settings = (ListView) view.findViewById(R.id.compare_settings_rank2);
-
-        rank1Name.setText(name1);
-        rank2Name.setText(name2);
 
         //show rank 1 initially
         switchRank(CurrentlySelected.RANK1);
 
         //show settings recaps
         DisplaySettingsAdapter adapter1 = new DisplaySettingsAdapter(getContext(),
-                R.layout.cell_settings_recap_small,
+                R.layout.cell_settings_recap_small_vertical,
                 settings1);
         rank1Settings.setAdapter(adapter1);
 
         DisplaySettingsAdapter adapter2 = new DisplaySettingsAdapter(getContext(),
-                R.layout.cell_settings_recap_small,
+                R.layout.cell_settings_recap_small_vertical,
                 settings2);
         rank2Settings.setAdapter(adapter2);
 

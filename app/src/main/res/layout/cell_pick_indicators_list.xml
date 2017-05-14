@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="20dp"
         android:checked="false"
-        android:clickable="false"/>
+        android:clickable="false"
+        style="@style/AppTheme.CheckBox"/>
 
 </LinearLayout>

@@ -3,7 +3,7 @@
     <corners
         android:radius="40dp" />
     <solid
-        android:color="@color/palette3" />
+        android:color="@color/palette1" />
     <padding
         android:bottom="10dp"
         android:top="5dp"
@@ -11,5 +11,5 @@
         android:right="30dp" />
     <stroke
         android:width="2dp"
-        android:color="@color/palette3" />
+        android:color="@color/palette1" />
 </shape>

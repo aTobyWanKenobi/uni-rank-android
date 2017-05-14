@@ -3,14 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context="com.example.albergon.unirank.Fragments.AskSettingsDialog"
-    android:background="@drawable/rectangle_black_border"
+    android:background="@drawable/dialog_background"
     android:padding="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="@drawable/general_background_border"
         android:padding="5dp">
 
         <TextView
@@ -38,7 +37,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:background="@drawable/general_background_border">
 
                 <TextView
                     android:id="@+id/country_txt"
@@ -46,19 +46,22 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
                     android:text="Your country" />
 
                 <Spinner
                     android:id="@+id/country_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    style="@style/SpinnerStyle"
                     android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:background="@drawable/general_background_border">
 
                 <TextView
                     android:id="@+id/gender_txt"
@@ -66,19 +69,22 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
                     android:text="Your gender" />
 
                 <Spinner
                     android:id="@+id/gender_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    style="@style/SpinnerStyle"
                     android:layout_weight="1" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:background="@drawable/general_background_border">
 
                 <TextView
                     android:id="@+id/year_txt"
@@ -86,12 +92,13 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
                     android:text="Your birth year" />
 
                 <NumberPicker
                     android:id="@+id/year_picker"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="75dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="1"
                     android:theme="@style/AppTheme.Picker" />
@@ -100,7 +107,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:background="@drawable/general_background_border">
 
                 <TextView
                     android:id="@+id/type_txt"
@@ -108,24 +116,26 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
                     android:text="Type of user" />
 
                 <Spinner
                     android:id="@+id/type_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    style="@style/SpinnerStyle"
                     android:layout_weight="1" />
             </LinearLayout>
         </LinearLayout>
 
         <Button
             android:id="@+id/ask_settings_confirm_btn"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:text="Confirm"
-            style="@style/ButtonTextAppearance"
-            android:layout_margin="5dp"/>
+            android:layout_gravity="center_horizontal"
+            android:text="Confirm" />
 
     </LinearLayout>
 </FrameLayout>

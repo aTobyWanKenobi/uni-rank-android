@@ -5,5 +5,4 @@
     android:layout_height="wrap_content"
     android:padding="3dp"
     style="@style/SpinnerStyle"
-    android:background="@color/palette3"
     android:text="TextView" />

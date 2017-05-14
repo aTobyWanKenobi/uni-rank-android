@@ -1,13 +1,10 @@
 package com.example.albergon.unirank.LayoutAdapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -110,7 +107,7 @@ public class SavesListAdapter extends BaseExpandableListAdapter {
 
         if(convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = inflater.inflate(R.layout.cell_settings_recap, null);
+            convertView = inflater.inflate(R.layout.cell_settings_recap_horizontal, null);
         }
 
         TextView indicatorNameTxt = (TextView) convertView.findViewById(R.id.indicator_name_compare_recap);

@@ -2,73 +2,65 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.example.albergon.unirank.Fragments.ChooseIndicatorsDialog">
+    tools:context="com.example.albergon.unirank.Fragments.ChooseIndicatorsDialog"
+    android:background="@drawable/dialog_background">
 
     <!-- TODO: Update blank fragment layout -->
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/rectangle_black_border"
+        android:orientation="vertical"
+        android:background="@android:color/transparent"
         android:padding="2dp">
+
+        <TextView
+            android:id="@+id/add_indicators_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginBottom="10dp"
+            android:text="Add Indicators"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+
+        <ListView
+            android:id="@+id/indicator_picking_list"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:clickable="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="2dp"
-            android:background="@drawable/general_background_border">
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/add_indicators_txt"
+            <Button
+                android:id="@+id/cancel_indicator_dialog_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:text="Add Indicators"
-                android:textAlignment="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:layout_marginBottom="10dp"/>
+                android:layout_gravity="right"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:text="Cancel" />
 
-            <ListView
-                android:id="@+id/indicator_picking_list"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:clickable="true" />
-
-            <LinearLayout
+            <Button
+                android:id="@+id/add_indicator_dialog_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/cancel_indicator_dialog_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_weight="1"
-                    android:text="Cancel"
-                    style="@style/ButtonTextAppearance"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="5dp"/>
-
-                <Button
-                    android:id="@+id/add_indicator_dialog_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_weight="1"
-                    android:text="Add"
-                    style="@style/ButtonTextAppearance"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="5dp"/>
-            </LinearLayout>
-
+                android:layout_gravity="right"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:text="Add" />
         </LinearLayout>
-    </FrameLayout>
+
+    </LinearLayout>
 
 </FrameLayout>

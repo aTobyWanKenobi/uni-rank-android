@@ -3,7 +3,6 @@
     android:id="@+id/textView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/palette1"
     android:padding="3dp"
     style="@style/SpinnerStyle"
     android:text="TextView" />

@@ -35,7 +35,6 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
             <Button
-                android:textAppearance="@style/ButtonTextAppearance"
                 android:id="@+id/add_indicator_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,17 +65,15 @@
         android:layout_marginLeft="10dp">
 
         <Button
-            android:textAppearance="@style/ButtonTextAppearance"
             android:id="@+id/generate_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="5dp"
             android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
             android:text="Generate" />
 
         <Button
-            android:textAppearance="@style/ButtonTextAppearance"
             android:id="@+id/load_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

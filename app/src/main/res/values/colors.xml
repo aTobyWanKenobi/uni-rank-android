@@ -5,7 +5,7 @@
     <color name="colorAccent">#009999</color>
     <color name="colorAccentLight">#00CCCC</color>
     <color name="colorAccentDark">#006666</color>
-    <color name="gray_unselected">#A0A0A0</color>
+    <color name="gray_unselected">#999999</color>
 
 
     <color name="black">#000000</color>

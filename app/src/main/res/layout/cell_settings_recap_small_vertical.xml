@@ -3,20 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="10dp">
+    android:orientation="vertical">
 
 
     <TextView
         android:id="@+id/indicator_name_compare"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="10dp"
         android:text="TextView" />
 
     <ProgressBar
         android:id="@+id/indicator_weight_compare"
-        style="?android:attr/progressBarStyleHorizontal"
+        style="@style/ProgressBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="10dp"
         android:max="10" />
 </LinearLayout>
