@@ -1,8 +1,11 @@
 package com.example.albergon.unirank.Fragments;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +23,7 @@ import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrie
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.PopularIndicatorListAdapter;
+import com.example.albergon.unirank.Model.ChartColors;
 import com.example.albergon.unirank.Model.Countries;
 import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Range;
@@ -27,6 +31,14 @@ import com.example.albergon.unirank.Model.ShareGeneralStats;
 import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.Model.SharedPoolFilter;
 import com.example.albergon.unirank.R;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.ColorFormatter;
+import com.github.mikephil.charting.formatter.PercentFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.database.DatabaseException;
 
 import java.util.ArrayList;
@@ -55,6 +67,10 @@ public class BrowseFragment extends Fragment {
     private ListView queryResult = null;
 
     // General statistics layout
+    private PieChart genderChart = null;
+    private PieChart userTypeChart = null;
+    private PieChart userAgeChart = null;
+
     private TextView totalCount = null;
     private TextView monthCount = null;
     private TextView yearCount = null;
@@ -85,8 +101,8 @@ public class BrowseFragment extends Fragment {
         setupUI(view);
 
         // popular indicators selected by default for now
-        initializePopularIndicators(view);
-        //initializeGeneralStatistics(view);
+        //initializePopularIndicators(view);
+        initializeGeneralStatistics(view);
 
         //demo(view);
 
@@ -120,10 +136,16 @@ public class BrowseFragment extends Fragment {
 
         // inflate correct layout
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        View generalStatsLayout = inflater.inflate(R.layout.general_statistics_layout, null, false);
+        View generalStatsLayout = inflater.inflate(R.layout.other_remote_stats, null, false);
         queryContainer.removeAllViews();
         queryContainer.addView(generalStatsLayout);
 
+        // initialize pie charts
+        genderChart = (PieChart) view.findViewById(R.id.gender_pie_chart);
+        userTypeChart = (PieChart) view.findViewById(R.id.user_type_pie_chart);
+        userAgeChart = (PieChart) view.findViewById(R.id.user_age_pie_chart);
+
+        /*
         //TODO: move above?
         //TODO: use piecharts
         // initialize layout elements
@@ -141,6 +163,7 @@ public class BrowseFragment extends Fragment {
         youngsPercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_youngs_percentage);
         adultsPercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_adults_percentage);
         oldPercentage = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_old_percentage);
+        */
 
         // create error listener
         OnFirebaseErrorListener errorListener = new OnFirebaseErrorListener() {
@@ -164,7 +187,7 @@ public class BrowseFragment extends Fragment {
 
         // inflate correct layout
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        View popularIndicatorsLayout = inflater.inflate(R.layout.popular_indicators_query, null, false);
+        View popularIndicatorsLayout = inflater.inflate(R.layout.other_popular_indicators, null, false);
         queryContainer.removeAllViews();
         queryContainer.addView(popularIndicatorsLayout);
 
@@ -215,12 +238,13 @@ public class BrowseFragment extends Fragment {
 
     private void setGeneralStatsValues(ShareGeneralStats stats) {
         // upload counts
-        totalCount.setText(String.valueOf(stats.totalCount));
+        //totalCount.setText(String.valueOf(stats.totalCount));
 
         String currentDate = FirebaseHelper.generateDate();
         String currentMonth = currentDate.split(" ", 2)[1];
         String currentYear = currentDate.substring(currentDate.lastIndexOf(' ') + 1);
 
+        /*
         monthCount.setText(String.valueOf(stats.byMonth.getOrDefault(currentMonth, 0)));
 
         int yearSum = 0;
@@ -228,22 +252,79 @@ public class BrowseFragment extends Fragment {
             yearSum += stats.byMonth.getOrDefault(Enums.MonthsAbbreviations.values()[i].toString() + " " + currentYear, 0);
         }
         yearCount.setText(String.valueOf(yearSum));
+        */
 
-        // gender percentages
-        malePercentage.setText(String.valueOf((int)(100*stats.byMale/(double) stats.totalCount)) + " %");
-        femalePercentage.setText(String.valueOf((int)(100*stats.byFemale/(double) stats.totalCount)) + " %");
-
-        // type percentages
-        highschoolPercentage.setText(String.valueOf((int)(100*stats.byHighSchoolStudents/(double) stats.totalCount)) + " %");
-        universityPercentage.setText(String.valueOf((int)(100*stats.byUniversityStudents/(double) stats.totalCount)) + " %");
-        parentsPercentage.setText(String.valueOf((int)(100*stats.byParents/(double) stats.totalCount)) + " %");
-        othersPercentage.setText(String.valueOf((int)(100*stats.byOtherType/(double) stats.totalCount)) + " %");
-
-        // age percentages (delegated to method because it was long)
-        setAgePercentages(currentYear, stats);
+        setAndStyleGender(stats);
+        setAndStyleType(stats);
+        setAndStyleAge(stats, currentYear);
     }
 
-    private void setAgePercentages(String currentYear, ShareGeneralStats stats) {
+    private void setAndStyleGender(ShareGeneralStats stats) {
+
+        // gender entries
+        PieEntry malePer = new PieEntry((int)(100*stats.byMale/(double) stats.totalCount), "Male");
+        PieEntry femalePer = new PieEntry((int)(100*stats.byFemale/(double) stats.totalCount), "Female");
+        List<PieEntry> genderEntries = new ArrayList<>();
+        genderEntries.add(malePer);
+        genderEntries.add(femalePer);
+
+        // gender dataset
+        PieDataSet genderDataSet = new PieDataSet(genderEntries, "");
+        genderDataSet.setSliceSpace(3);
+        genderDataSet.setValueTextColor(ChartColors.BLACK);
+        genderDataSet.setColors(ChartColors.MALE_BLUE, ChartColors.FEMALE_PINK);
+
+        // gender data
+        PieData genderData = new PieData(genderDataSet);
+        stylePieData(genderData);
+        genderChart.setData(genderData);
+
+        // gender styling
+        stylePieChart(genderChart, "UPLOADS BY GENDER");
+        styleLegend(genderChart.getLegend(), true);
+
+        // refresh
+        genderChart.invalidate();
+    }
+
+    private void setAndStyleType(ShareGeneralStats stats) {
+
+        // type entries
+        PieEntry highschoolPer = new PieEntry((int)(100*stats.byHighSchoolStudents/(double) stats.totalCount), "Highschool");
+        PieEntry universityPer = new PieEntry((int)(100*stats.byUniversityStudents/(double) stats.totalCount), "University");
+        PieEntry parentsPer = new PieEntry((int)(100*stats.byParents/(double) stats.totalCount), "Parents");
+        PieEntry othersPer = new PieEntry((int)(100*stats.byOtherType/(double) stats.totalCount), "Other");
+        List<PieEntry> typeEntries = new ArrayList<>();
+        typeEntries.add(highschoolPer);
+        typeEntries.add(universityPer);
+        typeEntries.add(parentsPer);
+        typeEntries.add(othersPer);
+
+        // type dataset
+        PieDataSet typeDataSet = new PieDataSet(typeEntries, "");
+        typeDataSet.setSliceSpace(3);
+        typeDataSet.setValueTextColor(ChartColors.BLACK);
+        typeDataSet.setValueFormatter(new PercentFormatter());
+        typeDataSet.setColors(
+                ChartColors.HIGHSCHOOL_GREEN,
+                ChartColors.UNIVERSITY_BLUE,
+                ChartColors.PARENTS_YELLOW,
+                ChartColors.OTHERS_VIOLET);
+
+        // type data
+        PieData typeData = new PieData(typeDataSet);
+        stylePieData(typeData);
+        userTypeChart.setData(typeData);
+
+        // type styling
+        stylePieChart(userTypeChart, "UPLOADS BY USER TYPE");
+        styleLegend(userTypeChart.getLegend(), true);
+
+        // refresh
+        userTypeChart.invalidate();
+    }
+
+    private void setAndStyleAge(ShareGeneralStats stats, String currentYear) {
 
         int currIntYear = Integer.valueOf(currentYear);
         Range kidsRange = new Range(currIntYear - 15, currIntYear);
@@ -275,11 +356,90 @@ public class BrowseFragment extends Fragment {
             }
         }
 
-        kidsPercentage.setText(String.valueOf((int)(100*kidsCount/(double) stats.totalCount)) + " %");
-        teensPercentage.setText(String.valueOf((int)(100*teensCount/(double) stats.totalCount)) + " %");
-        youngsPercentage.setText(String.valueOf((int)(100*youngsCount/(double) stats.totalCount)) + " %");
-        adultsPercentage.setText(String.valueOf((int)(100*adultsCount/(double) stats.totalCount)) + " %");
-        oldPercentage.setText(String.valueOf((int)(100*oldCount/(double) stats.totalCount)) + " %");
+        // type entries
+        PieEntry kidsPer = new PieEntry((int)(100*kidsCount/(double) stats.totalCount), "0-15");
+        PieEntry teensPer = new PieEntry((int)(100*teensCount/(double) stats.totalCount), "15-20");
+        PieEntry youngsPer = new PieEntry((int)(100*youngsCount/(double) stats.totalCount), "20-27");
+        PieEntry adultsPer = new PieEntry((int)(100*adultsCount/(double) stats.totalCount), "27-50");
+        PieEntry oldPer = new PieEntry((int)(100*oldCount/(double) stats.totalCount), "50+");
+        List<PieEntry> ageEntries = new ArrayList<>();
+        ageEntries.add(kidsPer);
+        ageEntries.add(teensPer);
+        ageEntries.add(youngsPer);
+        ageEntries.add(adultsPer);
+        ageEntries.add(oldPer);
+
+        // type dataset
+        PieDataSet ageDataSet = new PieDataSet(ageEntries, "");
+        ageDataSet.setSliceSpace(3);
+        ageDataSet.setValueTextColor(ChartColors.BLACK);
+        ageDataSet.setValueFormatter(new PercentFormatter());
+        ageDataSet.setColors(
+                ChartColors.KIDS_ORANGE,
+                ChartColors.TEENS_MINT,
+                ChartColors.YOUNGS_RED,
+                ChartColors.ADULTS_PURPLE,
+                ChartColors.OLD_GREY);
+
+        // type data
+        PieData ageData = new PieData(ageDataSet);
+        stylePieData(ageData);
+        userAgeChart.setData(ageData);
+
+        // type styling
+        stylePieChart(userAgeChart, "UPLOADS BY USER AGE");
+        styleLegend(userAgeChart.getLegend(), true);
+
+        // refresh
+        userAgeChart.invalidate();
+    }
+
+
+    private void stylePieChart(PieChart chart, String centerText) {
+
+        // style texts
+        chart.setCenterTextColor(ChartColors.PALETTE3);
+        chart.setCenterTextSize(10f);
+        chart.setCenterText(centerText);
+        chart.setUsePercentValues(true);
+        chart.setEntryLabelColor(ChartColors.BLACK);
+        chart.setDrawEntryLabels(false);
+
+        // set hole and display
+        chart.setDrawHoleEnabled(true);
+        chart.setHoleColor(ChartColors.BLACK);
+        chart.setTransparentCircleColor(ChartColors.BLACK);
+        chart.setTransparentCircleAlpha(110);
+        chart.getDescription().setEnabled(false);
+    }
+
+    private void stylePieData(PieData data) {
+
+        data.setValueTextSize(15f);
+        data.setValueTextColor(ChartColors.BLACK);
+        data.setValueTypeface(Typeface.DEFAULT_BOLD);
+        data.setValueFormatter(new PercentFormatter());
+    }
+
+    private void styleLegend(Legend legend, boolean left) {
+
+        // enable legend
+        legend.setEnabled(true);
+
+        // set position
+        legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
+        if(left) {
+            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        } else {
+            legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        }
+
+
+        // set attributes
+        legend.setDrawInside(true);
+        legend.setTextColor(ChartColors.PALETTE3);
+        legend.setTextSize(10f);
     }
 
     private AdapterView.OnItemSelectedListener createCategorySpinnerListener() {

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
@@ -88,6 +89,10 @@ public class ChooseLoadDialog extends DialogFragment {
         // Initialize UI elements
         ListView loadPickList = (ListView) view.findViewById(R.id.choose_load_list);
         Button cancelBtn = (Button) view.findViewById(R.id.cancel_load_dialog);
+        TextView titleTxt = (TextView) view.findViewById(R.id.load_save_txt);
+
+        String title = comparisonActive ? "Choose save to compare" : "Load save";
+        titleTxt.setText(title);
 
         // Get database and fetch all save names
         DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getContext());

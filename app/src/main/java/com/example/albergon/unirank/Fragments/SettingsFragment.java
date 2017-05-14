@@ -78,7 +78,7 @@ public class SettingsFragment extends Fragment {
         Collections.sort(countryNames, String.CASE_INSENSITIVE_ORDER);
         ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(
                 getContext(),
-                R.layout.spinner_layout,
+                R.layout.other_spinner,
                 countryNames);
         countryAdapter.setDropDownViewResource(R.layout.cell_simple_dropdown_text);
         countrySpinner.setAdapter(countryAdapter);
@@ -90,7 +90,7 @@ public class SettingsFragment extends Fragment {
         }
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(
                 getContext(),
-                R.layout.spinner_layout,
+                R.layout.other_spinner,
                 genderList);
         genderAdapter.setDropDownViewResource(R.layout.cell_simple_dropdown_text);
         genderSpinner.setAdapter(genderAdapter);
@@ -102,7 +102,7 @@ public class SettingsFragment extends Fragment {
         }
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(
                 getContext(),
-                R.layout.spinner_layout,
+                R.layout.other_spinner,
                 typesList);
         typeAdapter.setDropDownViewResource(R.layout.cell_simple_dropdown_text);
         typeSpinner.setAdapter(typeAdapter);

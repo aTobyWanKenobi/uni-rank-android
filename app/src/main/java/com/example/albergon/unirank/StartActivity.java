@@ -19,9 +19,6 @@ public class StartActivity extends AppCompatActivity implements
     private ProgressBar progressCircle = null;
     private TextView loadDatabaseTxt = null;
 
-    //TODO: just for testing, remove
-    private TextView feedback = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,8 +34,6 @@ public class StartActivity extends AppCompatActivity implements
 
         progressCircle = (ProgressBar) findViewById(R.id.load_app_progress);
         loadDatabaseTxt = (TextView) findViewById(R.id.load_universities_txt);
-
-        feedback = (TextView) findViewById(R.id.opening_feedback);
     }
 
     public void startTabbedActivity() {
@@ -62,7 +57,6 @@ public class StartActivity extends AppCompatActivity implements
         protected void onPreExecute() {
             progressCircle.setVisibility(View.VISIBLE);
             loadDatabaseTxt.setVisibility(View.VISIBLE);
-            feedback.setVisibility(View.GONE);
         }
 
         @Override
@@ -98,7 +92,6 @@ public class StartActivity extends AppCompatActivity implements
         protected void onPostExecute(Boolean exists) {
             progressCircle.setVisibility(View.INVISIBLE);
             loadDatabaseTxt.setVisibility(View.INVISIBLE);
-            feedback.setVisibility(View.VISIBLE);
 
             if(!exists) {
                 askSettings();

@@ -17,6 +17,9 @@
     <color name="palette3">#66CCFF</color>
     <color name="palette4">#003399</color>
 
+    <color name="maleBlue">#66B2FF</color>
+    <color name="femalePink">#FF66FF</color>
+
     <color name="gray_unselected_body">#808080</color>
     <color name="gray_unselected_border">#C0C0C0</color>
 </resources>
