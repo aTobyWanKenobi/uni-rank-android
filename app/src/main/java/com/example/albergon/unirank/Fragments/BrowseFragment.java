@@ -1,20 +1,18 @@
 package com.example.albergon.unirank.Fragments;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorListener;
@@ -29,16 +27,14 @@ import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Range;
 import com.example.albergon.unirank.Model.ShareGeneralStats;
 import com.example.albergon.unirank.Model.ShareRank;
-import com.example.albergon.unirank.Model.SharedPoolFilter;
+import com.example.albergon.unirank.Model.SharedRankFilters.FilterManager;
 import com.example.albergon.unirank.R;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.ColorFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.database.DatabaseException;
 
 import java.util.ArrayList;
@@ -63,9 +59,10 @@ public class BrowseFragment extends Fragment {
     private FrameLayout queryContainer = null;
 
     // Popular indicators layout
-    private Spinner categorySpinner = null;
-    private Spinner parameterSpinner = null;
     private ListView queryResult = null;
+    private ListView filterList = null;
+    private Button addFilter = null;
+    private Button filterBtn = null;
 
     // General statistics layout
     private PieChart genderChart = null;
@@ -176,37 +173,12 @@ public class BrowseFragment extends Fragment {
         queryContainer.addView(popularIndicatorsLayout);
 
         // initialize layout elements
-        categorySpinner = (Spinner) popularIndicatorsLayout.findViewById(R.id.query_type_spinner);
-        parameterSpinner = (Spinner) popularIndicatorsLayout.findViewById(R.id.query_parameter_spinner);
+
         queryResult = (ListView) popularIndicatorsLayout.findViewById(R.id.indicators_result_list);
+        filterList = (ListView) popularIndicatorsLayout.findViewById(R.id.filters_list);
+        addFilter = (Button) popularIndicatorsLayout.findViewById(R.id.add_filter_button);
+        filterBtn = (Button) popularIndicatorsLayout.findViewById(R.id.filter_result_button);
 
-        // disable parameter spinner until category is chosen and set temporary adapter
-        parameterSpinner.setEnabled(false);
-        List<String> noParametersList = new ArrayList<>();
-        noParametersList.add("not selected");
-        ArrayAdapter<String> parameterAdapter = new ArrayAdapter<>(
-                getContext(),
-                R.layout.cell_simple_dropdown_text,
-                noParametersList);
-        parameterSpinner.setAdapter(parameterAdapter);
-
-        // set category spinner adapter
-        List<String> categoriesList = new ArrayList<>();
-        for(Enums.PopularIndicatorsCategories category : Enums.PopularIndicatorsCategories.values()) {
-            categoriesList.add(category.toString());
-        }
-
-        // add no selection item
-        categoriesList.add(0, "not selected");
-
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
-                getContext(),
-                R.layout.cell_simple_dropdown_text,
-                categoriesList);
-        categorySpinner.setAdapter(categoryAdapter);
-
-        // set category spinner listener
-        categorySpinner.setOnItemSelectedListener(createCategorySpinnerListener());
 
     }
 
@@ -576,7 +548,7 @@ public class BrowseFragment extends Fragment {
     private void launchQuery(String parameter) {
 
         // Object parameter depending on the category
-        final Object param = SharedPoolFilter.parameterDependingOnCategory(currentCategory, parameter);
+        final Object param = FilterManager.parameterDependingOnCategory(currentCategory, parameter);
 
         // Uniform error callback listener that simply throws an exception
         final OnFirebaseErrorListener errorListener = new OnFirebaseErrorListener() {
@@ -592,7 +564,7 @@ public class BrowseFragment extends Fragment {
         OnSharedPoolRetrievalListener retrievalListener = new OnSharedPoolRetrievalListener() {
             @Override
             public void onSharedPoolRetrieved(List<ShareRank> sharedPool) {
-                int[] scores = SharedPoolFilter.popularIndicatorsByCategory(sharedPool,
+                int[] scores = FilterManager.popularIndicatorsByCategory(sharedPool,
                         currentCategory,
                         param);
                 displayListResult(scores);

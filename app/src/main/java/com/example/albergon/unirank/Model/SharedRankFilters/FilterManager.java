@@ -1,9 +1,14 @@
-package com.example.albergon.unirank.Model;
+package com.example.albergon.unirank.Model.SharedRankFilters;
 
 import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.Database.Tables;
-import com.example.albergon.unirank.ShareRankFilter;
+import com.example.albergon.unirank.Model.Countries;
+import com.example.albergon.unirank.Model.Enums;
+import com.example.albergon.unirank.Model.Range;
+import com.example.albergon.unirank.Model.ShareRank;
+import com.example.albergon.unirank.Model.SharedRankFilters.ShareRankFilter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,10 +16,20 @@ import java.util.Map;
  * This not instantiable class provides static methods to process the shared pool of aggregations
  * retrieved from firebase in order to give results to the implemented queries
  */
-public class SharedPoolFilter {
+public class FilterManager {
+
+    List<ShareRankFilter> filters = null;
 
     // private empty constructor
-    private SharedPoolFilter() {}
+    public FilterManager() {
+
+        filters = new ArrayList<>();
+    }
+
+    public void addFilter(String category, String parameter) {
+
+
+    }
 
     /**
      * Retrieves the total scores gathered by indicators in the shared pool in aggregations that
@@ -185,143 +200,5 @@ public class SharedPoolFilter {
                 throw new IllegalStateException("Unknown element in categories enumeration");
         }
 
-    }
-
-    /**
-     * Returns a ShareRankFilter that accepts aggregations uploaded by a user of a precise gender,
-     * defined by a parameter.
-     *
-     * @return  aggregate indicator weights belonging to the requested category
-     */
-    private static ShareRankFilter createGenderFilter() {
-
-        return (param, sharedAggregation) -> {
-
-            // argument check
-            if(param == null || sharedAggregation == null) {
-                throw new IllegalArgumentException("Filter arguments cannot be null");
-            } else if(!(param instanceof Enums.GenderEnum)) {
-                throw new IllegalArgumentException("This filter has to be called with a gender as parameter");
-            }
-
-            Enums.GenderEnum gender = (Enums.GenderEnum) param;
-
-            return sharedAggregation.gender.equals(gender.toString());
-
-        };
-    }
-
-    /**
-     * Returns a ShareRankFilter that accepts aggregations uploaded by a user of a precise type,
-     * defined by a parameter.
-     *
-     * @return  aggregate indicator weights belonging to the requested category
-     */
-    private static ShareRankFilter createUserTypeFilter() {
-
-        return (param, sharedAggregation) -> {
-
-            // argument check
-            if(param == null || sharedAggregation == null) {
-                throw new IllegalArgumentException("Filter arguments cannot be null");
-            } else if(!(param instanceof Enums.TypesOfUsers)) {
-                throw new IllegalArgumentException("This filter has to be called with a user type as parameter");
-            }
-
-            Enums.TypesOfUsers type = (Enums.TypesOfUsers) param;
-
-            return sharedAggregation.userType.equals(type.toString());
-        };
-    }
-
-    /**
-     * Returns a ShareRankFilter that accepts aggregations uploaded by a user born in a specific
-     * time frame, defined by a parameter.
-     *
-     * @return  aggregate indicator weights belonging to the requested category
-     */
-    private static ShareRankFilter createBirthyearFilter() {
-
-        return (param, sharedAggregation) -> {
-
-            // argument check
-            if(param == null || sharedAggregation == null) {
-                throw new IllegalArgumentException("Filter arguments cannot be null");
-            } else if(!(param instanceof Range)) {
-                throw new IllegalArgumentException("This filter has to be called with a range as parameter");
-            }
-
-            // assumes date formatted like dd mmm aaaa
-            Range yearRange = (Range) param;
-            Integer year = sharedAggregation.birthYear;
-
-            return yearRange.within(year);
-        };
-    }
-
-    /**
-     * Returns a ShareRankFilter that accepts aggregations uploaded in the last month or year,
-     * depending on a parameter.
-     *
-     * @return  aggregate indicator weights belonging to the requested category
-     */
-    private static ShareRankFilter createTimeFrameFilter() {
-
-        return (param, sharedAggregation) -> {
-
-            // argument check
-            if(param == null || sharedAggregation == null) {
-                throw new IllegalArgumentException("Filter arguments cannot be null");
-            } else if(!(param instanceof Enums.TimeFrame)) {
-                throw new IllegalArgumentException("This filter has to be called with a timeframe as parameter");
-            }
-
-            Enums.TimeFrame timeWindow = (Enums.TimeFrame) param;
-
-            String currentDate = FirebaseHelper.generateDate();
-            String sharedDate = sharedAggregation.date;
-            boolean belongs = false;
-
-            // TODO: different date formats in different phones? look it up
-            switch(timeWindow) {
-                case MONTH:
-                    // keep month and year from dates so that we can check for month equality
-                    belongs = currentDate.split(" ", 2)[1].equals(sharedDate.split(" ", 2)[1]);
-                    break;
-                case YEAR:
-                    // cast years and compare
-                    belongs =   Integer.parseInt(currentDate.substring(currentDate.lastIndexOf(' ') + 1)) ==
-                            Integer.parseInt(sharedDate.substring(sharedDate.lastIndexOf(' ') + 1));
-                    break;
-                default:
-                    throw new IllegalStateException("Unknown element in TimeFrame enumeration");
-            }
-
-            return belongs;
-        };
-    }
-
-    /**
-     * Returns a ShareRankFilter that accepts aggregations uploaded by a user from a precise country,
-     * defined by a parameter.
-     *
-     * @return  aggregate indicator weights belonging to the requested category
-     */
-    private static ShareRankFilter createCountryFilter() {
-
-        return (param, sharedAggregation) -> {
-
-            // argument check
-            if(param == null || sharedAggregation == null) {
-                throw new IllegalArgumentException("Filter arguments cannot be null");
-            } else if(!(param instanceof String)) {
-                throw new IllegalArgumentException("This filter has to be called with a string as parameter");
-            }
-
-            String countryCode = (String) param;
-            String aggregationCountry = sharedAggregation.country;
-
-            return countryCode.equals(aggregationCountry);
-        };
     }
 }
