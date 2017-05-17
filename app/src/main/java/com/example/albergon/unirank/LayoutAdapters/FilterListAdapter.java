@@ -1,14 +1,23 @@
 package com.example.albergon.unirank.LayoutAdapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.albergon.unirank.AsyncFilterListAdd;
+import com.example.albergon.unirank.AsyncIndicatorListAdd;
+import com.example.albergon.unirank.Database.Tables;
+import com.example.albergon.unirank.FilterListCellContent;
 import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.SharedRankFilters.ShareRankFilter;
 import com.example.albergon.unirank.R;
@@ -23,7 +32,7 @@ public class FilterListAdapter extends BaseAdapter {
 
     private Context context = null;
     private int layoutResourceId = 0;
-    private List<AsyncFilterListAdd.FilterCellContent> filters = null;
+    private List<FilterListCellContent> filters = null;
 
     public FilterListAdapter(@NonNull Context context, @LayoutRes int resource) {
         this.context = context;
@@ -31,57 +40,45 @@ public class FilterListAdapter extends BaseAdapter {
         filters = new ArrayList<>();
     }
 
-    public void addFilter(AsyncFilterListAdd.FilterCellContent filterCellContent) {
+    public void addFilter(FilterListCellContent filterCellContent) {
         filters.add(filterCellContent);
     }
 
     @Override
     public int getCount() {
-        return 0;
+        return filters.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return filters.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
+    }
+
+    public List<FilterListCellContent> getCurrentFilters() {
+        return new ArrayList<>(filters);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
-    }
 
-    public void sdjhfjasd() {
-        // disable parameter spinner until category is chosen and set temporary adapter
-        parameterSpinner.setEnabled(false);
-        List<String> noParametersList = new ArrayList<>();
-        noParametersList.add("not selected");
-        ArrayAdapter<String> parameterAdapter = new ArrayAdapter<>(
-                getContext(),
-                R.layout.cell_simple_dropdown_text,
-                noParametersList);
-        parameterSpinner.setAdapter(parameterAdapter);
+        FilterListCellContent filterCell = filters.get(position);
 
-        // set category spinner adapter
-        List<String> categoriesList = new ArrayList<>();
-        for(Enums.PopularIndicatorsCategories category : Enums.PopularIndicatorsCategories.values()) {
-            categoriesList.add(category.toString());
+        if(convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.cell_pop_indicator_filter, null);
         }
 
-        // add no selection item
-        categoriesList.add(0, "not selected");
+        Spinner categorySpinner = (Spinner) convertView.findViewById(R.id.filter_type_spinner);
+        Spinner parameterSpinner = (Spinner) convertView.findViewById(R.id.filter_parameter_spinner);
 
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
-                getContext(),
-                R.layout.cell_simple_dropdown_text,
-                categoriesList);
-        categorySpinner.setAdapter(categoryAdapter);
+        filterCell.setCategorySpinner(categorySpinner);
+        filterCell.setParameterSpinner(parameterSpinner);
 
-        // set category spinner listener
-        categorySpinner.setOnItemSelectedListener(createCategorySpinnerListener());
+        return convertView;
     }
 }

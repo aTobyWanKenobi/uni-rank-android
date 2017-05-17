@@ -16,7 +16,7 @@ import com.example.albergon.unirank.Model.Enums;
  * This AsyncTask extension updates the contents of a ListView outside of the UI thread, to allow it
  * to refresh and show the results in real time.
  */
-public class AsyncFilterListAdd extends AsyncTask<AsyncFilterListAdd.FilterCellContent, AsyncFilterListAdd.FilterCellContent, Void> {
+public class AsyncFilterListAdd extends AsyncTask<FilterListCellContent, FilterListCellContent, Void> {
 
     private FilterListAdapter arrayAdapter = null;
     private Context context = null;
@@ -41,7 +41,7 @@ public class AsyncFilterListAdd extends AsyncTask<AsyncFilterListAdd.FilterCellC
 
 
     @Override
-    protected Void doInBackground(FilterCellContent... params) {
+    protected Void doInBackground(FilterListCellContent... params) {
 
         // arguments check
         if(params.length != 1) {
@@ -54,7 +54,7 @@ public class AsyncFilterListAdd extends AsyncTask<AsyncFilterListAdd.FilterCellC
     }
 
     @Override
-    protected void onProgressUpdate(FilterCellContent... item) {
+    protected void onProgressUpdate(FilterListCellContent... item) {
         arrayAdapter.addFilter(item[0]);
     }
 
@@ -63,57 +63,4 @@ public class AsyncFilterListAdd extends AsyncTask<AsyncFilterListAdd.FilterCellC
         arrayAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * This nested static class serves as a container for the tuple composed by a filter category and the
-     * associated parameters, along with listeners.
-     */
-    public static class FilterCellContent {
-
-        private String category = null;
-        private String parameter = null;
-
-        private AdapterView.OnItemSelectedListener categoryListener = null;
-        private AdapterView.OnItemSelectedListener parameterListener = null;
-
-        private Spinner categorySpinner = null;
-        private Spinner parameterSpinner = null;
-
-        public FilterCellContent() {
-
-            categoryListener =new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                    // retrieve selected category and call UI updates
-                    String chosenCategory = (String) parent.getItemAtPosition(position);
-
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                    // do nothing
-                }
-            };
-        }
-
-        public void setCategorySpinner(Spinner categorySpinner) {
-
-        }
-
-        public void setParameterSpinner(Spinner parameterSpinner) {
-            this.parameterSpinner = parameterSpinner;
-        }
-
-        public Integer getIndicator() {
-            return indicator;
-        }
-
-        public SeekBar.OnSeekBarChangeListener getListener() {
-            return listener;
-        }
-
-        public int getInitialWeight() {
-            return initialWeight;
-        }
-    }
 }

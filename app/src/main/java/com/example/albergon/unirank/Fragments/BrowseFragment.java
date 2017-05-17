@@ -15,11 +15,15 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.example.albergon.unirank.AsyncFilterListAdd;
+import com.example.albergon.unirank.AsyncIndicatorListAdd;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnGeneralStatisticsRetrievalListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
+import com.example.albergon.unirank.FilterListCellContent;
+import com.example.albergon.unirank.LayoutAdapters.FilterListAdapter;
 import com.example.albergon.unirank.LayoutAdapters.PopularIndicatorListAdapter;
 import com.example.albergon.unirank.Model.ChartColors;
 import com.example.albergon.unirank.Model.Countries;
@@ -63,6 +67,8 @@ public class BrowseFragment extends Fragment {
     private ListView filterList = null;
     private Button addFilter = null;
     private Button filterBtn = null;
+
+    private FilterListAdapter filterListAdapter = null;
 
     // General statistics layout
     private PieChart genderChart = null;
@@ -179,6 +185,26 @@ public class BrowseFragment extends Fragment {
         addFilter = (Button) popularIndicatorsLayout.findViewById(R.id.add_filter_button);
         filterBtn = (Button) popularIndicatorsLayout.findViewById(R.id.filter_result_button);
 
+        filterListAdapter = new FilterListAdapter(getContext(), R.layout.cell_pop_indicator_filter);
+        filterList.setAdapter(filterListAdapter);
+
+        addFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // add indicator to the list
+                AsyncFilterListAdd task = new AsyncFilterListAdd(filterListAdapter, getContext());
+
+                FilterListCellContent filterCell = new FilterListCellContent(getContext());
+                task.execute(filterCell);
+            }
+        });
+
+        filterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchQuery();
+            }
+        });
 
     }
 
@@ -445,110 +471,7 @@ public class BrowseFragment extends Fragment {
      *  POPULAR INDICATORS
      **********************************************************************************************/
 
-    private AdapterView.OnItemSelectedListener createCategorySpinnerListener() {
-
-        return new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                // retrieve selected category and call UI updates
-                String chosenCategory = (String) parent.getItemAtPosition(position);
-                for(Enums.PopularIndicatorsCategories c : Enums.PopularIndicatorsCategories.values()) {
-                    // avoids updating category on nothing selected
-                    if(c.toString().equals(chosenCategory)) {
-                        updateCurrentCategory(c);
-                    }
-                }
-
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // do nothing
-            }
-        };
-    }
-
-    private AdapterView.OnItemSelectedListener createParameterSpinnerListener() {
-
-        return new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                // retrieve selected parameter and call UI updates
-                String chosenParameter = (String) parent.getItemAtPosition(position);
-
-                // safety check, should never happen
-                if(currentCategory != null && !chosenParameter.equals("not selected")) {
-                    launchQuery(chosenParameter);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // do nothing
-            }
-        };
-    }
-
-    private void updateCurrentCategory(Enums.PopularIndicatorsCategories category) {
-
-        // update current category
-        currentCategory = category;
-
-        // prepare spinner list by category
-        List<String> spinnerList = new ArrayList<>();
-        switch(category) {
-            case GENDER:
-                for(Enums.GenderEnum gender : Enums.GenderEnum.values()) {
-                    spinnerList.add(gender.toString());
-                }
-                break;
-            case TYPE:
-                for(Enums.TypesOfUsers type : Enums.TypesOfUsers.values()) {
-                    spinnerList.add(type.toString());
-                }
-                break;
-            case BIRTHYEAR:
-                for(Enums.UserAgeCategories age : Enums.UserAgeCategories.values()) {
-                    spinnerList.add(age.toString());
-                }
-                break;
-            case TIMEFRAME:
-                for(Enums.TimeFrame timeFrame : Enums.TimeFrame.values()) {
-                    spinnerList.add(timeFrame.toString());
-                }
-                break;
-            case COUNTRY:
-                List<String> countryNames = new ArrayList<>(Countries.countryMap.values());
-                Collections.sort(countryNames, String.CASE_INSENSITIVE_ORDER);
-                spinnerList = countryNames;
-                break;
-            default:
-                throw new IllegalStateException("Unknown element in categories enumeration");
-        }
-
-        // add initial "no selection" entry
-        spinnerList.add(0, "not selected");
-
-        // set category spinner adapter and enable it
-        ArrayAdapter<String> parameterAdapter = new ArrayAdapter<>(
-                getContext(),
-                R.layout.cell_simple_dropdown_text,
-                spinnerList);
-        parameterSpinner.setAdapter(parameterAdapter);
-        parameterSpinner.setEnabled(true);
-
-        // set category parameter listener
-        parameterSpinner.setOnItemSelectedListener(createParameterSpinnerListener());
-
-    }
-
-    private void launchQuery(String parameter) {
-
-        // Object parameter depending on the category
-        final Object param = FilterManager.parameterDependingOnCategory(currentCategory, parameter);
+    private void launchQuery() {
 
         // Uniform error callback listener that simply throws an exception
         final OnFirebaseErrorListener errorListener = new OnFirebaseErrorListener() {
@@ -564,9 +487,8 @@ public class BrowseFragment extends Fragment {
         OnSharedPoolRetrievalListener retrievalListener = new OnSharedPoolRetrievalListener() {
             @Override
             public void onSharedPoolRetrieved(List<ShareRank> sharedPool) {
-                int[] scores = FilterManager.popularIndicatorsByCategory(sharedPool,
-                        currentCategory,
-                        param);
+                FilterManager filterManager = new FilterManager(filterListAdapter.getCurrentFilters());
+                int[] scores = filterManager.filter(sharedPool);
                 displayListResult(scores);
             }
         };
