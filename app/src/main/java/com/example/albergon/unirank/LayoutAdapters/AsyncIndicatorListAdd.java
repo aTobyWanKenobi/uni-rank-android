@@ -1,10 +1,8 @@
-package com.example.albergon.unirank;
+package com.example.albergon.unirank.LayoutAdapters;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.SeekBar;
-
-import com.example.albergon.unirank.LayoutAdapters.IndicatorListAdapter;
 
 /**
  * This AsyncTask extension updates the contents of a ListView outside of the UI thread, to allow it

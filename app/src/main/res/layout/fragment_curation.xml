@@ -1,0 +1,39 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fragment_background"
+    android:orientation="vertical"
+    tools:context="com.example.albergon.unirank.Fragments.CurationFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:id="@+id/curation_welcome_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="20dp"
+        android:text="Welcome to UniRank!"
+        android:textAlignment="center"
+        android:textAppearance="@style/PageTitleTextBox" />
+
+    <TextView
+        android:id="@+id/curation_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="10dp"
+        android:text="You can start by looking at what other people are doing with this application and what they want from a University. Or you can start from scratch and build your own personalized ranking!"
+        android:textAlignment="center" />
+
+    <GridView
+        android:id="@+id/curation_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:horizontalSpacing="60dp"
+        android:numColumns="2"
+        android:verticalSpacing="30dp" />
+</LinearLayout>

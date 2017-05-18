@@ -48,24 +48,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/uni_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="10"
             android:paddingLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_vertical"
             android:text="TextView"></TextView>
 
-        <ProgressBar
-            android:id="@+id/rank_score_bar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:max="1000"
-            android:progress="0" />
+        <ImageView
+            android:id="@+id/icon_country_flag"
+            android:layout_width="30dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0.5"
+            app:srcCompat="@drawable/z_icon_united_kingdom" />
+
     </LinearLayout>
 
 </LinearLayout>

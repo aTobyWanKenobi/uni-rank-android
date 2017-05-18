@@ -1,4 +1,4 @@
-package com.example.albergon.unirank;
+package com.example.albergon.unirank.LayoutAdapters;
 
 import android.content.Context;
 import android.view.View;
@@ -10,6 +10,7 @@ import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.Model.Countries;
 import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Range;
+import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
 import java.util.Collections;

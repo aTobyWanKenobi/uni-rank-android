@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.example.albergon.unirank.Fragments.BrowseFragment;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
+import com.example.albergon.unirank.Fragments.CurationFragment;
 import com.example.albergon.unirank.Fragments.MyRankingsFragment;
 import com.example.albergon.unirank.Fragments.SettingsFragment;
 
@@ -52,7 +53,8 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
 
         // Instantiate correct fragment depending on selected tab
         switch(position){
-            case 0: toRet = new CreateRankingFragment();
+            case 0: toRet = new CurationFragment();
+                    //new CreateRankingFragment();
                     break;
             case 1: toRet = MyRankingsFragment.newInstance();
                 break;

@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.example.albergon.unirank.AsyncIndicatorListAdd;
+import com.example.albergon.unirank.LayoutAdapters.AsyncIndicatorListAdd;
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.IndicatorListAdapter;
 import com.example.albergon.unirank.R;

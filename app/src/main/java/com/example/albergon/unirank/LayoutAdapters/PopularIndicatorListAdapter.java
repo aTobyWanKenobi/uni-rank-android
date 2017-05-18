@@ -10,10 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.example.albergon.unirank.AsyncIndicatorListAdd;
 import com.example.albergon.unirank.Database.Tables;
 import com.example.albergon.unirank.R;
 

@@ -59,8 +59,7 @@ public class UniversityListAdapter extends ArrayAdapter {
             holder = new UniHolder( (TextView)row.findViewById(R.id.rank),
                                     (TextView)row.findViewById(R.id.uni_name),
                                     (ImageView) row.findViewById(R.id.rank_change_icon),
-                                    (TextView) row.findViewById(R.id.rank_change_number),
-                                    (ProgressBar) row.findViewById(R.id.rank_score_bar));
+                                    (TextView) row.findViewById(R.id.rank_change_number));
             row.setTag(holder);
         }
         else
@@ -74,7 +73,6 @@ public class UniversityListAdapter extends ArrayAdapter {
         }
         holder.getRank().setText(String.valueOf(position+1));
         holder.getName().setText(uni.getName());
-        holder.getScoreBar().setProgress(scores.getOrDefault(uni.getId(), 0.0).intValue());
 
         return row;
     }
@@ -105,12 +103,11 @@ public class UniversityListAdapter extends ArrayAdapter {
         private TextView name = null;
         private ImageView changeIcon = null;
         private TextView changeNumber = null;
-        private ProgressBar scoreBar = null;
 
-        public UniHolder(TextView rank, TextView name, ImageView changeIcon, TextView changeNumber, ProgressBar scoreBar) {
+        public UniHolder(TextView rank, TextView name, ImageView changeIcon, TextView changeNumber) {
 
             // arguments check
-            if(rank == null || name == null || changeIcon == null || changeNumber == null || scoreBar == null) {
+            if(rank == null || name == null || changeIcon == null || changeNumber == null) {
                 throw new IllegalArgumentException("UniHolder parameters cannot be null");
             }
 
@@ -118,7 +115,6 @@ public class UniversityListAdapter extends ArrayAdapter {
             this.name = name;
             this.changeIcon = changeIcon;
             this.changeNumber = changeNumber;
-            this.scoreBar = scoreBar;
         }
 
         public TextView getRank() {
@@ -137,8 +133,5 @@ public class UniversityListAdapter extends ArrayAdapter {
             return changeNumber;
         }
 
-        public ProgressBar getScoreBar() {
-            return scoreBar;
-        }
     }
 }

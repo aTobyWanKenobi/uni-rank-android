@@ -1,16 +1,7 @@
-package com.example.albergon.unirank;
+package com.example.albergon.unirank.LayoutAdapters;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Filter;
-import android.widget.SeekBar;
-import android.widget.Spinner;
-
-import com.example.albergon.unirank.LayoutAdapters.FilterListAdapter;
-import com.example.albergon.unirank.LayoutAdapters.IndicatorListAdapter;
-import com.example.albergon.unirank.Model.Enums;
 
 /**
  * This AsyncTask extension updates the contents of a ListView outside of the UI thread, to allow it

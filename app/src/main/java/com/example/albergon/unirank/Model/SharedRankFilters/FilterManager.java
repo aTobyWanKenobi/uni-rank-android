@@ -1,13 +1,10 @@
 package com.example.albergon.unirank.Model.SharedRankFilters;
 
-import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.Database.Tables;
-import com.example.albergon.unirank.FilterListCellContent;
-import com.example.albergon.unirank.Model.Countries;
+import com.example.albergon.unirank.LayoutAdapters.FilterListCellContent;
 import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Range;
 import com.example.albergon.unirank.Model.ShareRank;
-import com.example.albergon.unirank.Model.SharedRankFilters.ShareRankFilter;
 
 import java.util.ArrayList;
 import java.util.List;

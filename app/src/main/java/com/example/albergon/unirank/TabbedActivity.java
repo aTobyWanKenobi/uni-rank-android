@@ -15,6 +15,7 @@ import com.example.albergon.unirank.Fragments.ChooseIndicatorsDialog;
 import com.example.albergon.unirank.Fragments.ChooseLoadDialog;
 import com.example.albergon.unirank.Fragments.CompareFragment;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
+import com.example.albergon.unirank.Fragments.CurationFragment;
 import com.example.albergon.unirank.Fragments.MyRankingsFragment;
 import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
@@ -38,7 +39,8 @@ public class TabbedActivity extends AppCompatActivity implements
         MyRankingsFragment.MyRankingsFragmentInteractionListener,
         ChooseLoadDialog.OnChooseLoadDialogInteractionListener,
         BrowseFragment.OnBrowseFragmentInteractionListener,
-        CompareFragment.OnCompareFragmentInteractionListener {
+        CompareFragment.OnCompareFragmentInteractionListener,
+        CurationFragment.OnCurationFragmentInteractionListener {
 
     // Database instance, unique for the entire application
     private DatabaseHelper databaseHelper = null;
