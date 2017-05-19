@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Spinner;
 
+import com.example.albergon.unirank.Fragments.CurationFragment;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
@@ -18,11 +19,13 @@ import java.util.List;
 public class CurationGridAdapter extends BaseAdapter {
 
     private Context context = null;
+    private CurationFragment.OnCurationFragmentInteractionListener interactionListener = null;
     private List<CurationCellContent> curations = null;
 
-    public CurationGridAdapter(Context context) {
+    public CurationGridAdapter(Context context, CurationFragment.OnCurationFragmentInteractionListener interactionListener) {
 
         this.context = context;
+        this.interactionListener = interactionListener;
         curations = initializeCurations();
     }
 
@@ -56,11 +59,18 @@ public class CurationGridAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        CurationCellContent curationContent = curations.get(position);
+        final CurationCellContent curationContent = curations.get(position);
 
         if(convertView == null) {
             convertView = curationContent.getLayout();
         }
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                interactionListener.onCurationClick(curationContent.getCuration());
+            }
+        });
 
         return convertView;
     }

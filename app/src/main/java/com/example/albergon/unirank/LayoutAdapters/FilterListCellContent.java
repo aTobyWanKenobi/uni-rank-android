@@ -146,6 +146,8 @@ public class FilterListCellContent {
         // add initial "no selection" entry
         spinnerList.add(0, "not selected");
 
+        parameterSpinner.getAdapter().da
+
         // set category spinner adapter and enable it
         ArrayAdapter<String> parameterAdapter = new ArrayAdapter<>(
                 context,

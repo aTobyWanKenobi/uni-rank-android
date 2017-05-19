@@ -41,10 +41,12 @@ public class ResultAggregationFragment extends Fragment {
     // Factory parameter and interaction listener
     private static final String SETTINGS = "settings";
     private static final String RANKING = "ranking";
+    private static final String CACHED = "cached";
     private ResultFragmentInteractionListener interactionListener = null;
 
     private Map<Integer, Integer> settings;
     private ArrayList<Integer> oldResult;
+    private boolean cached = false;
     private Ranking<Integer> result = null;
     FirebaseHelper firebaseHelper = null;
     DatabaseHelper databaseHelper = null;
@@ -67,7 +69,8 @@ public class ResultAggregationFragment extends Fragment {
      * @return              a result fragment with the desired settings
      */
     public static ResultAggregationFragment newInstance(HashMap<Integer, Integer> settings,
-                                                        ArrayList<Integer> oldRanking) {
+                                                        ArrayList<Integer> oldRanking,
+                                                        boolean cached) {
 
         // arguments check
         if(settings == null) {
@@ -80,6 +83,7 @@ public class ResultAggregationFragment extends Fragment {
         args.putSerializable(SETTINGS, settings);
         // assume array list usage since it's serializable
         args.putSerializable(RANKING, oldRanking);
+        args.putBoolean(CACHED, cached);
         fragment.setArguments(args);
         return fragment;
     }
@@ -95,6 +99,7 @@ public class ResultAggregationFragment extends Fragment {
             settings = (HashMap<Integer, Integer>) getArguments().getSerializable(SETTINGS);
             //noinspection unchecked
             oldResult = (ArrayList<Integer>) getArguments().getSerializable(RANKING);
+            cached = getArguments().getBoolean(CACHED);
         }
 
         firebaseHelper = new FirebaseHelper(getActivity());
@@ -105,7 +110,12 @@ public class ResultAggregationFragment extends Fragment {
         addButtonsBehavior();
 
         // perform aggregation and display it
-        performAggregation();
+        if(cached) {
+            Ranking<Integer> cached = new Ranking<Integer>(oldResult);
+            skipAggregation(cached);
+        } else {
+            performAggregation();
+        }
 
         return view;
     }
@@ -210,6 +220,18 @@ public class ResultAggregationFragment extends Fragment {
         saveBtn.setEnabled(false);
     }
 
+    private void skipAggregation(Ranking<Integer> cache) {
+
+        result = cache;
+        progress_layout.setVisibility(View.GONE);
+        resultList.setVisibility(View.VISIBLE);
+        saveBtn.setEnabled(true);
+        shareBtn.setEnabled(true);
+        modifyBtn.setEnabled(true);
+        newRankingBtn.setEnabled(true);
+        displayRanking();
+    }
+
     /**
      * This method performs the aggregation with the input settings and returns the resulting ranking.
      */
@@ -239,7 +261,7 @@ public class ResultAggregationFragment extends Fragment {
         // Setup ListView adapter
         UniversityListAdapter adapter = new UniversityListAdapter(getContext(),
                 R.layout.cell_ranking_list,
-                uniList, oldResult, result.getNormalizedScores(1000.0));
+                uniList, oldResult, cached);
         resultList.setAdapter(adapter);
     }
 

@@ -43,6 +43,10 @@ public class CurationCellContent {
         return convertView;
     }
 
+    public CurationGridAdapter.Curations getCuration() {
+        return curation;
+    }
+
     private void setLayoutContent() {
 
         switch(curation) {

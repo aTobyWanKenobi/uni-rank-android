@@ -45,6 +45,7 @@ public class CreateRankingFragment extends Fragment {
     private DatabaseHelper databaseHelper = null;
     private Map<Integer, Integer> currentSettings = null;
     private ArrayList<Integer> oldRanking = null;
+    private boolean cacheValid = false;
     private OnRankGenerationInteractionListener interactionListener = null;
 
 
@@ -95,6 +96,9 @@ public class CreateRankingFragment extends Fragment {
             currentSettings = (HashMap<Integer, Integer>) getArguments().getSerializable(OLD_SETTINGS);
             //noinspection unchecked
             oldRanking = (ArrayList<Integer>) getArguments().getSerializable(OLD_RANKING);
+
+            cacheValid = true;
+
             updateListFromSettings();
         }
 
@@ -192,7 +196,7 @@ public class CreateRankingFragment extends Fragment {
             if(currentSettings.size() == 0) {
                 Toast.makeText(getActivity(), "Choose at least one indicator", Toast.LENGTH_LONG).show();
             } else {
-                interactionListener.onPressGenerate(currentSettings, oldRanking);
+                interactionListener.onPressGenerate(currentSettings, oldRanking, cacheValid);
             }
 
         });
@@ -221,7 +225,7 @@ public class CreateRankingFragment extends Fragment {
 
     public interface OnRankGenerationInteractionListener {
 
-        void onPressGenerate(Map<Integer, Integer> settings, List<Integer> oldRanking);
+        void onPressGenerate(Map<Integer, Integer> settings, List<Integer> oldRanking, boolean cached);
 
         void showPickIndicatorDialog(Set<Integer> alreadyPicked);
 
@@ -240,6 +244,7 @@ public class CreateRankingFragment extends Fragment {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if(fromUser) {
                 currentSettings.put(indicator, progress+1);
+                cacheValid = false;
             }
         }
 

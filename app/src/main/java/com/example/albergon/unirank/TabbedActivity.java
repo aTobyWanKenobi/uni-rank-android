@@ -18,7 +18,9 @@ import com.example.albergon.unirank.Fragments.CreateRankingFragment;
 import com.example.albergon.unirank.Fragments.CurationFragment;
 import com.example.albergon.unirank.Fragments.MyRankingsFragment;
 import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
+import com.example.albergon.unirank.LayoutAdapters.CurationGridAdapter;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
+import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.SaveRank;
 
 import java.util.ArrayList;
@@ -76,7 +78,7 @@ public class TabbedActivity extends AppCompatActivity implements
         fragmentManager = getSupportFragmentManager();
         currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
 
-        changeFragment(new CreateRankingFragment());
+        changeFragment(new CurationFragment());
 
         databaseHelper = DatabaseHelper.getInstance(this);
     }
@@ -125,7 +127,7 @@ public class TabbedActivity extends AppCompatActivity implements
      * @param settings  settings for the aggregation
      */
     @Override
-    public void onPressGenerate(Map<Integer, Integer> settings, List<Integer> oldRanking) {
+    public void onPressGenerate(Map<Integer, Integer> settings, List<Integer> oldRanking, boolean cached) {
 
         // arguments check
         if(settings == null) {
@@ -134,7 +136,7 @@ public class TabbedActivity extends AppCompatActivity implements
 
         @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settingsCopy = new HashMap<>(settings);
         ArrayList<Integer> oldResult = (oldRanking == null)? null : new ArrayList<>(oldRanking);
-        changeFragment(ResultAggregationFragment.newInstance(settingsCopy, oldResult));
+        changeFragment(ResultAggregationFragment.newInstance(settingsCopy, oldResult, cached));
     }
 
     @Override
@@ -252,7 +254,6 @@ public class TabbedActivity extends AppCompatActivity implements
         launchCompareFragment(toOpen, otherSave);
     }
 
-
     private void launchCreationWithData(SaveRank toOpen) {
         @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settings = new HashMap<>(toOpen.getSettings());
         ArrayList<Integer> oldRanking = new ArrayList<>(toOpen.getResultList());
@@ -260,5 +261,10 @@ public class TabbedActivity extends AppCompatActivity implements
         //noinspection ConstantConditions
         tabLayout.getTabAt(0).select();
         changeFragment(CreateRankingFragment.newInstanceFromSettings(settings, oldRanking));
+    }
+
+    @Override
+    public void onCurationClick(CurationGridAdapter.Curations curation) {
+        changeFragment(new CreateRankingFragment());
     }
 }

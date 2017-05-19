@@ -34,7 +34,7 @@ public class CurationFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_curation, container, false);
 
         curationGrid = (GridView) view.findViewById(R.id.curation_grid);
-        curationGrid.setAdapter(new CurationGridAdapter(getContext()));
+        curationGrid.setAdapter(new CurationGridAdapter(getContext(), interactionListener));
 
         return view;
     }
@@ -57,6 +57,8 @@ public class CurationFragment extends Fragment {
     }
 
     public interface OnCurationFragmentInteractionListener {
+
+        void onCurationClick(CurationGridAdapter.Curations curation);
 
     }
 }

@@ -30,18 +30,18 @@ public class UniversityListAdapter extends ArrayAdapter {
     private int layoutResourceId = 0;
     private List<University> universities = null;
     private List<Integer> oldResult = null;
-    private Map<Integer, Double> scores = null;
+    private boolean cacheUsed = false;
 
     public UniversityListAdapter(@NonNull Context context, @LayoutRes int resource,
                                  @NonNull List<University> universities, List<Integer> oldResult,
-                                 @NonNull Map<Integer, Double> scores) {
+                                 boolean cacheUsed) {
         //noinspection unchecked
         super(context, resource, universities);
 
+        this.cacheUsed = cacheUsed;
         this.context = context;
         this.layoutResourceId = resource;
         this.universities = new ArrayList<>(universities);
-        this.scores = new HashMap<>(scores);
         this.oldResult = (oldResult == null) ? null : new ArrayList<>(oldResult);
     }
 
@@ -68,7 +68,7 @@ public class UniversityListAdapter extends ArrayAdapter {
         }
 
         University uni = universities.get(position);
-        if(oldResult != null) {
+        if(oldResult != null && !cacheUsed) {
             setOldRankingComparison(holder, uni, position);
         }
         holder.getRank().setText(String.valueOf(position+1));

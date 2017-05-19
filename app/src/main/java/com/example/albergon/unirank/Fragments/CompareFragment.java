@@ -156,14 +156,14 @@ public class CompareFragment extends Fragment {
                         R.layout.cell_ranking_list,
                         uniList1,
                         rank2,
-                        score1);
+                        false);
                 break;
             case RANK2:
                 adapter = new UniversityListAdapter(getContext(),
                         R.layout.cell_ranking_list,
                         uniList2,
                         rank1,
-                        score2);
+                        false);
                 break;
             default:
                 throw new IllegalStateException("Unknown element of enum CurrentlySelected");
