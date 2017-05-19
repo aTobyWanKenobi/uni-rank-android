@@ -34,6 +34,8 @@ public class FilterListCellContent {
     private Spinner categorySpinner = null;
     private Spinner parameterSpinner = null;
 
+    private boolean first = true;
+
     public FilterListCellContent(Context context) {
 
         this.context = context;
@@ -42,9 +44,21 @@ public class FilterListCellContent {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                // retrieve selected category
-                category = (String) parent.getItemAtPosition(position);
-                updateCurrentParameterSpinner();
+                if(!first) {
+                    // retrieve selected category
+                    category = (String) parent.getItemAtPosition(position);
+
+                    ArrayList<String> parameterList = new ArrayList<>();
+                    parameterList.add("cambia?");
+                    ArrayAdapter<String> parameterAdapter = new ArrayAdapter<>(
+                            context,
+                            R.layout.cell_simple_dropdown_text,
+                            parameterList);
+                    parameterSpinner.setAdapter(parameterAdapter);
+                    //updateCurrentParameterSpinner();
+                }
+
+                first = false;
             }
 
             @Override
@@ -70,7 +84,6 @@ public class FilterListCellContent {
 
     public void setCategorySpinner(Spinner categorySpinner) {
         this.categorySpinner = categorySpinner;
-        this.categorySpinner.setOnItemSelectedListener(categoryListener);
 
         // set category spinner adapter
         List<String> categoriesList = new ArrayList<>();
@@ -86,12 +99,13 @@ public class FilterListCellContent {
                 R.layout.cell_simple_dropdown_text,
                 categoriesList);
         this.categorySpinner.setAdapter(categoryAdapter);
+
+        this.categorySpinner.setOnItemSelectedListener(categoryListener);
     }
 
     public void setParameterSpinner(Spinner parameterSpinner) {
         this.parameterSpinner = parameterSpinner;
         //this.parameterSpinner.setEnabled(false);
-        this.parameterSpinner.setOnItemSelectedListener(parameterListener);
 
         // disable parameter spinner until category is chosen and set temporary adapter
         ArrayList<String> parameterList = new ArrayList<>();
@@ -101,6 +115,8 @@ public class FilterListCellContent {
                 R.layout.cell_simple_dropdown_text,
                 parameterList);
         this.parameterSpinner.setAdapter(parameterAdapter);
+
+        this.parameterSpinner.setOnItemSelectedListener(parameterListener);
     }
 
     private void updateCurrentParameterSpinner() {
@@ -146,15 +162,14 @@ public class FilterListCellContent {
         // add initial "no selection" entry
         spinnerList.add(0, "not selected");
 
-        parameterSpinner.getAdapter().da
-
         // set category spinner adapter and enable it
         ArrayAdapter<String> parameterAdapter = new ArrayAdapter<>(
                 context,
                 R.layout.cell_simple_dropdown_text,
                 spinnerList);
         this.parameterSpinner.setAdapter(parameterAdapter);
-        this.parameterSpinner.setEnabled(true);
+        //this.parameterSpinner.setEnabled(true);
+
     }
 
     public Enums.PopularIndicatorsCategories findCurrentCategory() {
