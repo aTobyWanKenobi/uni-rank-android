@@ -33,6 +33,7 @@ public class CreateRankingFragment extends Fragment {
     // optional aggregation update parameter
     private static final String OLD_SETTINGS = "old_settings";
     private static final String OLD_RANKING = "old_ranking";
+    private static final String CACHE_VALID = "cache_valid";
 
     // UI elements
     private ListView indicatorList = null;
@@ -58,10 +59,10 @@ public class CreateRankingFragment extends Fragment {
      * @return          a fragment instance with the given indicators displayed
      */
     public static CreateRankingFragment newInstanceFromSettings(HashMap<Integer, Integer> settings,
-                                                                ArrayList<Integer> ranking) {
-
+                                                                ArrayList<Integer> ranking,
+                                                                boolean cacheValid) {
         // arguments check
-        if(settings == null || ranking == null) {
+        if(settings == null) {
             throw new IllegalArgumentException("Cannot instantiate ranking creation with null arguments");
         }
 
@@ -71,6 +72,7 @@ public class CreateRankingFragment extends Fragment {
         args.putSerializable(OLD_SETTINGS, settings);
         // assume array list usage since it's serializable
         args.putSerializable(OLD_RANKING, ranking);
+        args.putBoolean(CACHE_VALID, cacheValid);
         fragment.setArguments(args);
         return fragment;
     }
@@ -93,11 +95,11 @@ public class CreateRankingFragment extends Fragment {
         // If the fragment is created based on old settings, "load them" together with the old result
         if (getArguments() != null) {
             //noinspection unchecked
-            currentSettings = (HashMap<Integer, Integer>) getArguments().getSerializable(OLD_SETTINGS);
+            currentSettings = new HashMap<>((HashMap<Integer, Integer>) getArguments().getSerializable(OLD_SETTINGS));
             //noinspection unchecked
             oldRanking = (ArrayList<Integer>) getArguments().getSerializable(OLD_RANKING);
 
-            cacheValid = true;
+            cacheValid = getArguments().getBoolean(CACHE_VALID);
 
             updateListFromSettings();
         }
@@ -120,6 +122,7 @@ public class CreateRankingFragment extends Fragment {
             listener.bindToIndicator(newIndicator);
             AsyncIndicatorListAdd.IndicatorCellContent tuple =
                     new AsyncIndicatorListAdd.IndicatorCellContent(newIndicator, listener, entry.getValue());
+
             task.execute(tuple);
         }
     }

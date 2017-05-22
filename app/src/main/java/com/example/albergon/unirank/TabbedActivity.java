@@ -9,7 +9,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorListener;
+import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
+import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.Fragments.BrowseFragment;
 import com.example.albergon.unirank.Fragments.ChooseIndicatorsDialog;
 import com.example.albergon.unirank.Fragments.ChooseLoadDialog;
@@ -20,8 +23,12 @@ import com.example.albergon.unirank.Fragments.MyRankingsFragment;
 import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
 import com.example.albergon.unirank.LayoutAdapters.CurationGridAdapter;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
+import com.example.albergon.unirank.Model.CreationUpdater;
 import com.example.albergon.unirank.Model.Indicator;
+import com.example.albergon.unirank.Model.OnCurationDownloadNotifier;
 import com.example.albergon.unirank.Model.SaveRank;
+import com.example.albergon.unirank.Model.ShareRank;
+import com.google.firebase.database.DatabaseException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,6 +63,22 @@ public class TabbedActivity extends AppCompatActivity implements
     private Fragment currentFragment = null;
     private FragmentManager fragmentManager = null;
 
+    // curation data
+    private List<ShareRank> pool = null;
+
+    private Map<Integer, Integer> countryCurSettings = null;
+    private Map<Integer, Integer> peersCurSettings = null;
+    private Map<Integer, Integer> monthCurSettings = null;
+    private Map<Integer, Integer> bestCurSettings = null;
+
+    private boolean countrySettingsReady = false;
+
+    private List<Integer> countryCurRank = null;
+    private List<Integer> peersCurRank = null;
+    private List<Integer> monthCurRank = null;
+    private List<Integer> bestCurRank = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +97,10 @@ public class TabbedActivity extends AppCompatActivity implements
 
         tabLayout.addOnTabSelectedListener(createSwitcher());
 
+        retrieveSharedPool();
+
+        //updateCurations();
+
         // initializing the fragment structure
         fragmentManager = getSupportFragmentManager();
         currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
@@ -81,6 +108,96 @@ public class TabbedActivity extends AppCompatActivity implements
         changeFragment(new CurationFragment());
 
         databaseHelper = DatabaseHelper.getInstance(this);
+    }
+
+    public void retrieveSharedPool() {
+        OnSharedPoolRetrievalListener retrievalListener = new OnSharedPoolRetrievalListener() {
+            @Override
+            public void onSharedPoolRetrieved(List<ShareRank> sharedPool) {
+                pool = sharedPool;
+                updateCurations();
+            }
+        };
+
+        OnFirebaseErrorListener errorListener = new OnFirebaseErrorListener() {
+            @Override
+            public void onError(String message) {
+                throw new DatabaseException(message);
+            }
+        };
+
+        FirebaseHelper firebaseHelper = new FirebaseHelper(this);
+        firebaseHelper.retrieveSharedPool(retrievalListener, errorListener);
+    }
+
+    private void updateCurations() {
+
+        OnCurationDownloadNotifier notifier = createCurationNotifier();
+
+        CreationUpdater countryCurUpdater = new CreationUpdater(CurationGridAdapter.Curations.BEST_COUNTRY, this, notifier, pool);
+        countryCurUpdater.execute();
+        /*
+        CreationUpdater peersCurUpdater = new CreationUpdater(CurationGridAdapter.Curations.TYPE_AND_AGE, this, createCurationNotifier());
+        peersCurUpdater.execute();
+        CreationUpdater monthCurUpdater = new CreationUpdater(CurationGridAdapter.Curations.LAST_MONTH, this, createCurationNotifier());
+        monthCurUpdater.execute();
+        CreationUpdater topCurUpdater = new CreationUpdater(CurationGridAdapter.Curations.BEST_OVERALL, this, createCurationNotifier());
+        topCurUpdater.execute();
+        */
+    }
+
+    public Map<Integer, Integer> curationSettingsGetter(CurationGridAdapter.Curations curation) {
+
+        switch(curation) {
+
+            case BEST_COUNTRY:
+                return countryCurSettings;
+            case TYPE_AND_AGE:
+                return peersCurSettings;
+            case LAST_MONTH:
+                return monthCurSettings;
+            case BEST_OVERALL:
+                return bestCurSettings;
+            case EMPTY:
+                throw new IllegalArgumentException("Should not call with EMPTY as curation");
+            default:
+                throw new IllegalStateException("Unknown element in enum Curations");
+        }
+    }
+
+    private OnCurationDownloadNotifier createCurationNotifier() {
+
+        return new OnCurationDownloadNotifier() {
+            @Override
+            public void onSettingsDownloadCompleted(CurationGridAdapter.Curations curation, Map<Integer, Integer> settings) {
+
+                switch(curation) {
+
+                    case BEST_COUNTRY:
+                        countryCurSettings = settings;
+                        countrySettingsReady = true;
+                        break;
+                    case TYPE_AND_AGE:
+                        peersCurSettings = settings;
+                        break;
+                    case LAST_MONTH:
+                        monthCurSettings = settings;
+                        break;
+                    case BEST_OVERALL:
+                        bestCurSettings = settings;
+                        break;
+                    case EMPTY:
+                        throw new IllegalArgumentException("Should not arrive here with EMPTY as curation");
+                    default:
+                         throw new IllegalStateException("Unknown element in enum Curations");
+                }
+            }
+
+            @Override
+            public void onRankingDownloadCompleted(CurationGridAdapter.Curations curation, List<Integer> ranking) {
+
+            }
+        };
     }
 
     /**
@@ -170,7 +287,7 @@ public class TabbedActivity extends AppCompatActivity implements
      */
 
     @Override
-    public void startGenerationWithSettings(Map<Integer, Integer> settings, List<Integer> oldRanking) {
+    public void startGenerationWithSettings(Map<Integer, Integer> settings, List<Integer> oldRanking, boolean cacheValid) {
 
         // arguments check
         if(settings == null) {
@@ -178,8 +295,12 @@ public class TabbedActivity extends AppCompatActivity implements
         }
 
         @SuppressLint("UseSparseArrays") HashMap<Integer, Integer> settingsCopy = new HashMap<>(settings);
-        ArrayList<Integer> oldRankingCopy = new ArrayList<>(oldRanking);
-        changeFragment(CreateRankingFragment.newInstanceFromSettings(settingsCopy, oldRankingCopy));
+        if(cacheValid) {
+            ArrayList<Integer> oldRankingCopy = new ArrayList<>(oldRanking);
+            changeFragment(CreateRankingFragment.newInstanceFromSettings(settingsCopy, oldRankingCopy, cacheValid));
+        } else {
+            changeFragment(CreateRankingFragment.newInstanceFromSettings(settingsCopy, null, cacheValid));
+        }
     }
 
     /**
@@ -260,11 +381,38 @@ public class TabbedActivity extends AppCompatActivity implements
 
         //noinspection ConstantConditions
         tabLayout.getTabAt(0).select();
-        changeFragment(CreateRankingFragment.newInstanceFromSettings(settings, oldRanking));
+        changeFragment(CreateRankingFragment.newInstanceFromSettings(settings, oldRanking, true));
     }
 
     @Override
     public void onCurationClick(CurationGridAdapter.Curations curation) {
-        changeFragment(new CreateRankingFragment());
+
+        switch(curation) {
+
+            case BEST_COUNTRY:
+                while(countryCurSettings == null) {
+                    System.out.println("DEBUG: SPINNING HERE");
+                }
+                startGenerationWithSettings(countryCurSettings, null, false);
+                break;
+            case TYPE_AND_AGE:
+                while(peersCurSettings == null) {}
+                startGenerationWithSettings(peersCurSettings, null, false);
+                break;
+            case LAST_MONTH:
+                while(monthCurSettings == null) {}
+                startGenerationWithSettings(monthCurSettings, null, false);
+                break;
+            case BEST_OVERALL:
+                while(bestCurSettings == null) {}
+                startGenerationWithSettings(bestCurSettings, null, false);
+                break;
+            case EMPTY:
+                changeFragment(new CreateRankingFragment());
+                break;
+            default:
+                throw new IllegalStateException("Unknown element in enum Curations");
+        }
     }
+
 }

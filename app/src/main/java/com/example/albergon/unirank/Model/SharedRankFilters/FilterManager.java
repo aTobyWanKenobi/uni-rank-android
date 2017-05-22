@@ -7,6 +7,7 @@ import com.example.albergon.unirank.Model.Range;
 import com.example.albergon.unirank.Model.ShareRank;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,10 @@ public class FilterManager {
     public FilterManager(List<FilterListCellContent> rawFilters) {
         filters = new ArrayList<>();
         createFinalFiltersFromRaw(rawFilters);
+    }
+
+    public FilterManager(ShareRankFilter... readyFilters) {
+        filters = Arrays.asList(readyFilters);
     }
 
     private void createFinalFiltersFromRaw(List<FilterListCellContent> rawFilters) {

@@ -77,6 +77,7 @@ public class IndicatorListAdapter extends BaseAdapter {
         }
 
         AsyncIndicatorListAdd.IndicatorCellContent tuple = indicators.get(position);
+
         holder.getName().setText(Tables.IndicatorsList.values()[tuple.getIndicator()].NAME);
         holder.getSeekBar().setOnSeekBarChangeListener(tuple.getListener());
         holder.getSeekBar().setProgress(tuple.getInitialWeight()-1);

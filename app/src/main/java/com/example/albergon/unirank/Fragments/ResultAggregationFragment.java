@@ -138,7 +138,7 @@ public class ResultAggregationFragment extends Fragment {
 
         newRankingBtn.setOnClickListener(v -> interactionListener.restartGeneration());
 
-        modifyBtn.setOnClickListener(v -> interactionListener.startGenerationWithSettings(settings, result.getList()));
+        modifyBtn.setOnClickListener(v -> interactionListener.startGenerationWithSettings(settings, result.getList(), true));
 
         saveBtn.setOnClickListener(v -> showSaveDialog());
 
@@ -289,7 +289,7 @@ public class ResultAggregationFragment extends Fragment {
 
         void restartGeneration();
 
-        void startGenerationWithSettings(Map<Integer, Integer> settings, List<Integer> oldRanking);
+        void startGenerationWithSettings(Map<Integer, Integer> settings, List<Integer> oldRanking, boolean cacheValid);
     }
 
     /**
