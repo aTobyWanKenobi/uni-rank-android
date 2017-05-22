@@ -1,6 +1,8 @@
 package com.example.albergon.unirank;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
@@ -8,11 +10,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
+import com.example.albergon.unirank.Fragments.AskSettingsDialog;
 import com.example.albergon.unirank.Fragments.BrowseFragment;
 import com.example.albergon.unirank.Fragments.ChooseIndicatorsDialog;
 import com.example.albergon.unirank.Fragments.ChooseLoadDialog;
@@ -23,8 +29,7 @@ import com.example.albergon.unirank.Fragments.MyRankingsFragment;
 import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
 import com.example.albergon.unirank.LayoutAdapters.CurationGridAdapter;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
-import com.example.albergon.unirank.Model.CreationUpdater;
-import com.example.albergon.unirank.Model.Indicator;
+import com.example.albergon.unirank.Model.CurationUpdater;
 import com.example.albergon.unirank.Model.OnCurationDownloadNotifier;
 import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.ShareRank;
@@ -49,7 +54,8 @@ public class TabbedActivity extends AppCompatActivity implements
         ChooseLoadDialog.OnChooseLoadDialogInteractionListener,
         BrowseFragment.OnBrowseFragmentInteractionListener,
         CompareFragment.OnCompareFragmentInteractionListener,
-        CurationFragment.OnCurationFragmentInteractionListener {
+        CurationFragment.OnCurationFragmentInteractionListener,
+        AskSettingsDialog.OnAskSettingsInteractionListener {
 
     // Database instance, unique for the entire application
     private DatabaseHelper databaseHelper = null;
@@ -63,15 +69,15 @@ public class TabbedActivity extends AppCompatActivity implements
     private Fragment currentFragment = null;
     private FragmentManager fragmentManager = null;
 
-    // curation data
-    private List<ShareRank> pool = null;
+    // start activity elements
+    private ProgressBar progressCircle = null;
+    private TextView loadDatabaseTxt = null;
 
+    // curation data
     private Map<Integer, Integer> countryCurSettings = null;
     private Map<Integer, Integer> peersCurSettings = null;
     private Map<Integer, Integer> monthCurSettings = null;
     private Map<Integer, Integer> bestCurSettings = null;
-
-    private boolean countrySettingsReady = false;
 
     private List<Integer> countryCurRank = null;
     private List<Integer> peersCurRank = null;
@@ -82,6 +88,27 @@ public class TabbedActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_start);
+
+        setupStartUI();
+
+        AsyncOpenDatabase openDBTask = new AsyncOpenDatabase();
+        openDBTask.execute(this);
+    }
+
+    public void setupStartUI() {
+
+        progressCircle = (ProgressBar) findViewById(R.id.load_app_progress);
+        loadDatabaseTxt = (TextView) findViewById(R.id.load_universities_txt);
+    }
+
+    public void askSettings() {
+        DialogFragment dialog = new AskSettingsDialog();
+        dialog.show(getSupportFragmentManager(), "AskSettingsDialog");
+    }
+
+
+    private void createRealActivity() {
         setContentView(R.layout.activity_tabbed);
 
         // Create the adapter that will return a fragment for each of the three
@@ -97,10 +124,6 @@ public class TabbedActivity extends AppCompatActivity implements
 
         tabLayout.addOnTabSelectedListener(createSwitcher());
 
-        retrieveSharedPool();
-
-        //updateCurations();
-
         // initializing the fragment structure
         fragmentManager = getSupportFragmentManager();
         currentFragment = fragmentManager.findFragmentById(R.id.fragment_container);
@@ -108,61 +131,6 @@ public class TabbedActivity extends AppCompatActivity implements
         changeFragment(new CurationFragment());
 
         databaseHelper = DatabaseHelper.getInstance(this);
-    }
-
-    public void retrieveSharedPool() {
-        OnSharedPoolRetrievalListener retrievalListener = new OnSharedPoolRetrievalListener() {
-            @Override
-            public void onSharedPoolRetrieved(List<ShareRank> sharedPool) {
-                pool = sharedPool;
-                updateCurations();
-            }
-        };
-
-        OnFirebaseErrorListener errorListener = new OnFirebaseErrorListener() {
-            @Override
-            public void onError(String message) {
-                throw new DatabaseException(message);
-            }
-        };
-
-        FirebaseHelper firebaseHelper = new FirebaseHelper(this);
-        firebaseHelper.retrieveSharedPool(retrievalListener, errorListener);
-    }
-
-    private void updateCurations() {
-
-        OnCurationDownloadNotifier notifier = createCurationNotifier();
-
-        CreationUpdater countryCurUpdater = new CreationUpdater(CurationGridAdapter.Curations.BEST_COUNTRY, this, notifier, pool);
-        countryCurUpdater.execute();
-        /*
-        CreationUpdater peersCurUpdater = new CreationUpdater(CurationGridAdapter.Curations.TYPE_AND_AGE, this, createCurationNotifier());
-        peersCurUpdater.execute();
-        CreationUpdater monthCurUpdater = new CreationUpdater(CurationGridAdapter.Curations.LAST_MONTH, this, createCurationNotifier());
-        monthCurUpdater.execute();
-        CreationUpdater topCurUpdater = new CreationUpdater(CurationGridAdapter.Curations.BEST_OVERALL, this, createCurationNotifier());
-        topCurUpdater.execute();
-        */
-    }
-
-    public Map<Integer, Integer> curationSettingsGetter(CurationGridAdapter.Curations curation) {
-
-        switch(curation) {
-
-            case BEST_COUNTRY:
-                return countryCurSettings;
-            case TYPE_AND_AGE:
-                return peersCurSettings;
-            case LAST_MONTH:
-                return monthCurSettings;
-            case BEST_OVERALL:
-                return bestCurSettings;
-            case EMPTY:
-                throw new IllegalArgumentException("Should not call with EMPTY as curation");
-            default:
-                throw new IllegalStateException("Unknown element in enum Curations");
-        }
     }
 
     private OnCurationDownloadNotifier createCurationNotifier() {
@@ -175,7 +143,6 @@ public class TabbedActivity extends AppCompatActivity implements
 
                     case BEST_COUNTRY:
                         countryCurSettings = settings;
-                        countrySettingsReady = true;
                         break;
                     case TYPE_AND_AGE:
                         peersCurSettings = settings;
@@ -390,9 +357,7 @@ public class TabbedActivity extends AppCompatActivity implements
         switch(curation) {
 
             case BEST_COUNTRY:
-                while(countryCurSettings == null) {
-                    System.out.println("DEBUG: SPINNING HERE");
-                }
+                while(countryCurSettings == null) {}
                 startGenerationWithSettings(countryCurSettings, null, false);
                 break;
             case TYPE_AND_AGE:
@@ -412,6 +377,87 @@ public class TabbedActivity extends AppCompatActivity implements
                 break;
             default:
                 throw new IllegalStateException("Unknown element in enum Curations");
+        }
+    }
+
+    @Override
+    public void goToApp() {
+        createRealActivity();
+    }
+
+    private class AsyncOpenDatabase extends AsyncTask<Context, Integer, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            progressCircle.setVisibility(View.VISIBLE);
+            loadDatabaseTxt.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Boolean doInBackground(Context... params) {
+
+            retrieveSharedPool(params[0]);
+
+            boolean exists = DatabaseHelper.databaseExists();
+            // first database instantiation of app
+            DatabaseHelper.getInstance(params[0]);
+
+            while(countryCurSettings == null || peersCurSettings == null || bestCurSettings == null || monthCurSettings == null) {
+                publishProgress(0);
+            }
+
+            return exists;
+        }
+
+        public void retrieveSharedPool(Context context) {
+            OnSharedPoolRetrievalListener retrievalListener = new OnSharedPoolRetrievalListener() {
+                @Override
+                public void onSharedPoolRetrieved(List<ShareRank> sharedPool) {
+                    updateCurations(sharedPool, context);
+                }
+            };
+
+            OnFirebaseErrorListener errorListener = new OnFirebaseErrorListener() {
+                @Override
+                public void onError(String message) {
+                    throw new DatabaseException(message);
+                }
+            };
+
+            FirebaseHelper firebaseHelper = new FirebaseHelper(context);
+            firebaseHelper.retrieveSharedPool(retrievalListener, errorListener);
+        }
+
+        private void updateCurations(List<ShareRank> pool, Context context) {
+
+            OnCurationDownloadNotifier notifier = createCurationNotifier();
+
+            CurationUpdater countryCurUpdater = new CurationUpdater(CurationGridAdapter.Curations.BEST_COUNTRY, context, notifier, pool);
+            countryCurUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            CurationUpdater peersCurUpdater = new CurationUpdater(CurationGridAdapter.Curations.TYPE_AND_AGE, context, notifier, pool);
+            peersCurUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            CurationUpdater monthCurUpdater = new CurationUpdater(CurationGridAdapter.Curations.LAST_MONTH, context, notifier, pool);
+            monthCurUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            CurationUpdater topCurUpdater = new CurationUpdater(CurationGridAdapter.Curations.BEST_OVERALL, context, notifier, pool);
+            topCurUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            progressCircle.setProgress(progress[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean exists) {
+            progressCircle.setVisibility(View.INVISIBLE);
+            loadDatabaseTxt.setVisibility(View.INVISIBLE);
+
+            if(!exists) {
+                askSettings();
+            } else {
+                createRealActivity();
+            }
         }
     }
 

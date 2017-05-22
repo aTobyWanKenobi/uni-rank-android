@@ -27,51 +27,19 @@ import java.util.Map;
  * This class launches the asynchronous download and processing of the curated rankings and notifies
  * the relative activities and fragments
  */
-public class CreationUpdater extends AsyncTask<Void, Void, Map<Integer, Integer>> {
+public class CurationUpdater extends AsyncTask<Void, Void, Map<Integer, Integer>> {
 
     private Context context = null;
     private CurationGridAdapter.Curations curation = null;
-    private FilterManager filterManager = null;
     private OnCurationDownloadNotifier notifier = null;
     private List<ShareRank> pool = null;
-    private int[] indicatorsScores = null;
 
-    public CreationUpdater(CurationGridAdapter.Curations curation, Context context, OnCurationDownloadNotifier notifier, List<ShareRank> pool){
+    public CurationUpdater(CurationGridAdapter.Curations curation, Context context, OnCurationDownloadNotifier notifier, List<ShareRank> pool){
 
         this.context = context;
         this.curation = curation;
         this.notifier = notifier;
         this.pool = pool;
-        indicatorsScores = new int[Tables.IndicatorsList.values().length];
-
-        createFilters();
-    }
-
-    private void createFilters() {
-
-        Settings currentSettings = DatabaseHelper.getInstance(context).retriveSettings(false);
-
-        switch(curation) {
-
-            case BEST_COUNTRY:
-                filterManager = new FilterManager(new CountryFilter(currentSettings.getCountryCode()));
-                break;
-            case TYPE_AND_AGE:
-                ShareRankFilter typeFilter = new UserTypeFilter(currentSettings.getType());
-                ShareRankFilter ageFilter = createAgeFilter(currentSettings.yearOfBirth);
-                filterManager = new FilterManager(typeFilter, ageFilter);
-                break;
-            case LAST_MONTH:
-                filterManager = new FilterManager(new TimeframeFilter(Enums.TimeFrame.MONTH));
-                break;
-            case BEST_OVERALL:
-                filterManager = new FilterManager();
-                break;
-            case EMPTY:
-                throw new IllegalStateException("This method should not be called with this argument");
-            default:
-                throw new IllegalStateException("Unknows element in enum Curations");
-        }
     }
 
     private ShareRankFilter createAgeFilter(int birthYear) {
@@ -97,8 +65,32 @@ public class CreationUpdater extends AsyncTask<Void, Void, Map<Integer, Integer>
     @Override
     protected Map<Integer, Integer> doInBackground(Void... params) {
 
-        indicatorsScores = filterManager.filter(pool);
-        Map<Integer, Integer> settings = normalizeSettings();
+        Settings currentSettings = DatabaseHelper.getInstance(context).retriveSettings(false);
+        FilterManager filterManager;
+
+        switch(curation) {
+
+            case BEST_COUNTRY:
+                filterManager = new FilterManager(new CountryFilter(currentSettings.getCountryCode()));
+                break;
+            case TYPE_AND_AGE:
+                ShareRankFilter typeFilter = new UserTypeFilter(currentSettings.getType());
+                ShareRankFilter ageFilter = createAgeFilter(currentSettings.yearOfBirth);
+                filterManager = new FilterManager(typeFilter, ageFilter);
+                break;
+            case LAST_MONTH:
+                filterManager = new FilterManager(new TimeframeFilter(Enums.TimeFrame.MONTH));
+                break;
+            case BEST_OVERALL:
+                filterManager = new FilterManager();
+                break;
+            case EMPTY:
+                throw new IllegalStateException("This method should not be called with this argument");
+            default:
+                throw new IllegalStateException("Unknows element in enum Curations");
+        }
+
+        Map<Integer, Integer> settings = normalizeSettings(filterManager.filter(pool));
 
         return settings;
     }
@@ -108,7 +100,7 @@ public class CreationUpdater extends AsyncTask<Void, Void, Map<Integer, Integer>
         notifier.onSettingsDownloadCompleted(curation, result);
     }
 
-    private Map<Integer, Integer> normalizeSettings() {
+    private Map<Integer, Integer> normalizeSettings(int[] indicatorsScores) {
 
         int max = 0;
         for(int score : indicatorsScores) {

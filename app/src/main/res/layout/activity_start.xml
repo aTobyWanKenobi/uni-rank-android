@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.albergon.unirank.StartActivity"
+    tools:context="com.example.albergon.unirank.TabbedActivity"
     android:background="@drawable/fragment_background"
     android:orientation="vertical">
 
