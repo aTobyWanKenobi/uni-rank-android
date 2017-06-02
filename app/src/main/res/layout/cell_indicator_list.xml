@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
     android:layout_marginBottom="10dp"
-    android:background="@drawable/indicator_cell_background"
+    android:background="@drawable/general_border_no_black"
     >
 
     <TextView
@@ -134,9 +134,8 @@
 
     <SeekBar
         android:id="@+id/indicator_bar"
-        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        style="@style/SeekBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="9"
-        android:progress="0" />
+         />
 </LinearLayout>

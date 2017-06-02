@@ -49,6 +49,17 @@
         <item name="android:clickable">true</item>
     </style>
 
+    <style name="RoundButton" parent="@android:style/Widget.Button">
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:textColor">@color/palette3</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:background">@drawable/button_round_states</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+    </style>
+
     <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:progressBackgroundTint">@color/gray_unselected_body</item>
         <item name="android:progressTint">@color/palette1</item>
@@ -82,6 +93,17 @@
         <item name="android:textSize">15sp</item>
         <item name="android:minHeight">25dp</item>
         <item name="android:background">@color/black</item>
+    </style>
+
+    <style name="SeekBarStyle" parent="Widget.AppCompat.SeekBar.Discrete">
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:minHeight">10dp</item>
+        <item name="android:maxHeight">10sp</item>
+        <item name="android:progressTint">@color/palette3</item>
+        <item name="android:progressBackgroundTint">@color/white</item>
+        <item name="android:thumbTint">@color/palette1</item>
+        <item name="android:max">9</item>
+        <item name="android:progress">0</item>
     </style>
 
 
