@@ -2,16 +2,19 @@ package com.example.albergon.unirank.LayoutAdapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.provider.Settings;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.albergon.unirank.Model.Countries;
 import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
 
@@ -59,6 +62,7 @@ public class UniversityListAdapter extends ArrayAdapter {
             holder = new UniHolder( (TextView)row.findViewById(R.id.rank),
                                     (TextView)row.findViewById(R.id.uni_name),
                                     (ImageView) row.findViewById(R.id.rank_change_icon),
+                                    (ImageView) row.findViewById(R.id.icon_country_flag),
                                     (TextView) row.findViewById(R.id.rank_change_number));
             row.setTag(holder);
         }
@@ -73,6 +77,7 @@ public class UniversityListAdapter extends ArrayAdapter {
         }
         holder.getRank().setText(String.valueOf(position+1));
         holder.getName().setText(uni.getName());
+        holder.getCountryIcon().setBackgroundResource(Countries.commonIconMap.getOrDefault(uni.getCountry(), R.drawable.z_icon_unknown));
 
         return row;
     }
@@ -102,18 +107,20 @@ public class UniversityListAdapter extends ArrayAdapter {
         private TextView rank = null;
         private TextView name = null;
         private ImageView changeIcon = null;
+        private ImageView countryIcon = null;
         private TextView changeNumber = null;
 
-        public UniHolder(TextView rank, TextView name, ImageView changeIcon, TextView changeNumber) {
+        public UniHolder(TextView rank, TextView name, ImageView changeIcon, ImageView countryIcon, TextView changeNumber) {
 
             // arguments check
-            if(rank == null || name == null || changeIcon == null || changeNumber == null) {
+            if(rank == null || name == null || changeIcon == null || countryIcon == null || changeNumber == null) {
                 throw new IllegalArgumentException("UniHolder parameters cannot be null");
             }
 
             this.rank = rank;
             this.name = name;
             this.changeIcon = changeIcon;
+            this.countryIcon = countryIcon;
             this.changeNumber = changeNumber;
         }
 
@@ -128,6 +135,8 @@ public class UniversityListAdapter extends ArrayAdapter {
         public ImageView getChangeIcon() {
             return changeIcon;
         }
+
+        public ImageView getCountryIcon() { return countryIcon;}
 
         public TextView getChangeNumber() {
             return changeNumber;

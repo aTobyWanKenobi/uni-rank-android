@@ -112,7 +112,10 @@ public class CurationUpdater extends AsyncTask<Void, Void, Map<Integer, Integer>
         Map<Integer, Integer> settings = new HashMap<>();
 
         for(int i = 0; i < indicatorsScores.length; i++) {
-            settings.put(i, (int) (10*((double) indicatorsScores[i]/max)));
+            int weight = (int) (10*((double) indicatorsScores[i]/max));
+            if(weight > 0) {
+                settings.put(i, weight);
+            }
         }
 
         return settings;

@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="10dp">
+    android:padding="10dp"
+    android:layout_margin="5dp"
+    android:background="@drawable/general_border_no_black">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,7 +18,7 @@
             android:id="@+id/rank"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.7"
             android:text="0"
             android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
 
@@ -66,7 +68,7 @@
             android:layout_height="20dp"
             android:layout_gravity="center_vertical"
             android:layout_weight="0.5"
-            app:srcCompat="@drawable/z_icon_united_kingdom" />
+            app:srcCompat="@drawable/icon_blank" />
 
     </LinearLayout>
 

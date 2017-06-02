@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -71,7 +73,9 @@ public class TabbedActivity extends AppCompatActivity implements
 
     // start activity elements
     private ProgressBar progressCircle = null;
-    private TextView loadDatabaseTxt = null;
+    private CheckBox localCheckbox = null;
+    private CheckBox remoteCheckbox = null;
+    private CheckBox curationCheckbox = null;
 
     // curation data
     private Map<Integer, Integer> countryCurSettings = null;
@@ -99,7 +103,9 @@ public class TabbedActivity extends AppCompatActivity implements
     public void setupStartUI() {
 
         progressCircle = (ProgressBar) findViewById(R.id.load_app_progress);
-        loadDatabaseTxt = (TextView) findViewById(R.id.load_universities_txt);
+        localCheckbox = (CheckBox) findViewById(R.id.local_checkbox);
+        remoteCheckbox = (CheckBox) findViewById(R.id.remote_checkbox);
+        curationCheckbox = (CheckBox) findViewById(R.id.curation_checkbox);
     }
 
     public void askSettings() {
@@ -390,21 +396,24 @@ public class TabbedActivity extends AppCompatActivity implements
         @Override
         protected void onPreExecute() {
             progressCircle.setVisibility(View.VISIBLE);
-            loadDatabaseTxt.setVisibility(View.VISIBLE);
         }
 
         @Override
         protected Boolean doInBackground(Context... params) {
 
-            retrieveSharedPool(params[0]);
-
             boolean exists = DatabaseHelper.databaseExists();
             // first database instantiation of app
             DatabaseHelper.getInstance(params[0]);
+            publishProgress(0);
+
+            retrieveSharedPool(params[0]);
 
             while(countryCurSettings == null || peersCurSettings == null || bestCurSettings == null || monthCurSettings == null) {
-                publishProgress(0);
+                //publishProgress(0);
             }
+
+            //TODO remove, just for correct behaviour check
+            SystemClock.sleep(2000);
 
             return exists;
         }
@@ -413,6 +422,7 @@ public class TabbedActivity extends AppCompatActivity implements
             OnSharedPoolRetrievalListener retrievalListener = new OnSharedPoolRetrievalListener() {
                 @Override
                 public void onSharedPoolRetrieved(List<ShareRank> sharedPool) {
+                    publishProgress(1);
                     updateCurations(sharedPool, context);
                 }
             };
@@ -441,17 +451,33 @@ public class TabbedActivity extends AppCompatActivity implements
             CurationUpdater topCurUpdater = new CurationUpdater(CurationGridAdapter.Curations.BEST_OVERALL, context, notifier, pool);
             topCurUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
+            publishProgress(2);
         }
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
-            progressCircle.setProgress(progress[0]);
+
+            switch(progress[0]) {
+                case 0:
+                    localCheckbox.setVisibility(View.VISIBLE);
+                    break;
+                case 1:
+                    remoteCheckbox.setVisibility(View.VISIBLE);
+                    break;
+                case 2:
+                    curationCheckbox.setVisibility(View.VISIBLE);
+                    break;
+            }
+
+            progressCircle.setProgress(0);
         }
 
         @Override
         protected void onPostExecute(Boolean exists) {
             progressCircle.setVisibility(View.INVISIBLE);
-            loadDatabaseTxt.setVisibility(View.INVISIBLE);
+            localCheckbox.setVisibility(View.INVISIBLE);
+            remoteCheckbox.setVisibility(View.INVISIBLE);
+            curationCheckbox.setVisibility(View.INVISIBLE);
 
             if(!exists) {
                 askSettings();

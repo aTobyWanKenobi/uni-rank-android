@@ -33,6 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_weight="1"
+        android:layout_marginBottom="20dp"
         android:orientation="vertical">
 
         <ProgressBar
@@ -43,13 +44,42 @@
             android:layout_gravity="center_horizontal"
             android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/load_universities_txt"
+        <CheckBox
+            android:id="@+id/local_checkbox"
+            style="@style/AppTheme.CheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="center_horizontal"
             android:layout_weight="1"
-            android:text="Loading universities database..." />
+            android:checked="true"
+            android:clickable="false"
+            android:text="Initialize local database"
+            android:visibility="invisible" />
+
+        <CheckBox
+            android:id="@+id/remote_checkbox"
+            style="@style/AppTheme.CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:checked="true"
+            android:clickable="false"
+            android:text="Retrieve remote data"
+            android:visibility="invisible" />
+
+        <CheckBox
+            android:id="@+id/curation_checkbox"
+            style="@style/AppTheme.CheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:checked="true"
+            android:clickable="false"
+            android:text="Compute trends"
+            android:visibility="invisible" />
+
     </LinearLayout>
 
 </LinearLayout>

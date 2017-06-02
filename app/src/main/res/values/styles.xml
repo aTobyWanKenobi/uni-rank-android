@@ -70,6 +70,7 @@
 
     <style name="AppTheme.CheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox" >
         <item name="android:buttonTint">@color/palette1</item>
+        <item name="android:textColor">@color/palette3</item>
     </style>
 
     <style name="AppTheme.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton" >
