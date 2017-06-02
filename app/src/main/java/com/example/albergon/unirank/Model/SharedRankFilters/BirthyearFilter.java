@@ -12,6 +12,8 @@ public class BirthyearFilter implements ShareRankFilter {
     private final Enums.PopularIndicatorsCategories category = Enums.PopularIndicatorsCategories.BIRTHYEAR;
 
     private Range parameter = null;
+    private String categoryString = "BirthYear";
+    private String parameterString = null;
 
     public BirthyearFilter(Range range) {
 
@@ -21,6 +23,11 @@ public class BirthyearFilter implements ShareRankFilter {
         }
 
         this.parameter = range;
+    }
+
+    public BirthyearFilter(Range range, String parameterString) {
+        this(range);
+        this.parameterString = parameterString;
     }
 
     @Override
@@ -37,6 +44,16 @@ public class BirthyearFilter implements ShareRankFilter {
     @Override
     public Enums.PopularIndicatorsCategories getCategory() {
         return category;
+    }
+
+    @Override
+    public String getCategoryString() {
+        return categoryString;
+    }
+
+    @Override
+    public String getParameterString() {
+        return parameterString;
     }
 
     public Range getParameter() {

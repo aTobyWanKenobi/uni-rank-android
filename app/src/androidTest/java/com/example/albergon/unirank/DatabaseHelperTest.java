@@ -7,6 +7,7 @@ import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.Tables;
 import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Indicator;
+import com.example.albergon.unirank.Model.Ranking;
 import com.example.albergon.unirank.Model.SaveRank;
 import com.example.albergon.unirank.Model.Settings;
 import com.example.albergon.unirank.Model.University;
@@ -89,8 +90,9 @@ public class DatabaseHelperTest {
         settings.put(3, 2);
         settings.put(2, 2);
 
+        Ranking<Integer> ranking = new Ranking<Integer>(rankList);
 
-        SaveRank testSave = new SaveRank("TestName", "TestDate", settings, rankList);
+        SaveRank testSave = new SaveRank("TestName", "TestDate", settings, ranking);
 
         databaseHelper.saveAggregation(testSave);
 

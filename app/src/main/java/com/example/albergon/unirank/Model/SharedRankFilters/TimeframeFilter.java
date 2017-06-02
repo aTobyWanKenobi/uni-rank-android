@@ -13,6 +13,8 @@ public class TimeframeFilter implements ShareRankFilter {
     private final Enums.PopularIndicatorsCategories category = Enums.PopularIndicatorsCategories.TIMEFRAME;
 
     private Enums.TimeFrame parameter = null;
+    private String categoryString = "Upload date";
+    private String parameterString = null;
 
     public TimeframeFilter(Enums.TimeFrame timeframe) {
 
@@ -22,6 +24,11 @@ public class TimeframeFilter implements ShareRankFilter {
         }
 
         this.parameter = timeframe;
+    }
+
+    public TimeframeFilter(Enums.TimeFrame timeframe, String parameterString) {
+        this(timeframe);
+        this.parameterString = parameterString;
     }
 
     @Override
@@ -57,6 +64,16 @@ public class TimeframeFilter implements ShareRankFilter {
     @Override
     public Enums.PopularIndicatorsCategories getCategory() {
         return category;
+    }
+
+    @Override
+    public String getCategoryString() {
+        return categoryString;
+    }
+
+    @Override
+    public String getParameterString() {
+        return parameterString;
     }
 
     public Enums.TimeFrame getParameter() {

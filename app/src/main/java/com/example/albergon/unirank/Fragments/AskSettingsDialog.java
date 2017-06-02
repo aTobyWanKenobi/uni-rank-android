@@ -34,6 +34,7 @@ import java.util.Map;
 public class AskSettingsDialog extends DialogFragment {
 
     private OnAskSettingsInteractionListener interactionListener = null;
+    private OnAskSettingsReturn returnListener = null;
 
     // UI elements
     Spinner countrySpinner = null;
@@ -87,10 +88,15 @@ public class AskSettingsDialog extends DialogFragment {
             DatabaseHelper databaseHelper = DatabaseHelper.getInstance(getContext());
             databaseHelper.saveSettings(selectedSettings, false);
             interactionListener.goToApp();
+            returnListener.setSettingsOk();
             dialog.dismiss();
         });
 
         return dialog;
+    }
+
+    public void addSettingsListener(OnAskSettingsReturn returnListener) {
+        this.returnListener = returnListener;
     }
 
     public void setupUI(View view) {

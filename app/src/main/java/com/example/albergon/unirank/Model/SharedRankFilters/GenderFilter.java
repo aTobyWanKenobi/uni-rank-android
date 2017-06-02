@@ -11,6 +11,8 @@ public class GenderFilter implements ShareRankFilter {
     private final Enums.PopularIndicatorsCategories category = Enums.PopularIndicatorsCategories.GENDER;
 
     private Enums.GenderEnum parameter = null;
+    private String categoryString = "Gender";
+    private String parameterString = null;
 
     public GenderFilter(Enums.GenderEnum gender) {
 
@@ -20,6 +22,11 @@ public class GenderFilter implements ShareRankFilter {
         }
 
         this.parameter = gender;
+    }
+
+    public GenderFilter(Enums.GenderEnum gender, String parameterString) {
+        this(gender);
+        this.parameterString = parameterString;
     }
 
     @Override
@@ -36,6 +43,16 @@ public class GenderFilter implements ShareRankFilter {
     @Override
     public Enums.PopularIndicatorsCategories getCategory() {
         return category;
+    }
+
+    @Override
+    public String getCategoryString() {
+        return categoryString;
+    }
+
+    @Override
+    public String getParameterString() {
+        return parameterString;
     }
 
     public Enums.GenderEnum getParameter() {

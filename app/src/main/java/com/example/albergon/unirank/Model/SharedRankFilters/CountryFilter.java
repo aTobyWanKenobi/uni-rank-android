@@ -11,6 +11,7 @@ public class CountryFilter implements ShareRankFilter {
     private final Enums.PopularIndicatorsCategories category = Enums.PopularIndicatorsCategories.COUNTRY;
 
     private String parameter = null;
+    private String categoryString = "Country";
 
     public CountryFilter(String country) {
 
@@ -36,6 +37,16 @@ public class CountryFilter implements ShareRankFilter {
     @Override
     public Enums.PopularIndicatorsCategories getCategory() {
         return category;
+    }
+
+    @Override
+    public String getCategoryString() {
+        return categoryString;
+    }
+
+    @Override
+    public String getParameterString() {
+        return parameter;
     }
 
     public String getParameter() {

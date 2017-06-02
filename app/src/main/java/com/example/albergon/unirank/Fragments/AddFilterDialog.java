@@ -1,89 +1,134 @@
-package com.example.albergon.unirank.LayoutAdapters;
+package com.example.albergon.unirank.Fragments;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 
+import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.Model.Countries;
 import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Range;
+import com.example.albergon.unirank.Model.Settings;
+import com.example.albergon.unirank.Model.SharedRankFilters.BirthyearFilter;
+import com.example.albergon.unirank.Model.SharedRankFilters.CountryFilter;
+import com.example.albergon.unirank.Model.SharedRankFilters.GenderFilter;
+import com.example.albergon.unirank.Model.SharedRankFilters.ShareRankFilter;
+import com.example.albergon.unirank.Model.SharedRankFilters.TimeframeFilter;
+import com.example.albergon.unirank.Model.SharedRankFilters.UserTypeFilter;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
- * This class serves as a container for the tuple composed by a filter category and the
- * associated parameters, along with listeners.
+ * This fragment defines a dialog which purpose is to ask to the user to input filter parameters
+ * to be used in a query to the remote shared pool
  */
-public class FilterListCellContent {
+public class AddFilterDialog extends DialogFragment {
 
-    private Context context = null;
+    private OnAddFilterReturn returnListener = null;
 
-    private String category = null;
-    private String parameter = null;
-
-    private AdapterView.OnItemSelectedListener categoryListener = null;
-    private AdapterView.OnItemSelectedListener parameterListener = null;
-
+    // UI elements
     private Spinner categorySpinner = null;
     private Spinner parameterSpinner = null;
+    private Button addFilterButton = null;
+    private Button cancelFilterAddition = null;
 
-    private boolean first = true;
+    private String category = "not selected";
+    private String parameter = "not selected";
 
-    public FilterListCellContent(Context context) {
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        @SuppressLint("InflateParams") View view = inflater.inflate(R.layout.dialog_add_filter, null);
 
-        this.context = context;
+        // UI setup
+        setupUI(view);
 
-        categoryListener =new AdapterView.OnItemSelectedListener() {
+        // Setup the dialog builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setCancelable(false);
+        builder.setView(view);
+        final AlertDialog dialog = builder.create();
+
+        // needed here to dismiss dialog
+        addFilterButton.setOnClickListener(v -> {
+
+            returnListener.onFilterReady(createFilterFromCurrent());
+            dialog.dismiss();
+        });
+        addFilterButton.setEnabled(false);
+
+        cancelFilterAddition.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                if(!first) {
-                    // retrieve selected category
-                    category = (String) parent.getItemAtPosition(position);
-
-                    ArrayList<String> parameterList = new ArrayList<>();
-                    parameterList.add("cambia?");
-                    ArrayAdapter<String> parameterAdapter = new ArrayAdapter<>(
-                            context,
-                            R.layout.cell_simple_dropdown_text,
-                            parameterList);
-                    parameterSpinner.setAdapter(parameterAdapter);
-                    //updateCurrentParameterSpinner();
-                }
-
-                first = false;
+            public void onClick(View v) {
+                dialog.dismiss();
             }
+        });
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // do nothing
-            }
-        };
-
-        parameterListener =new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                // retrieve selected parameter
-                parameter = (String) parent.getItemAtPosition(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // do nothing
-            }
-        };
+        return dialog;
     }
 
-    public void setCategorySpinner(Spinner categorySpinner) {
-        this.categorySpinner = categorySpinner;
+    private ShareRankFilter createFilterFromCurrent() {
+
+        Enums.PopularIndicatorsCategories currentCategory = findCurrentCategory();
+        Object currentParameter = findCurrentParameter();
+        ShareRankFilter filter;
+
+        switch(currentCategory) {
+
+            case GENDER:
+                filter = new GenderFilter((Enums.GenderEnum) currentParameter, parameter);
+                break;
+            case TYPE:
+                filter = new UserTypeFilter((Enums.TypesOfUsers) currentParameter);
+                break;
+            case BIRTHYEAR:
+                filter = new BirthyearFilter((Range) currentParameter, parameter);
+                break;
+            case TIMEFRAME:
+                filter = new TimeframeFilter((Enums.TimeFrame) currentParameter, parameter);
+                break;
+            case COUNTRY:
+                filter = new CountryFilter((String) currentParameter);
+                break;
+            default:
+                throw new IllegalStateException("Unknown element in PopularIndicatorsCategories enum");
+        }
+
+        return filter;
+    }
+
+    public void setAddFilterCallback(OnAddFilterReturn returnListener) {
+        this.returnListener = returnListener;
+    }
+
+    private void setupUI(View view) {
+
+        // Inflate elements
+        categorySpinner = (Spinner) view.findViewById(R.id.filter_type_spinner);
+        parameterSpinner = (Spinner) view.findViewById(R.id.filter_parameter_spinner);
+        addFilterButton = (Button) view.findViewById(R.id.add_filter_button_dialog);
+        cancelFilterAddition = (Button) view.findViewById(R.id.cancel_filter_addition);
 
         // set category spinner adapter
         List<String> categoriesList = new ArrayList<>();
@@ -95,28 +140,55 @@ public class FilterListCellContent {
         categoriesList.add(0, "not selected");
 
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
-                context,
+                getContext(),
                 R.layout.cell_simple_dropdown_text,
                 categoriesList);
         this.categorySpinner.setAdapter(categoryAdapter);
-
-        this.categorySpinner.setOnItemSelectedListener(categoryListener);
-    }
-
-    public void setParameterSpinner(Spinner parameterSpinner) {
-        this.parameterSpinner = parameterSpinner;
-        //this.parameterSpinner.setEnabled(false);
 
         // disable parameter spinner until category is chosen and set temporary adapter
         ArrayList<String> parameterList = new ArrayList<>();
         parameterList.add("not selected");
         ArrayAdapter<String> parameterAdapter = new ArrayAdapter<>(
-                context,
+                getContext(),
                 R.layout.cell_simple_dropdown_text,
                 parameterList);
         this.parameterSpinner.setAdapter(parameterAdapter);
+        parameterSpinner.setEnabled(false);
 
-        this.parameterSpinner.setOnItemSelectedListener(parameterListener);
+        // add listeners
+        categorySpinner.setOnItemSelectedListener(createCategoryListener());
+        parameterSpinner.setOnItemSelectedListener(createParameterListener());
+    }
+
+    private AdapterView.OnItemSelectedListener createCategoryListener() {
+        return new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                addFilterButton.setEnabled(false);
+                category = (String) parent.getItemAtPosition(position);
+                updateCurrentParameterSpinner();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // do nothing
+            }
+        };
+    }
+
+    private AdapterView.OnItemSelectedListener createParameterListener() {
+        return new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                parameter = (String) parent.getItemAtPosition(position);
+                addFilterButton.setEnabled(true);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // do nothing
+            }
+        };
     }
 
     private void updateCurrentParameterSpinner() {
@@ -164,12 +236,11 @@ public class FilterListCellContent {
 
         // set category spinner adapter and enable it
         ArrayAdapter<String> parameterAdapter = new ArrayAdapter<>(
-                context,
+                getContext(),
                 R.layout.cell_simple_dropdown_text,
                 spinnerList);
         this.parameterSpinner.setAdapter(parameterAdapter);
-        //this.parameterSpinner.setEnabled(true);
-
+        this.parameterSpinner.setEnabled(true);
     }
 
     public Enums.PopularIndicatorsCategories findCurrentCategory() {
@@ -283,6 +354,5 @@ public class FilterListCellContent {
                 throw new IllegalStateException("Unknown element in categories enumeration");
         }
     }
-
 
 }

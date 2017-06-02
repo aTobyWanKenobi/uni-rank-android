@@ -30,7 +30,8 @@
                 android:layout_weight="1"
                 android:drawableRight="@drawable/radio_button_charts_icon_states"
                 android:paddingRight="10dp"
-                android:text="General Statistics" />
+                android:text="Statisticts"
+                android:textAlignment="center" />
 
             <RadioButton
                 android:id="@+id/popular_indicators_radio"
@@ -40,7 +41,8 @@
                 android:layout_weight="1"
                 android:drawableRight="@drawable/radio_button_indicator_icon_states"
                 android:paddingRight="10dp"
-                android:text="Popular Indicators" />
+                android:text="Indicators"
+                android:textAlignment="center" />
 
         </RadioGroup>
 

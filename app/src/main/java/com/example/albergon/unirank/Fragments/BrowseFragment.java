@@ -19,7 +19,6 @@ import com.example.albergon.unirank.Database.CallbackHandlers.OnGeneralStatistic
 import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
-import com.example.albergon.unirank.LayoutAdapters.FilterListCellContent;
 import com.example.albergon.unirank.LayoutAdapters.FilterListAdapter;
 import com.example.albergon.unirank.LayoutAdapters.PopularIndicatorListAdapter;
 import com.example.albergon.unirank.Model.ChartColors;
@@ -28,6 +27,7 @@ import com.example.albergon.unirank.Model.Range;
 import com.example.albergon.unirank.Model.ShareGeneralStats;
 import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.Model.SharedRankFilters.FilterManager;
+import com.example.albergon.unirank.Model.SharedRankFilters.ShareRankFilter;
 import com.example.albergon.unirank.R;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -186,11 +186,18 @@ public class BrowseFragment extends Fragment {
         addFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // add indicator to the list
-                AsyncFilterListAdd task = new AsyncFilterListAdd(filterListAdapter, getContext());
 
-                FilterListCellContent filterCell = new FilterListCellContent(getContext());
-                task.execute(filterCell);
+                AddFilterDialog dialog = new AddFilterDialog();
+                dialog.setAddFilterCallback(new OnAddFilterReturn() {
+                    @Override
+                    public void onFilterReady(ShareRankFilter filter) {
+                        // add indicator to the list
+                        AsyncFilterListAdd task = new AsyncFilterListAdd(filterListAdapter, getContext());
+                        task.execute(filter);
+                    }
+                });
+
+                interactionListener.showFilterDialog(dialog);
             }
         });
 
@@ -533,6 +540,7 @@ public class BrowseFragment extends Fragment {
      */
     public interface OnBrowseFragmentInteractionListener {
 
+        void showFilterDialog(AddFilterDialog dialog);
     }
 
 }

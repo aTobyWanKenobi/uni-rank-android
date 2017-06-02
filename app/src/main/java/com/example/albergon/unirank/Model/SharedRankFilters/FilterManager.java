@@ -1,9 +1,6 @@
 package com.example.albergon.unirank.Model.SharedRankFilters;
 
 import com.example.albergon.unirank.Database.Tables;
-import com.example.albergon.unirank.LayoutAdapters.FilterListCellContent;
-import com.example.albergon.unirank.Model.Enums;
-import com.example.albergon.unirank.Model.Range;
 import com.example.albergon.unirank.Model.ShareRank;
 
 import java.util.ArrayList;
@@ -19,43 +16,13 @@ public class FilterManager {
 
     private List<ShareRankFilter> filters = null;
 
-    public FilterManager(List<FilterListCellContent> rawFilters) {
-        filters = new ArrayList<>();
-        createFinalFiltersFromRaw(rawFilters);
+    public FilterManager(List<ShareRankFilter> filters) {
+        this.filters = new ArrayList<>(filters);
+
     }
 
     public FilterManager(ShareRankFilter... readyFilters) {
         filters = Arrays.asList(readyFilters);
-    }
-
-    private void createFinalFiltersFromRaw(List<FilterListCellContent> rawFilters) {
-
-        // iterate through cell content to construct filters
-        for(FilterListCellContent raw : rawFilters) {
-
-            Enums.PopularIndicatorsCategories category = raw.findCurrentCategory();
-            Object parameter = raw.findCurrentParameter();
-
-            switch(category) {
-                case GENDER:
-                    filters.add(new GenderFilter((Enums.GenderEnum) parameter));
-                    break;
-                case TYPE:
-                    filters.add(new UserTypeFilter((Enums.TypesOfUsers) parameter));
-                    break;
-                case BIRTHYEAR:
-                    filters.add(new BirthyearFilter((Range) parameter));
-                    break;
-                case TIMEFRAME:
-                    filters.add(new TimeframeFilter((Enums.TimeFrame) parameter));
-                    break;
-                case COUNTRY:
-                    filters.add(new CountryFilter((String) parameter));
-                    break;
-                default:
-                    throw new IllegalStateException("Unknown element in categories enumeration");
-            }
-        }
     }
 
     /**

@@ -3,11 +3,13 @@ package com.example.albergon.unirank.LayoutAdapters;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.example.albergon.unirank.Model.SharedRankFilters.ShareRankFilter;
+
 /**
  * This AsyncTask extension updates the contents of a ListView outside of the UI thread, to allow it
  * to refresh and show the results in real time.
  */
-public class AsyncFilterListAdd extends AsyncTask<FilterListCellContent, FilterListCellContent, Void> {
+public class AsyncFilterListAdd extends AsyncTask<ShareRankFilter, ShareRankFilter, Void> {
 
     private FilterListAdapter arrayAdapter = null;
     private Context context = null;
@@ -32,7 +34,7 @@ public class AsyncFilterListAdd extends AsyncTask<FilterListCellContent, FilterL
 
 
     @Override
-    protected Void doInBackground(FilterListCellContent... params) {
+    protected Void doInBackground(ShareRankFilter... params) {
 
         // arguments check
         if(params.length != 1) {
@@ -45,7 +47,7 @@ public class AsyncFilterListAdd extends AsyncTask<FilterListCellContent, FilterL
     }
 
     @Override
-    protected void onProgressUpdate(FilterListCellContent... item) {
+    protected void onProgressUpdate(ShareRankFilter... item) {
         arrayAdapter.addFilter(item[0]);
     }
 

@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:padding="20dp"
+        android:padding="10dp"
         android:text="Welcome to UniRank!"
         android:textAlignment="center"
         android:textAppearance="@style/PageTitleTextBox" />
@@ -23,17 +23,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp"
+        android:background="@drawable/general_border_no_black"
         android:padding="10dp"
-        android:text="You can start by looking at what other people are doing with this application and what they want from a University. Or you can start from scratch and build your own personalized ranking!"
+        android:text="Look at what other people are ranking and what they value in Universities or start your own aggregation from scratch!"
         android:textAlignment="center" />
 
     <GridView
         android:id="@+id/curation_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"
         android:horizontalSpacing="60dp"
         android:numColumns="2"
-        android:verticalSpacing="30dp" />
+        android:verticalSpacing="25dp" />
 </LinearLayout>

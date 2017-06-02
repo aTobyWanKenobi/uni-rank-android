@@ -42,8 +42,8 @@ public class Enums {
     }
 
     public enum TypesOfUsers {
-        HighSchoolStudent("High school student"),
-        UniversityStudent("University student"),
+        HighSchoolStudent("High School"),
+        UniversityStudent("University"),
         Parent("Parent"),
         NoType("No type");
 

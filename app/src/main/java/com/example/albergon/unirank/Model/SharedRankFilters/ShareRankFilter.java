@@ -13,4 +13,7 @@ public interface  ShareRankFilter {
 
     Enums.PopularIndicatorsCategories getCategory();
 
+    String getCategoryString();
+
+    String getParameterString();
 }

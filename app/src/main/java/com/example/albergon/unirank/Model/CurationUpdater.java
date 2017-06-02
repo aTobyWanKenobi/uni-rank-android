@@ -1,23 +1,17 @@
 package com.example.albergon.unirank.Model;
 
 import android.content.Context;
-import android.drm.DrmManagerClient;
 import android.os.AsyncTask;
 
-import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorListener;
-import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
-import com.example.albergon.unirank.Database.Tables;
 import com.example.albergon.unirank.LayoutAdapters.CurationGridAdapter;
-import com.example.albergon.unirank.LayoutAdapters.FilterListCellContent;
 import com.example.albergon.unirank.Model.SharedRankFilters.BirthyearFilter;
 import com.example.albergon.unirank.Model.SharedRankFilters.CountryFilter;
 import com.example.albergon.unirank.Model.SharedRankFilters.FilterManager;
 import com.example.albergon.unirank.Model.SharedRankFilters.ShareRankFilter;
 import com.example.albergon.unirank.Model.SharedRankFilters.TimeframeFilter;
 import com.example.albergon.unirank.Model.SharedRankFilters.UserTypeFilter;
-import com.google.firebase.database.DatabaseException;
 
 import java.util.HashMap;
 import java.util.List;

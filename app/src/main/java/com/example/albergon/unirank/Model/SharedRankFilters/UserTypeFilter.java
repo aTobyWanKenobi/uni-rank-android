@@ -11,6 +11,7 @@ public class UserTypeFilter implements ShareRankFilter {
     private final Enums.PopularIndicatorsCategories category = Enums.PopularIndicatorsCategories.TYPE;
 
     private Enums.TypesOfUsers parameter = null;
+    private String categoryString = "Type of user";
 
     public UserTypeFilter(Enums.TypesOfUsers type) {
 
@@ -35,6 +36,16 @@ public class UserTypeFilter implements ShareRankFilter {
     @Override
     public Enums.PopularIndicatorsCategories getCategory() {
         return category;
+    }
+
+    @Override
+    public String getCategoryString() {
+        return categoryString;
+    }
+
+    @Override
+    public String getParameterString() {
+        return parameter.toString();
     }
 
     public Enums.TypesOfUsers getParameter() {

@@ -20,6 +20,7 @@ import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorLis
 import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
+import com.example.albergon.unirank.Fragments.AddFilterDialog;
 import com.example.albergon.unirank.Fragments.AskSettingsDialog;
 import com.example.albergon.unirank.Fragments.BrowseFragment;
 import com.example.albergon.unirank.Fragments.ChooseIndicatorsDialog;
@@ -28,6 +29,7 @@ import com.example.albergon.unirank.Fragments.CompareFragment;
 import com.example.albergon.unirank.Fragments.CreateRankingFragment;
 import com.example.albergon.unirank.Fragments.CurationFragment;
 import com.example.albergon.unirank.Fragments.MyRankingsFragment;
+import com.example.albergon.unirank.Fragments.OnAskSettingsReturn;
 import com.example.albergon.unirank.Fragments.ResultAggregationFragment;
 import com.example.albergon.unirank.LayoutAdapters.CurationGridAdapter;
 import com.example.albergon.unirank.LayoutAdapters.TabsFragmentPagerAdapter;
@@ -76,6 +78,7 @@ public class TabbedActivity extends AppCompatActivity implements
     private CheckBox localCheckbox = null;
     private CheckBox remoteCheckbox = null;
     private CheckBox curationCheckbox = null;
+    private boolean settingsOk = true;
 
     // curation data
     private Map<Integer, Integer> countryCurSettings = null;
@@ -109,10 +112,17 @@ public class TabbedActivity extends AppCompatActivity implements
     }
 
     public void askSettings() {
-        DialogFragment dialog = new AskSettingsDialog();
+        AskSettingsDialog dialog = new AskSettingsDialog();
+        dialog.addSettingsListener(new OnAskSettingsReturn() {
+            @Override
+            public void setSettingsOk() {
+                settingsOk = true;
+            }
+        });
         dialog.show(getSupportFragmentManager(), "AskSettingsDialog");
-    }
 
+
+    }
 
     private void createRealActivity() {
         setContentView(R.layout.activity_tabbed);
@@ -391,6 +401,11 @@ public class TabbedActivity extends AppCompatActivity implements
         createRealActivity();
     }
 
+    @Override
+    public void showFilterDialog(AddFilterDialog dialog) {
+        dialog.show(fragmentManager, "Add filters dialog");
+    }
+
     private class AsyncOpenDatabase extends AsyncTask<Context, Integer, Boolean> {
 
         @Override
@@ -404,6 +419,12 @@ public class TabbedActivity extends AppCompatActivity implements
             boolean exists = DatabaseHelper.databaseExists();
             // first database instantiation of app
             DatabaseHelper.getInstance(params[0]);
+            if(!exists) {
+                settingsOk = false;
+                publishProgress(3);
+            }
+            while(!settingsOk) {}
+
             publishProgress(0);
 
             retrieveSharedPool(params[0]);
@@ -467,6 +488,9 @@ public class TabbedActivity extends AppCompatActivity implements
                 case 2:
                     curationCheckbox.setVisibility(View.VISIBLE);
                     break;
+                case 3:
+                    askSettings();
+                    break;
             }
 
             progressCircle.setProgress(0);
@@ -479,11 +503,7 @@ public class TabbedActivity extends AppCompatActivity implements
             remoteCheckbox.setVisibility(View.INVISIBLE);
             curationCheckbox.setVisibility(View.INVISIBLE);
 
-            if(!exists) {
-                askSettings();
-            } else {
-                createRealActivity();
-            }
+            createRealActivity();
         }
     }
 

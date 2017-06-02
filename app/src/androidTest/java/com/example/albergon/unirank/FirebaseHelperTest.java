@@ -5,8 +5,10 @@ import android.os.SystemClock;
 import android.support.test.InstrumentationRegistry;
 
 import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorListener;
+import com.example.albergon.unirank.Database.CallbackHandlers.OnShareRankUploadListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
 import com.example.albergon.unirank.Database.FirebaseHelper;
+import com.example.albergon.unirank.Model.Ranking;
 import com.example.albergon.unirank.Model.ShareGeneralStats;
 import com.example.albergon.unirank.Model.ShareRank;
 import com.google.firebase.database.DataSnapshot;
@@ -18,7 +20,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Test suite for the firebase helper
@@ -75,5 +80,30 @@ public class FirebaseHelperTest {
                 // nothing, just a test
             }
         });
+
+        SystemClock.sleep(3000);
+    }
+
+    @Test
+    public void uploadAggregation() {
+
+        List<Integer> rankList = new ArrayList<>();
+        rankList.add(12);
+        rankList.add(3);
+
+        Map<Integer, Integer> settings = new HashMap<>();
+        settings.put(1, 3);
+        settings.put(3, 2);
+        settings.put(2, 2);
+
+        Ranking<Integer> ranking = new Ranking<Integer>(rankList);
+
+        firebaseHelper.uploadAggregation(rankList, settings,
+                new OnShareRankUploadListener() {
+                    @Override
+                    public void onUploadCompleted(boolean successful) {
+                        // do nothing
+                    }
+                });
     }
 }
