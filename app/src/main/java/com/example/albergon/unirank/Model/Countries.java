@@ -2,9 +2,7 @@ package com.example.albergon.unirank.Model;
 
 import com.example.albergon.unirank.R;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

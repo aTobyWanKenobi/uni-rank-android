@@ -13,12 +13,12 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.example.albergon.unirank.LayoutAdapters.AsyncFilterListAdd;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnGeneralStatisticsRetrievalListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
 import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
+import com.example.albergon.unirank.LayoutAdapters.AsyncFilterListAdd;
 import com.example.albergon.unirank.LayoutAdapters.FilterListAdapter;
 import com.example.albergon.unirank.LayoutAdapters.PopularIndicatorListAdapter;
 import com.example.albergon.unirank.Model.ChartColors;

@@ -1,7 +1,5 @@
 package com.example.albergon.unirank.Model;
 
-import com.example.albergon.unirank.Database.FirebaseHelper;
-
 import java.util.HashMap;
 import java.util.Map;
 

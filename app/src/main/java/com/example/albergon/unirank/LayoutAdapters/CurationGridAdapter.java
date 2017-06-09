@@ -1,14 +1,11 @@
 package com.example.albergon.unirank.LayoutAdapters;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Spinner;
 
 import com.example.albergon.unirank.Fragments.CurationFragment;
-import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;

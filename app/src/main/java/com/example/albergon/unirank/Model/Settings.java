@@ -1,10 +1,6 @@
 package com.example.albergon.unirank.Model;
 
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class models the set of settings present in the local database and is used to store them in

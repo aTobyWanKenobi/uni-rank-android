@@ -2,7 +2,6 @@ package com.example.albergon.unirank.Fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -12,15 +11,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.NumberPicker;
 import android.widget.Spinner;
 
-import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.Model.Countries;
 import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Range;
-import com.example.albergon.unirank.Model.Settings;
 import com.example.albergon.unirank.Model.SharedRankFilters.BirthyearFilter;
 import com.example.albergon.unirank.Model.SharedRankFilters.CountryFilter;
 import com.example.albergon.unirank.Model.SharedRankFilters.GenderFilter;
@@ -30,7 +26,6 @@ import com.example.albergon.unirank.Model.SharedRankFilters.UserTypeFilter;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

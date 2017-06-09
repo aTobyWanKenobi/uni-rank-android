@@ -8,8 +8,6 @@ import android.widget.TextView;
 
 import com.example.albergon.unirank.R;
 
-import java.util.List;
-
 /**
  * This class models the content of a curation cell in the CurationFragment
  */

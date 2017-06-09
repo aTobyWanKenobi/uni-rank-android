@@ -2,7 +2,6 @@ package com.example.albergon.unirank.Model.SharedRankFilters;
 
 import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.Model.Enums;
-import com.example.albergon.unirank.Model.Range;
 import com.example.albergon.unirank.Model.ShareRank;
 
 /**

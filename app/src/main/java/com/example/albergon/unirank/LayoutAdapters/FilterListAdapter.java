@@ -8,16 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.albergon.unirank.Database.Tables;
-import com.example.albergon.unirank.Model.Countries;
-import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.Model.SharedRankFilters.ShareRankFilter;
-import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;

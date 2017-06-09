@@ -2,16 +2,13 @@ package com.example.albergon.unirank.LayoutAdapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.provider.Settings;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.albergon.unirank.Model.Countries;
@@ -19,9 +16,7 @@ import com.example.albergon.unirank.Model.University;
 import com.example.albergon.unirank.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This ListView adapter implementation defines the behavior of a ListView containing universities
