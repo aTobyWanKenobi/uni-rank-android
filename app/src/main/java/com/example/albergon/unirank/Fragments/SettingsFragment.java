@@ -25,6 +25,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This Fragment implements the UI and behavior necessary to change the local user settings.
+ */
 public class SettingsFragment extends Fragment {
 
     private DatabaseHelper databaseHelper = null;
@@ -51,7 +54,7 @@ public class SettingsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         databaseHelper = DatabaseHelper.getInstance(getContext());
-        settings = databaseHelper.retriveSettings(false);
+        settings = databaseHelper.retrieveSettings(false);
 
         // setup UI and set current settings
         setupUI(view);
@@ -128,6 +131,9 @@ public class SettingsFragment extends Fragment {
         typeSpinner.setSelection(typesList.indexOf(currentType));
     }
 
+    /**
+     * Add behavior to Spinners
+     */
     private void setupListeners() {
 
         countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -170,25 +176,23 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-        yearPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                confirmButton.setEnabled(true);
-            }
-        });
+        yearPicker.setOnValueChangedListener((picker, oldVal, newVal) -> confirmButton.setEnabled(true));
 
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        confirmButton.setOnClickListener(v -> {
 
-                Settings newSettings = extractNewSettings();
-                databaseHelper.saveSettings(newSettings, false);
-                confirmButton.setEnabled(false);
-                Toast.makeText(getContext(), "New settings saved", Toast.LENGTH_LONG);
-            }
+            Settings newSettings = extractNewSettings();
+            databaseHelper.saveSettings(newSettings, false);
+            confirmButton.setEnabled(false);
+            Toast.makeText(getContext(), "New settings saved", Toast.LENGTH_LONG).show();
         });
     }
 
+    /**
+     * When modifications are confirmed, the new settings are extracted from layout elements and
+     * returned wrapped in a Settings object.
+     *
+     * @return      Settings that encapsulates new user settings
+     */
     private Settings extractNewSettings() {
 
         String country = null;

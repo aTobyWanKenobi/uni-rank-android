@@ -4,14 +4,14 @@ import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.ShareRank;
 
 /**
- * Filter aggregations by country
+ * ShareRankFilter implementation that filters aggregations by country.
  */
 public class CountryFilter implements ShareRankFilter {
 
     private final Enums.PopularIndicatorsCategories category = Enums.PopularIndicatorsCategories.COUNTRY;
 
     private String parameter = null;
-    private String categoryString = "Country";
+    private final String categoryString = "Country";
 
     public CountryFilter(String country) {
 

@@ -83,6 +83,10 @@ public class FilterListAdapter extends BaseAdapter {
         return row;
     }
 
+    /**
+     * Object which will be set as the row's tag and that contains the instantiated layout elements
+     * of a list cell.
+     */
     private static class FilterHolder {
 
         private TextView category = null;

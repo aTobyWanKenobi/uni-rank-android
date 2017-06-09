@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This adapter serves to display curated rankings to the curation fragment
+ * This adapter serves to display curated rankings in the curation fragment
  */
 public class CurationGridAdapter extends BaseAdapter {
 
@@ -19,6 +19,12 @@ public class CurationGridAdapter extends BaseAdapter {
     private CurationFragment.OnCurationFragmentInteractionListener interactionListener = null;
     private List<CurationCellContent> curations = null;
 
+    /**
+     * Public constructor that simply encapsulates parameters
+     *
+     * @param context                   activity context
+     * @param interactionListener       interaction listener for when the grid element will be pressed
+     */
     public CurationGridAdapter(Context context, CurationFragment.OnCurationFragmentInteractionListener interactionListener) {
 
         this.context = context;
@@ -26,6 +32,11 @@ public class CurationGridAdapter extends BaseAdapter {
         curations = initializeCurations();
     }
 
+    /**
+     * Initialize all grid cells for current curated aggregations.
+     *
+     * @return  a list of CurationCellContent
+     */
     private List<CurationCellContent> initializeCurations() {
 
         List<CurationCellContent> defaultCurations = new ArrayList<>();
@@ -62,23 +73,20 @@ public class CurationGridAdapter extends BaseAdapter {
             convertView = curationContent.getLayout();
         }
 
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                interactionListener.onCurationClick(curationContent.getCuration());
-            }
-        });
+        convertView.setOnClickListener(v -> interactionListener.onCurationClick(curationContent.getCuration()));
 
         return convertView;
     }
 
-
-    public static enum Curations {
+    /**
+     * Current curated aggregations in UniRank.
+     */
+    public enum Curations {
 
         BEST_COUNTRY,
         TYPE_AND_AGE,
         LAST_MONTH,
         BEST_OVERALL,
-        EMPTY;
+        EMPTY
     }
 }

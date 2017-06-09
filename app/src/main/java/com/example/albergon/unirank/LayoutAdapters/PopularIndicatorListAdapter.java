@@ -22,6 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This ListView adapter implementation defines the behavior of a ListView containing indicators
+ * names and a progress bar. It's used to display Indicators together with their popularity score.
+ */
 public class PopularIndicatorListAdapter extends BaseAdapter {
 
     private Context context = null;
@@ -31,6 +35,7 @@ public class PopularIndicatorListAdapter extends BaseAdapter {
     private int maxWeight = 0;
 
 
+    @SuppressLint("UseSparseArrays")
     public PopularIndicatorListAdapter(@NonNull Context context, @LayoutRes int resource, Map<Integer, Integer> indicators) {
         this.indicators = new HashMap<>(indicators);
         this.sortedIndicators = sortIndicators(indicators);

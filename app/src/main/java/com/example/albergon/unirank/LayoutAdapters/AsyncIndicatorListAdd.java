@@ -29,8 +29,6 @@ public class AsyncIndicatorListAdd extends AsyncTask<AsyncIndicatorListAdd.Indic
 
         this.context = context;
         this.arrayAdapter = arrayAdapter;
-
-        System.out.println("DEBUG: TASK CREATED");
     }
 
 
@@ -52,8 +50,6 @@ public class AsyncIndicatorListAdd extends AsyncTask<AsyncIndicatorListAdd.Indic
     @Override
     protected void onProgressUpdate(IndicatorCellContent... item) {
         arrayAdapter.addIndicator(item[0]);
-
-        System.out.println("DEBUG: ADD : " + item[0].getIndicator() + " " + item[0].getInitialWeight());
     }
 
     @Override

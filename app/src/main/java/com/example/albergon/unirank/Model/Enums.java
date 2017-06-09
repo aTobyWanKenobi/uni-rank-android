@@ -1,13 +1,16 @@
 package com.example.albergon.unirank.Model;
 
 /**
- * Created by Tobia Albergoni on 28.04.2017.
+ * This not instantiable container class contains many of the enumerations used through the application
  */
-
 public class Enums {
 
+    // private constructor
     private Enums() {}
 
+    /**
+     * This enumeration models the user characteristics used to differentiate aggregations.
+     */
     public enum PopularIndicatorsCategories {
         GENDER("Gender"),
         TYPE("User type"),
@@ -26,6 +29,9 @@ public class Enums {
         }
     }
 
+    /**
+     * This enumeration models genders in UniRank.
+     */
     public enum GenderEnum {
         MALE("Male"),
         FEMALE("Female");
@@ -41,6 +47,9 @@ public class Enums {
         }
     }
 
+    /**
+     * This enumeration models user types in UniRank.
+     */
     public enum TypesOfUsers {
         HighSchoolStudent("High School"),
         UniversityStudent("University"),
@@ -58,6 +67,9 @@ public class Enums {
         }
     }
 
+    /**
+     * This enumeration models time intervals used to identify recent indicator trends.
+     */
     public enum TimeFrame {
         MONTH("This month"),
         YEAR("This year");
@@ -73,6 +85,9 @@ public class Enums {
         }
     }
 
+    /**
+     * This enumeration models age ranges.
+     */
     public enum UserAgeCategories {
         KIDS("Less than 15 years old"),
         TEENS("15-20 years old"),
@@ -91,6 +106,9 @@ public class Enums {
         }
     }
 
+    /**
+     * This enumeration lists month abbreviation in order to easily manipulate Firebase dates.
+     */
     public enum MonthsAbbreviations {
         JANUARY("Jan"),
         FEBRUARY("Feb"),

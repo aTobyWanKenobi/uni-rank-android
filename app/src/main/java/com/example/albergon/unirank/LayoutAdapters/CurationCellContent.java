@@ -1,5 +1,6 @@
 package com.example.albergon.unirank.LayoutAdapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,13 @@ public class CurationCellContent {
     private Context context = null;
     private CurationGridAdapter.Curations curation = null;
 
+    /**
+     * Public constructor that initializes layout elements depending on the curation parameter.
+     *
+     * @param curation  type of curated aggregation, determines the contents of this cell
+     * @param context   activity context
+     */
+    @SuppressLint("InflateParams")
     public CurationCellContent(CurationGridAdapter.Curations curation, Context context) {
 
         this.context = context;
@@ -37,14 +45,27 @@ public class CurationCellContent {
         setLayoutContent();
     }
 
+    /**
+     * Getter for the cell layout
+     *
+     * @return  the cell root View
+     */
     public View getLayout() {
         return convertView;
     }
 
+    /**
+     * Getter for the type of curated aggregation of this cell.
+     *
+     * @return  a Curations enum element
+     */
     public CurationGridAdapter.Curations getCuration() {
         return curation;
     }
 
+    /**
+     * Set layout content of this cell depending on the curated type.
+     */
     private void setLayoutContent() {
 
         switch(curation) {

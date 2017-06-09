@@ -8,6 +8,8 @@ import com.example.albergon.unirank.Model.University;
  * This interface specifies the access methods to the local university and indicators database. It
  * has to be implemented by database helpers to ensure the interface with whatever SQLite implementation
  * is currently deployed stays the same for the rest of the application.
+ *
+ * TODO: update interface with later additions
  */
 public interface UniRankDatabase {
 

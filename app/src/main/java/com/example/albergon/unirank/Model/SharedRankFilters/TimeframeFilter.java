@@ -5,14 +5,14 @@ import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.ShareRank;
 
 /**
- * Filter aggregations by upload date
+ * ShareRankFilter implementation that filters aggregations by upload date
  */
 public class TimeframeFilter implements ShareRankFilter {
 
     private final Enums.PopularIndicatorsCategories category = Enums.PopularIndicatorsCategories.TIMEFRAME;
 
     private Enums.TimeFrame parameter = null;
-    private String categoryString = "Upload date";
+    private final String categoryString = "Upload date";
     private String parameterString = null;
 
     public TimeframeFilter(Enums.TimeFrame timeframe) {
@@ -40,9 +40,8 @@ public class TimeframeFilter implements ShareRankFilter {
 
         String currentDate = FirebaseHelper.generateDate();
         String sharedDate = sharedAggregation.date;
-        boolean belongs = false;
+        boolean belongs;
 
-        // TODO: different date formats in different phones? look it up
         switch(parameter) {
             case MONTH:
                 // keep month and year from dates so that we can check for month equality

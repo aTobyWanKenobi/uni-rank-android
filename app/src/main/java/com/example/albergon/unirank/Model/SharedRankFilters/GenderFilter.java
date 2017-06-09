@@ -4,14 +4,14 @@ import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.ShareRank;
 
 /**
- * Filter aggregations by gender
+ * ShareRankFilter implementation that filters aggregations by gender
  */
 public class GenderFilter implements ShareRankFilter {
 
     private final Enums.PopularIndicatorsCategories category = Enums.PopularIndicatorsCategories.GENDER;
 
     private Enums.GenderEnum parameter = null;
-    private String categoryString = "Gender";
+    private final String categoryString = "Gender";
     private String parameterString = null;
 
     public GenderFilter(Enums.GenderEnum gender) {

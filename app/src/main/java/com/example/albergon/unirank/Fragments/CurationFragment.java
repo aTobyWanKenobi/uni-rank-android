@@ -11,14 +11,22 @@ import android.widget.GridView;
 import com.example.albergon.unirank.LayoutAdapters.CurationGridAdapter;
 import com.example.albergon.unirank.R;
 
-
+/**
+ * This Fragment implements the landing screen of the application after initialization. Its main purpose
+ * is to access the rank generation cycle either by starting a nre aggregation from scratch or by clicking
+ * on one of the curated aggregations that this Fragment displays. Their computation has been performed
+ * during app launch.
+ */
 public class CurationFragment extends Fragment {
 
+    // interaction listener
     private OnCurationFragmentInteractionListener interactionListener;
 
-    // layout elements
-    private GridView curationGrid = null;
-
+    /**
+     * Factory method
+     *
+     * @return  a CurationFragment instance
+     */
     public static CurationFragment newInstance() {
         CurationFragment fragment = new CurationFragment();
         Bundle args = new Bundle();
@@ -33,7 +41,8 @@ public class CurationFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_curation, container, false);
 
-        curationGrid = (GridView) view.findViewById(R.id.curation_grid);
+        // create layout elements
+        GridView curationGrid = (GridView) view.findViewById(R.id.curation_grid);
         curationGrid.setAdapter(new CurationGridAdapter(getContext(), interactionListener));
 
         return view;
@@ -56,6 +65,9 @@ public class CurationFragment extends Fragment {
         interactionListener = null;
     }
 
+    /**
+     * Interaction listener for implementing activity.
+     */
     public interface OnCurationFragmentInteractionListener {
 
         void onCurationClick(CurationGridAdapter.Curations curation);

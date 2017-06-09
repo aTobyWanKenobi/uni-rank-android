@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-// TODO: move all methods not concerning initialization to a separate class?
-
 /**
  * This helper class provides methods to interact with a local SQLite database.
  *
@@ -42,19 +40,21 @@ import java.util.NoSuchElementException;
  */
 public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase {
 
-    // Database follows singleton pattern
+    // Database implements singleton pattern
+    @SuppressLint("StaticFieldLeak")
     private static DatabaseHelper singletonInstance;
 
-    private Context context = null;
-    private SQLiteDatabase db = null;
-
+    // database file parameters
     private final static String TAG = "DatabaseHelper";
     @SuppressLint("SdCardPath")
     private final static String DB_PATH = "/data/data/com.example.albergon.unirank/databases/";
     private final static String DB_NAME = "uni_rank.db";
 
+    private Context context = null;
+    private SQLiteDatabase db = null;
+
     /**
-     * Implement singleton pattern. There is a unique instance of DatabaseHelper across the application
+     * Implements singleton pattern. There is a unique instance of DatabaseHelper across the application
      * and this factory method creates it at the first invocation and then returns always the same instance.
      *
      * @param context   activity's context
@@ -94,11 +94,12 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
     @Override
     public void onCreate(SQLiteDatabase db) {
         // nothing to do for now
+        // database initialization is done through createDatabase()
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // TODO: drop database and recreate
+        // in the future, implement logic to recreate database form different initialization file
     }
 
     /**
@@ -131,7 +132,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
 
     /**
-     * Utility static method to check if database initialization has already been performed.
+     * Utility static method to check if local database initialization has already been performed.
      *
      * @return  true if it exists, false otherwise
      */
@@ -153,7 +154,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
     }
 
     /**
-     * Copies your database from your local assets-folder to the just created empty database in the
+     * Copies your database from your local assets-folder to the newly created empty database in the
      * system folder, from where it can be accessed and handled.
      * This is done by transferring byte stream.
      *
@@ -304,12 +305,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         ContentValues settings = new ContentValues();
         ContentValues ranking = new ContentValues();
 
-        // TODO: implement correct system
-        // verify if the current writing is an update of an already present save
-        /*if(saveAlreadyPresent(toSave.getName())) {
-            // in that case delete old data
-            deleteSavedAggregation(toSave.getName());
-        }*/
+        // TODO : implement more advanced naming system here if necessary
 
         // add rankings information to appropriate table
         save.put(Tables.Saves.RANKING_NAME, toSave.getName());
@@ -338,6 +334,12 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
     }
 
+    /**
+     * Check if a save with a given name is already present in the local database.
+     *
+     * @param name  name to check in the local SQLite instance
+     * @return      boolean indicating whether the save is present or not
+     */
     public boolean saveAlreadyPresent(String name) {
 
         return retrieveSaveData(name) != null;
@@ -358,6 +360,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
         String[] selectionArgs = {name};
 
+        // execute deletion queries in every table containing aggregation information
         String query1 = "DELETE FROM " + Tables.Saves.TABLE_NAME +
                 " WHERE "+Tables.Saves.RANKING_NAME+" = ?;";
         db.execSQL(query1, selectionArgs);
@@ -377,7 +380,6 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
     public void deleteAllSaves() {
         List<String> names = retrieveAllSavesName();
 
-        List<SaveRank> allSaves = new ArrayList<>();
         //noinspection Convert2streamapi
         for(String name : names) {
             deleteSavedAggregation(name);
@@ -402,7 +404,14 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
         return allSaves;
     }
 
+    /**
+     * This method retrieves all distinct save names currently used in the database. Useful to
+     * instantiate save lists without retrieving all data.
+     *
+     * @return  a list of names
+     */
     public List<String> retrieveAllSavesName() {
+
         // specifies which database columns we want from the query
         String[] projection = {
                 Tables.Saves.RANKING_NAME
@@ -484,7 +493,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
 
         // build rank list
         List<Integer> unsortedUniIds = new ArrayList<>();
-        Map<Integer, Double> scores = new HashMap<>();
+        @SuppressLint("UseSparseArrays") Map<Integer, Double> scores = new HashMap<>();
 
         @SuppressLint("UseSparseArrays") Map<Integer, Integer> idsWithRank = new HashMap<>();
         while(savedRankList.moveToNext()) {
@@ -499,13 +508,14 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
                     getDouble(savedRankList.
                             getColumnIndexOrThrow(Tables.SavesRankings.SAVED_SCORE));
             idsWithRank.put(uniID, rankPos);
+            scores.put(uniID, score);
             unsortedUniIds.add(uniID);
         }
         unsortedUniIds.sort(new RetrieveRankComparator(idsWithRank));
 
-        Ranking<Integer> ranking = new Ranking<Integer>(unsortedUniIds, scores);
+        Ranking<Integer> ranking = new Ranking<>(unsortedUniIds, scores);
 
-        // build and return a SaveRank object with the fetched parameters
+        // build and return a SaveRank object with  fetched parameters
         SaveRank savedRanking = new SaveRank(rName, rDate, settings, ranking);
 
         // close Cursors
@@ -602,6 +612,102 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
     }
 
     /**
+     * Saves new user settings in the local database instance. An additional boolean parameter ensures
+     * correct behavior while in a testing environment.
+     *
+     * @param settings      the Settings object containing new database data
+     * @param test          specifies if the method is called in a test environment or not
+     */
+    public void saveSettings(Settings settings, boolean test) {
+
+        //delete old settings
+        deleteSettings(test);
+
+        // check arguments
+        if(settings == null) {
+            throw new IllegalArgumentException("Settings to be saved cannot be null");
+        }
+
+        // initialize rows to insert
+        ContentValues settingsRow = new ContentValues();
+
+        // add settings information to appropriate table, id always 0 to override current settings
+        // except for testing, which occupies a different row
+        int id = test?1:0;
+        settingsRow.put(Tables.Settings._ID, id);
+        settingsRow.put(Tables.Settings.COUNTRY, settings.getCountryCode());
+        settingsRow.put(Tables.Settings.GENDER, settings.getGender().toString());
+        settingsRow.put(Tables.Settings.BIRTH_YEAR, settings.getYearOfBirth());
+        settingsRow.put(Tables.Settings.USER_TYPE, settings.getType().toString());
+
+        db.insert(Tables.Settings.TABLE_NAME, null, settingsRow);
+
+    }
+
+    /**
+     * Retrieve current user settings stored in the local database, storing them into a Settings object.
+     *
+     * @param test  specifies whether to retrieve real or test settings
+     * @return      a Settings object encapsulating database data
+     */
+    public Settings retrieveSettings(boolean test) {
+
+        // construct and perform database query
+        String query = "SELECT " +
+                Tables.Settings.COUNTRY + ", " +
+                Tables.Settings.GENDER + ", " +
+                Tables.Settings.BIRTH_YEAR + ", " +
+                Tables.Settings.USER_TYPE +
+                " FROM " + Tables.Settings.TABLE_NAME +
+                " WHERE "+ Tables.Settings._ID +" = ?;";
+        String id = test?"1":"0";
+        String[] selectionArgs = {id};
+        Cursor result = db.rawQuery(query, selectionArgs);
+
+        // check results
+        if(result.getCount() != 1) {
+            throw new IllegalArgumentException("Retrieved incorrect settings, database corrupt");
+        } else {
+            // construct Settings object
+            result.moveToNext();
+
+            String countryCode = result.getString(result.getColumnIndexOrThrow(Tables.Settings.COUNTRY));
+            String gender = result.getString(result.getColumnIndexOrThrow(Tables.Settings.GENDER));
+            int year = result.getInt(result.getColumnIndexOrThrow(Tables.Settings.BIRTH_YEAR));
+
+            String userType = result.getString(result.getColumnIndexOrThrow(Tables.Settings.USER_TYPE));
+            Enums.TypesOfUsers enumType = null;
+            for(Enums.TypesOfUsers type : Enums.TypesOfUsers.values()) {
+                if(type.toString().equals(userType)) {
+                    enumType = type;
+                }
+            }
+
+            Enums.GenderEnum genderEnum = gender.equals(Enums.GenderEnum.MALE.toString())?
+                    Enums.GenderEnum.MALE:
+                    Enums.GenderEnum.FEMALE;
+
+            result.close();
+            return new Settings(countryCode, genderEnum, year, enumType);
+        }
+    }
+
+    /**
+     * Delete old settings to avoid corrupting the database.
+     *
+     * @param test  specifies whether to delete real or test user settings.
+     */
+    private void deleteSettings(boolean test) {
+
+        String row = test?"1":"0";
+        String[] selectionArgs = {row};
+
+        String query1 = "DELETE FROM " + Tables.Settings.TABLE_NAME +
+                " WHERE "+Tables.Settings._ID+" = ?;";
+        db.execSQL(query1, selectionArgs);
+    }
+
+    /**
      * Nested comparator class that reconstructs a rank list of universities ids given database data.
      */
     public static class RetrieveRankComparator implements Comparator<Integer> {
@@ -626,85 +732,10 @@ public class DatabaseHelper extends SQLiteOpenHelper implements UniRankDatabase 
                 return -1;
             } else //noinspection NumberEquality
                 if(pairings.get(o1) == pairings.get(o2)) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
-    }
-
-    public void saveSettings(Settings settings, boolean test) {
-
-        deleteSettings(test);
-
-        // check arguments
-        if(settings == null) {
-            throw new IllegalArgumentException("Settings to be saved cannot be null");
-        }
-
-        // initialize rows to insert
-        ContentValues settingsRow = new ContentValues();
-
-        // add settings information to appropriate table, id always 0 to override current settings
-        // except for testing
-        int id = test?1:0;
-        settingsRow.put(Tables.Settings._ID, id);
-        settingsRow.put(Tables.Settings.COUNTRY, settings.getCountryCode());
-        settingsRow.put(Tables.Settings.GENDER, settings.getGender().toString());
-        settingsRow.put(Tables.Settings.BIRTH_YEAR, settings.getYearOfBirth());
-        settingsRow.put(Tables.Settings.USER_TYPE, settings.getType().toString());
-
-        db.insert(Tables.Settings.TABLE_NAME, null, settingsRow);
-
-    }
-
-    private void deleteSettings(boolean test) {
-
-        String row = test?"1":"0";
-        String[] selectionArgs = {row};
-
-        String query1 = "DELETE FROM " + Tables.Settings.TABLE_NAME +
-                " WHERE "+Tables.Settings._ID+" = ?;";
-        db.execSQL(query1, selectionArgs);
-    }
-
-    public Settings retriveSettings(boolean test) {
-
-        String query = "SELECT " +
-                Tables.Settings.COUNTRY + ", " +
-                Tables.Settings.GENDER + ", " +
-                Tables.Settings.BIRTH_YEAR + ", " +
-                Tables.Settings.USER_TYPE +
-                " FROM " + Tables.Settings.TABLE_NAME +
-                " WHERE "+ Tables.Settings._ID +" = ?;";
-        String id = test?"1":"0";
-        String[] selectionArgs = {id};
-        Cursor result = db.rawQuery(query, selectionArgs);
-
-        if(result.getCount() != 1) {
-            throw new IllegalArgumentException("Retrieved incorrect settings, database corrupt");
-        } else {
-            result.moveToNext();
-
-            String countryCode = result.getString(result.getColumnIndexOrThrow(Tables.Settings.COUNTRY));
-            String gender = result.getString(result.getColumnIndexOrThrow(Tables.Settings.GENDER));
-            int year = result.getInt(result.getColumnIndexOrThrow(Tables.Settings.BIRTH_YEAR));
-
-            String userType = result.getString(result.getColumnIndexOrThrow(Tables.Settings.USER_TYPE));
-            Enums.TypesOfUsers enumType = null;
-            for(Enums.TypesOfUsers type : Enums.TypesOfUsers.values()) {
-                if(type.toString().equals(userType)) {
-                    enumType = type;
+                    return 0;
+                } else {
+                    return 1;
                 }
-            }
-
-            Enums.GenderEnum genderEnum = gender.equals(Enums.GenderEnum.MALE.toString())?
-                    Enums.GenderEnum.MALE:
-                    Enums.GenderEnum.FEMALE;
-
-            Settings retrievedSettings = new Settings(countryCode, genderEnum, year, enumType);
-            return retrievedSettings;
         }
-
     }
 }

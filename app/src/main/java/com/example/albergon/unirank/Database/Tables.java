@@ -11,6 +11,7 @@ import android.provider.BaseColumns;
  */
 public final class Tables {
 
+    // private default constructor
     private Tables() {}
 
     /**
@@ -96,6 +97,12 @@ public final class Tables {
         }
     }
 
+    /**
+     * Static utility method to replace underscores with spaces in a string.
+     *
+     * @param s     string to modify
+     * @return      modified string
+     */
     private static String removeUnderscores(String s) {
         return s.replace("_", " ");
     }

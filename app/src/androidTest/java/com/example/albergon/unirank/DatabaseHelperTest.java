@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 
 import com.example.albergon.unirank.Database.DatabaseHelper;
-import com.example.albergon.unirank.Database.Tables;
 import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Indicator;
 import com.example.albergon.unirank.Model.Ranking;
@@ -16,7 +15,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -115,7 +113,7 @@ public class DatabaseHelperTest {
 
         databaseHelper.saveSettings(toSave, true);
 
-        Settings retrieved = databaseHelper.retriveSettings(true);
+        Settings retrieved = databaseHelper.retrieveSettings(true);
 
         Assert.assertEquals(toSave.getCountryCode(), retrieved.getCountryCode());
         Assert.assertEquals(toSave.getGender(), retrieved.getGender());

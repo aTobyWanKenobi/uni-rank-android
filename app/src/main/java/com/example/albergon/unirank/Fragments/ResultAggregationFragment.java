@@ -48,8 +48,8 @@ public class ResultAggregationFragment extends Fragment {
     private ArrayList<Integer> oldResult;
     private boolean cached = false;
     private Ranking<Integer> result = null;
-    FirebaseHelper firebaseHelper = null;
-    DatabaseHelper databaseHelper = null;
+    private FirebaseHelper firebaseHelper = null;
+    private DatabaseHelper databaseHelper = null;
 
     // UI elements
     private ListView resultList = null;
@@ -111,7 +111,7 @@ public class ResultAggregationFragment extends Fragment {
 
         // perform aggregation and display it
         if(cached) {
-            Ranking<Integer> cached = new Ranking<Integer>(oldResult);
+            Ranking<Integer> cached = new Ranking<>(oldResult);
             skipAggregation(cached);
         } else {
             performAggregation();
@@ -143,16 +143,13 @@ public class ResultAggregationFragment extends Fragment {
         saveBtn.setOnClickListener(v -> showSaveDialog());
 
         shareBtn.setOnClickListener(v -> {
-            OnShareRankUploadListener callbackHandler = new OnShareRankUploadListener() {
-                @Override
-                public void onUploadCompleted(boolean successful) {
+            OnShareRankUploadListener callbackHandler = successful -> {
 
-                    if(successful) {
-                        shareBtn.setEnabled(false);
-                        Toast.makeText(getContext(), "Upload successful", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
-                    }
+                if(successful) {
+                    shareBtn.setEnabled(false);
+                    Toast.makeText(getContext(), "Upload successful", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
                 }
             };
 
@@ -161,7 +158,6 @@ public class ResultAggregationFragment extends Fragment {
 
     }
 
-    //TODO: implement naming conflict resolution
     /**
      * Show the save dialog, which lets the user input a name for the aggregation he wants to save.
      */
@@ -220,6 +216,12 @@ public class ResultAggregationFragment extends Fragment {
         saveBtn.setEnabled(false);
     }
 
+    /**
+     * If the old settings were not modified and the fragment receives a valid cached ranking, avoid
+     * computing the algorithm and directly display the result.
+     *
+     * @param cache     valid cached aggregation
+     */
     private void skipAggregation(Ranking<Integer> cache) {
 
         result = cache;
@@ -336,6 +338,10 @@ public class ResultAggregationFragment extends Fragment {
 
     }
 
+    /**
+     * This other AsyncTask has the sole purpose of updating the UI thread to show a spinning progress
+     * circle.
+     */
     private class AsyncSpinningProgress extends AsyncTask<Void, Integer, Void> {
 
         @Override

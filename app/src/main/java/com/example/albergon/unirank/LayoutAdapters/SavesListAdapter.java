@@ -1,5 +1,6 @@
 package com.example.albergon.unirank.LayoutAdapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -47,6 +48,7 @@ public class SavesListAdapter extends BaseExpandableListAdapter {
         this.buttonHandler = buttonHandler;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
 
@@ -62,36 +64,16 @@ public class SavesListAdapter extends BaseExpandableListAdapter {
         saveNameTxt.setText(saveName);
 
         ImageView openIcon = (ImageView) convertView.findViewById(R.id.open_icon_myrank);
-        openIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonHandler.open(saveName);
-            }
-        });
+        openIcon.setOnClickListener(v -> buttonHandler.open(saveName));
 
         ImageView compareIcon = (ImageView) convertView.findViewById(R.id.compare_icon_myrank);
-        compareIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonHandler.compare(saveName);
-            }
-        });
+        compareIcon.setOnClickListener(v -> buttonHandler.compare(saveName));
 
         ImageView shareIcon = (ImageView) convertView.findViewById(R.id.share_icon_myrank);
-        shareIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonHandler.share(saveName);
-            }
-        });
+        shareIcon.setOnClickListener(v -> buttonHandler.share(saveName));
 
         ImageView deleteIcon = (ImageView) convertView.findViewById(R.id.delete_icon_myrank);
-        deleteIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                buttonHandler.delete(saveName);
-            }
-        });
+        deleteIcon.setOnClickListener(v -> buttonHandler.delete(saveName));
 
         //convertView.setOnClickListener(rowListener);
         convertView.setTag(saveNameTxt);
@@ -99,6 +81,7 @@ public class SavesListAdapter extends BaseExpandableListAdapter {
         return convertView;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 

@@ -57,7 +57,13 @@ public class FilterManager {
         return indicatorsScores;
     }
 
-    public boolean allFiltersAnd(ShareRank aggregation) {
+    /**
+     * Combine all filters in a unique conjunction and return the corresponding boolean result
+     *
+     * @param aggregation   aggregation to filter
+     * @return              boolean depending if the aggregation was filtered out or not
+     */
+    private boolean allFiltersAnd(ShareRank aggregation) {
 
         boolean isOk = true;
         for(ShareRankFilter filter : filters) {

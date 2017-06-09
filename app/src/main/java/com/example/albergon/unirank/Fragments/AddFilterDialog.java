@@ -32,10 +32,11 @@ import java.util.Map;
 
 /**
  * This fragment defines a dialog which purpose is to ask to the user to input filter parameters
- * to be used in a query to the remote shared pool
+ * to be used in a query to the remote shared pool.
  */
 public class AddFilterDialog extends DialogFragment {
 
+    // interaction listener
     private OnAddFilterReturn returnListener = null;
 
     // UI elements
@@ -73,22 +74,24 @@ public class AddFilterDialog extends DialogFragment {
         });
         addFilterButton.setEnabled(false);
 
-        cancelFilterAddition.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
+        cancelFilterAddition.setOnClickListener(v -> dialog.dismiss());
 
         return dialog;
     }
 
+    /**
+     * Uses the current dialog parameters to build the desired ShareRankFilter object.
+     *
+     * @return  an aggregation filter tuned according to user inputs
+     */
     private ShareRankFilter createFilterFromCurrent() {
 
+        // retrieve current user inputs
         Enums.PopularIndicatorsCategories currentCategory = findCurrentCategory();
         Object currentParameter = findCurrentParameter();
         ShareRankFilter filter;
 
+        // build corresponding filter
         switch(currentCategory) {
 
             case GENDER:
@@ -113,10 +116,21 @@ public class AddFilterDialog extends DialogFragment {
         return filter;
     }
 
+    /**
+     * Receives callback listener from Activity or Fragment and encapsulate it for when the filter
+     * will be instantiated.
+     *
+     * @param returnListener    callback listener from caller
+     */
     public void setAddFilterCallback(OnAddFilterReturn returnListener) {
         this.returnListener = returnListener;
     }
 
+    /**
+     * Setup dialog layout elements
+     *
+     * @param view  dialog root View
+     */
     private void setupUI(View view) {
 
         // Inflate elements
@@ -155,12 +169,20 @@ public class AddFilterDialog extends DialogFragment {
         parameterSpinner.setOnItemSelectedListener(createParameterListener());
     }
 
+    /**
+     * Category spinner listener factory method. Updates category attribute on user selections.
+     *
+     * @return  a OnItemSelectedListener that will be attached to the category spinner
+     */
     private AdapterView.OnItemSelectedListener createCategoryListener() {
         return new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // disable button until filter is completely created
                 addFilterButton.setEnabled(false);
                 category = (String) parent.getItemAtPosition(position);
+
+                // update parameter spinner
                 updateCurrentParameterSpinner();
             }
 
@@ -171,11 +193,18 @@ public class AddFilterDialog extends DialogFragment {
         };
     }
 
+    /**
+     * Parameter spinner listener factory method. Updates parameter attribute on user selections.
+     *
+     * @return  a OnItemSelectedListener that will be attached to the parameter spinner
+     */
     private AdapterView.OnItemSelectedListener createParameterListener() {
         return new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 parameter = (String) parent.getItemAtPosition(position);
+
+                // enable add button since filter is complete
                 addFilterButton.setEnabled(true);
             }
 
@@ -186,6 +215,9 @@ public class AddFilterDialog extends DialogFragment {
         };
     }
 
+    /**
+     * Updates spinner adapter with a parameter list coherent with the current category.
+     */
     private void updateCurrentParameterSpinner() {
 
         Enums.PopularIndicatorsCategories currCategory = findCurrentCategory();
@@ -238,7 +270,12 @@ public class AddFilterDialog extends DialogFragment {
         this.parameterSpinner.setEnabled(true);
     }
 
-    public Enums.PopularIndicatorsCategories findCurrentCategory() {
+    /**
+     * Finds category enum representation from string representation.
+     *
+     * @return  a category enum element
+     */
+    private Enums.PopularIndicatorsCategories findCurrentCategory() {
 
         // find current category
         Enums.PopularIndicatorsCategories currCategory = null;
@@ -251,7 +288,12 @@ public class AddFilterDialog extends DialogFragment {
         return currCategory;
     }
 
-    public Object findCurrentParameter() {
+    /**
+     * Creates correct parameter object depending from selected category and parameter string representation.
+     *
+     * @return a generic parameter Object, since each filter has a different parameter type
+     */
+    private Object findCurrentParameter() {
 
         // handle string parameter differently depending on category
         switch(findCurrentCategory()) {
@@ -294,9 +336,10 @@ public class AddFilterDialog extends DialogFragment {
                 }
 
                 // build correct range depending on current year
-                Range yearRange = null;
+                Range yearRange;
                 String currentDate = FirebaseHelper.generateDate();
                 int currentYear = Integer.parseInt(currentDate.substring(currentDate.lastIndexOf(' ') + 1));
+                //noinspection ConstantConditions
                 switch(age) {
                     case KIDS:
                         yearRange = new Range(currentYear - 15, currentYear);

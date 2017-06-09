@@ -102,6 +102,9 @@ public class TabbedActivity extends AppCompatActivity implements
         openDBTask.execute(this);
     }
 
+    /**
+     * Setup splash screen and initialization layout
+     */
     public void setupStartUI() {
 
         progressCircle = (ProgressBar) findViewById(R.id.load_app_progress);
@@ -110,6 +113,9 @@ public class TabbedActivity extends AppCompatActivity implements
         curationCheckbox = (CheckBox) findViewById(R.id.curation_checkbox);
     }
 
+    /**
+     * If it's the first application startup, show dialog to ask user settings
+     */
     public void askSettings() {
         AskSettingsDialog dialog = new AskSettingsDialog();
         dialog.addSettingsListener(new OnAskSettingsReturn() {
@@ -123,6 +129,9 @@ public class TabbedActivity extends AppCompatActivity implements
 
     }
 
+    /**
+     * Instantiate application layout and dismantle splash screen structures.
+     */
     private void createRealActivity() {
         setContentView(R.layout.activity_tabbed);
 
@@ -148,6 +157,11 @@ public class TabbedActivity extends AppCompatActivity implements
         databaseHelper = DatabaseHelper.getInstance(this);
     }
 
+    /**
+     * Create listener that notifies when curated aggregations are computed and ready to be shown to users.
+     *
+     * @return  a OnCurationDownloadNotifier object
+     */
     private OnCurationDownloadNotifier createCurationNotifier() {
 
         return new OnCurationDownloadNotifier() {
@@ -206,8 +220,6 @@ public class TabbedActivity extends AppCompatActivity implements
         };
     }
 
-    // TODO: keep fragment stack
-
     /**
      * Method that manages the fragment switching by replacing the old fragment with the new one.
      *
@@ -219,6 +231,10 @@ public class TabbedActivity extends AppCompatActivity implements
                 .replace(R.id.fragment_container, newFragment)
                 .commit();
     }
+
+    /***********************************************************************************************
+     * FRAGMENT INTERACTION LISTENERS
+     **********************************************************************************************/
 
     /**
      * Launches a ResultAggregationFragment which performs the aggregation with the parameter settings.
@@ -432,7 +448,7 @@ public class TabbedActivity extends AppCompatActivity implements
                 //publishProgress(0);
             }
 
-            //TODO remove, just for correct behaviour check
+            //TODO remove, just for correct behaviour check and demo
             SystemClock.sleep(2000);
 
             return exists;

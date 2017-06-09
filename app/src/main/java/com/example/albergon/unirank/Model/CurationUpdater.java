@@ -1,5 +1,6 @@
 package com.example.albergon.unirank.Model;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -36,6 +37,12 @@ public class CurationUpdater extends AsyncTask<Void, Void, Map<Integer, Integer>
         this.pool = pool;
     }
 
+    /**
+     * Creates a Birthyear filter for the PEERS curated ranking.
+     *
+     * @param birthYear     user birth year
+     * @return              relative filter
+     */
     private ShareRankFilter createAgeFilter(int birthYear) {
 
         int currentYear = Integer.parseInt(FirebaseHelper.generateDate().substring(FirebaseHelper.generateDate().lastIndexOf(' ') + 1));
@@ -59,9 +66,10 @@ public class CurationUpdater extends AsyncTask<Void, Void, Map<Integer, Integer>
     @Override
     protected Map<Integer, Integer> doInBackground(Void... params) {
 
-        Settings currentSettings = DatabaseHelper.getInstance(context).retriveSettings(false);
+        Settings currentSettings = DatabaseHelper.getInstance(context).retrieveSettings(false);
         FilterManager filterManager;
 
+        // create correct filter
         switch(curation) {
 
             case BEST_COUNTRY:
@@ -81,12 +89,10 @@ public class CurationUpdater extends AsyncTask<Void, Void, Map<Integer, Integer>
             case EMPTY:
                 throw new IllegalStateException("This method should not be called with this argument");
             default:
-                throw new IllegalStateException("Unknows element in enum Curations");
+                throw new IllegalStateException("Unknown element in enum Curations");
         }
 
-        Map<Integer, Integer> settings = normalizeSettings(filterManager.filter(pool));
-
-        return settings;
+        return normalizeSettings(filterManager.filter(pool));
     }
 
     @Override
@@ -94,8 +100,16 @@ public class CurationUpdater extends AsyncTask<Void, Void, Map<Integer, Integer>
         notifier.onSettingsDownloadCompleted(curation, result);
     }
 
+    /**
+     * This private method normalizes popularity scores computed from the shared pool into the 1-10
+     * weight range used by UniRank.
+     *
+     * @param indicatorsScores      indicator popularity scores
+     * @return                      mapping with normalized weights
+     */
     private Map<Integer, Integer> normalizeSettings(int[] indicatorsScores) {
 
+        // find max value
         int max = 0;
         for(int score : indicatorsScores) {
             if(score > max) {
@@ -103,8 +117,9 @@ public class CurationUpdater extends AsyncTask<Void, Void, Map<Integer, Integer>
             }
         }
 
-        Map<Integer, Integer> settings = new HashMap<>();
+        @SuppressLint("UseSparseArrays") Map<Integer, Integer> settings = new HashMap<>();
 
+        // normalize base don max value
         for(int i = 0; i < indicatorsScores.length; i++) {
             int weight = (int) (10*((double) indicatorsScores[i]/max));
             if(weight > 0) {

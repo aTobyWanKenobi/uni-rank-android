@@ -20,9 +20,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * This Fragment implements the save comparison system. It is basically a ResultAggregationFragment
+ * with reduced behavior and different layout. One of the two rankings is displayed, with the other
+ * being used to compute comparison information. On the bottom of the screen, the indicator set previews
+ * are displayed for both rankings.
+ */
+@SuppressWarnings("unchecked")
 public class CompareFragment extends Fragment {
 
+    // interaction listener
     private OnCompareFragmentInteractionListener interactionListener;
 
     // factory method parameters
@@ -59,7 +66,20 @@ public class CompareFragment extends Fragment {
     private CurrentlySelected selected = null;
     private DatabaseHelper databaseHelper = null;
 
-
+    /**
+     * Factory method used to instantiate this Fragment with all the necessary information about the
+     * two rankings that will be confronted.
+     *
+     * @param name1         name of the first rankings
+     * @param rank1         first ranking result
+     * @param score1        first ranking scores
+     * @param settings1     first ranking settings
+     * @param name2         name of the second rankings
+     * @param rank2         second ranking result
+     * @param score2        second ranking scores
+     * @param settings2     second ranking settings
+     * @return              a CompareFragment instance with all the above arguments
+     */
     public static CompareFragment newInstance(String name1, ArrayList<Integer> rank1, HashMap<Integer, Double> score1, HashMap<Integer, Integer> settings1,
                                               String name2, ArrayList<Integer> rank2, HashMap<Integer, Double> score2, HashMap<Integer, Integer> settings2)  {
         CompareFragment fragment = new CompareFragment();
@@ -82,6 +102,7 @@ public class CompareFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_compare, container, false);
 
+        // retrieve arguments
         if (getArguments() != null) {
             name1 = getArguments().getString(RANK_NAME_1);
             rank1 = (List<Integer>) getArguments().getSerializable(RANK_LIST_1);
@@ -106,7 +127,13 @@ public class CompareFragment extends Fragment {
         return view;
     }
 
-    public List<University> computeUniversityListFromIds(List<Integer> idList) {
+    /**
+     * Used to retrieve university lists form the database given a list of ids.
+     *
+     * @param idList    list of university ids
+     * @return          list of University objects
+     */
+    private List<University> computeUniversityListFromIds(List<Integer> idList) {
 
         List<University> uniList = new ArrayList<>();
 
@@ -120,7 +147,11 @@ public class CompareFragment extends Fragment {
         return uniList;
     }
 
-
+    /**
+     * Setup and instantiate layout elements
+     *
+     * @param view  fragment root View
+     */
     private void setupUI(View view) {
 
         shownRank = (ListView) view.findViewById(R.id.compare_current_rank);
@@ -140,12 +171,14 @@ public class CompareFragment extends Fragment {
                 R.layout.cell_settings_recap_small_vertical,
                 settings2);
         rank2Settings.setAdapter(adapter2);
-
-        //add click behaviour to layouts
-        //TODO
-
     }
 
+    /**
+     * This method switches the two rankings of the fragment: the one shown becomes the comparison reference
+     * and vice versa.
+     *
+     * @param rank     currently selected ranking
+     */
     private void switchRank(CurrentlySelected rank) {
 
         UniversityListAdapter adapter;
@@ -189,12 +222,17 @@ public class CompareFragment extends Fragment {
         interactionListener = null;
     }
 
-
+    /**
+     * Interaction listener for implementing activity.
+     */
     public interface OnCompareFragmentInteractionListener {
 
     }
 
+    /**
+     * Enum to differentiate the two Fragment rankings.
+     */
     private enum CurrentlySelected {
-        RANK1, RANK2;
+        RANK1, RANK2
     }
 }

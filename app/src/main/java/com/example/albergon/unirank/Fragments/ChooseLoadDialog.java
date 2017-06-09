@@ -28,22 +28,33 @@ import java.util.Map;
 /**
  * This Dialog fragment defines the behavior of the AlertDialog used to display the list of saves
  * which we can load into the rank generation fragment.
+ *
+ * It is additionally used to select a save to confront with, in which case the boolean comparisonActive
+ * becomes true and the Dialog behavior changes marginally.
  */
+@SuppressWarnings("unchecked")
 public class ChooseLoadDialog extends DialogFragment {
-
-    //arguments for comparison instance
-    private boolean comparisonActive = false;
-
-    public static final String OTHER_NAME = "name";
-    public static final String OTHER_LIST = "list";
-    public static final String OTHER_SCORES = "scores";
-    public static final String OTHER_SETTINGS = "settings";
-
-    private SaveRank otherToCompare = null;
 
     // Interaction listener
     private OnChooseLoadDialogInteractionListener interactionListener = null;
 
+    //arguments for comparison instance
+    private boolean comparisonActive = false;
+    private static final String OTHER_NAME = "name";
+    private static final String OTHER_LIST = "list";
+    private static final String OTHER_SCORES = "scores";
+    private static final String OTHER_SETTINGS = "settings";
+    private SaveRank otherToCompare = null;
+
+    /**
+     * Factory method used to instantiate this dialog for save comparison.
+     *
+     * @param name      save name of ranking to be compared
+     * @param rank      ranking to be compared
+     * @param score     scores of ranking to be compared
+     * @param settings  settings of ranking to be compared
+     * @return          a ChooseLoadDialog instance with the above arguments set
+     */
     public static ChooseLoadDialog newInstance(String name,
                                               ArrayList<Integer> rank,
                                               HashMap<Integer, Double> score,
@@ -75,7 +86,7 @@ public class ChooseLoadDialog extends DialogFragment {
             Map<Integer, Double> score = (Map<Integer, Double>) getArguments().getSerializable(OTHER_SCORES);
             Map<Integer, Integer> settings = (Map<Integer, Integer>) getArguments().getSerializable(OTHER_SETTINGS);
 
-            Ranking<Integer> ranking = new Ranking<Integer>(rank, score);
+            Ranking<Integer> ranking = new Ranking<>(rank, score);
             otherToCompare = new SaveRank(name, FirebaseHelper.generateDate(), settings, ranking);
             comparisonActive = true;
         }
@@ -91,6 +102,7 @@ public class ChooseLoadDialog extends DialogFragment {
         Button cancelBtn = (Button) view.findViewById(R.id.cancel_load_dialog);
         TextView titleTxt = (TextView) view.findViewById(R.id.load_save_txt);
 
+        // Change dialog title depending on whether the comparison is active or not
         String title = comparisonActive ? "Choose save to compare" : "Load save";
         titleTxt.setText(title);
 

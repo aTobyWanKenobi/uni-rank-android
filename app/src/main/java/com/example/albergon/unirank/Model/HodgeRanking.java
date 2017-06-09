@@ -224,16 +224,9 @@ public class HodgeRanking implements RankAggregationAlgorithm {
      */
     private double[] minimize(MinimizationFunction toMinimize, double[] start) {
 
-        long startTime = System.currentTimeMillis();
-
         // use Flanagan's library Nelder-Mead implementation
         Minimization minimizer = new Minimization();
         minimizer.nelderMead(toMinimize, start);
-
-        long endTime = System.currentTimeMillis();
-
-        // FIXME: remove debug printing
-        System.out.println("Duration minimization : " + (endTime - startTime) + " ms");
 
         return minimizer.getParamValues();
     }

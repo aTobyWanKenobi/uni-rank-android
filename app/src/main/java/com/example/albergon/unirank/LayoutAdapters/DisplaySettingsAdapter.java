@@ -1,5 +1,6 @@
 package com.example.albergon.unirank.LayoutAdapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.LayoutRes;
@@ -26,8 +27,9 @@ public class DisplaySettingsAdapter extends BaseAdapter {
     private int layoutResourceId = 0;
     private Map<Integer, Integer> settings = null;
 
+    @SuppressLint("UseSparseArrays")
     public DisplaySettingsAdapter(@NonNull Context context, @LayoutRes int resource,
-                                 @NonNull Map<Integer, Integer> settings) {
+                                  @NonNull Map<Integer, Integer> settings) {
 
         this.context = context;
         this.layoutResourceId = resource;

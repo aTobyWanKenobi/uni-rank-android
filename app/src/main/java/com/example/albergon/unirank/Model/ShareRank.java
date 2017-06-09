@@ -1,5 +1,7 @@
 package com.example.albergon.unirank.Model;
 
+import android.annotation.SuppressLint;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -93,7 +95,7 @@ public class ShareRank {
             throw new IllegalArgumentException("Cannot convert null settings from firebase");
         }
 
-        Map<Integer, Integer> settings = new HashMap<>();
+        @SuppressLint("UseSparseArrays") Map<Integer, Integer> settings = new HashMap<>();
         for(Map.Entry<String, Integer> entry : firebaseSettings.entrySet()) {
             int indicator = Integer.parseInt(entry.getKey().substring(3));
             settings.put(indicator, entry.getValue());

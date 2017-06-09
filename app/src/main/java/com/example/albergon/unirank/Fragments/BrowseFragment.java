@@ -1,5 +1,6 @@
 package com.example.albergon.unirank.Fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -16,7 +17,6 @@ import android.widget.TextView;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnFirebaseErrorListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnGeneralStatisticsRetrievalListener;
 import com.example.albergon.unirank.Database.CallbackHandlers.OnSharedPoolRetrievalListener;
-import com.example.albergon.unirank.Database.DatabaseHelper;
 import com.example.albergon.unirank.Database.FirebaseHelper;
 import com.example.albergon.unirank.LayoutAdapters.AsyncFilterListAdd;
 import com.example.albergon.unirank.LayoutAdapters.FilterListAdapter;
@@ -25,7 +25,6 @@ import com.example.albergon.unirank.Model.ChartColors;
 import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.Range;
 import com.example.albergon.unirank.Model.ShareGeneralStats;
-import com.example.albergon.unirank.Model.ShareRank;
 import com.example.albergon.unirank.Model.SharedRankFilters.FilterManager;
 import com.example.albergon.unirank.Model.SharedRankFilters.ShareRankFilter;
 import com.example.albergon.unirank.R;
@@ -42,14 +41,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This Fragment implements the possible interactions with the remote shared pool of aggregations. It is
+ * divided in two distinct parts, that the user can select through a smaller tab selector: General
+ * Statistics and Popular Indicators. When the users switches between those two functionality, the
+ * corresponding layout is inflated.
+ */
+@SuppressWarnings("DanglingJavadoc")
 public class BrowseFragment extends Fragment {
 
+    // interaction listener
     private OnBrowseFragmentInteractionListener interactionListener;
 
+    // database instances
     private FirebaseHelper firebaseHelper = null;
-    private DatabaseHelper databaseHelper = null;
-
-    private Enums.PopularIndicatorsCategories currentCategory = null;
 
     // General layout
     private View rootView = null;
@@ -62,14 +67,12 @@ public class BrowseFragment extends Fragment {
     private ListView filterList = null;
     private Button addFilter = null;
     private Button filterBtn = null;
-
     private FilterListAdapter filterListAdapter = null;
 
     // General statistics layout
     private PieChart genderChart = null;
     private PieChart userTypeChart = null;
     private PieChart userAgeChart = null;
-
     private TextView totalCount = null;
     private TextView monthCount = null;
     private TextView yearCount = null;
@@ -80,16 +83,13 @@ public class BrowseFragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_browse, container, false);
 
-        databaseHelper = DatabaseHelper.getInstance(getContext());
         firebaseHelper = new FirebaseHelper(getContext());
 
         // setup common elements
         setupUI();
 
         // general statistics selected by default for now
-        //initializePopularIndicators(view);
         initializeGeneralStatistics();
-
 
         return rootView;
     }
@@ -99,23 +99,15 @@ public class BrowseFragment extends Fragment {
      */
     private void setupUI() {
 
+        // initialize layout
         popularIndicatorRadio = (RadioButton) rootView.findViewById(R.id.popular_indicators_radio);
         generalStatisticsRadio = (RadioButton) rootView.findViewById(R.id.general_queries_radio);
         queryContainer = (FrameLayout) rootView.findViewById(R.id.query_layout_container);
 
-        popularIndicatorRadio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                initializePopularIndicators();
-            }
-        });
+        // add functionality switch listeners
+        popularIndicatorRadio.setOnClickListener(v -> initializePopularIndicators());
 
-        generalStatisticsRadio.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                initializeGeneralStatistics();
-            }
-        });
+        generalStatisticsRadio.setOnClickListener(v -> initializeGeneralStatistics());
     }
 
     /**
@@ -128,7 +120,7 @@ public class BrowseFragment extends Fragment {
 
         // inflate correct layout
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        View generalStatsLayout = inflater.inflate(R.layout.other_remote_stats, null, false);
+        @SuppressLint("InflateParams") View generalStatsLayout = inflater.inflate(R.layout.other_remote_stats, null, false);
         queryContainer.removeAllViews();
         queryContainer.addView(generalStatsLayout);
 
@@ -142,14 +134,9 @@ public class BrowseFragment extends Fragment {
         monthCount = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_last_month_number);
         yearCount = (TextView) generalStatsLayout.findViewById(R.id.gen_stat_last_year_number);
 
-
         // create error listener
-        OnFirebaseErrorListener errorListener = new OnFirebaseErrorListener() {
-            @Override
-            public void onError(String message) {
-                // TODO: evaluate recovery in app? just an error toast?
-                throw new DatabaseException(message);
-            }
+        OnFirebaseErrorListener errorListener = message -> {
+            throw new DatabaseException(message);
         };
 
         // create success listener
@@ -169,49 +156,41 @@ public class BrowseFragment extends Fragment {
 
         // inflate correct layout
         LayoutInflater inflater = LayoutInflater.from(getContext());
-        View popularIndicatorsLayout = inflater.inflate(R.layout.other_popular_indicators, null, false);
+        @SuppressLint("InflateParams") View popularIndicatorsLayout = inflater.inflate(R.layout.other_popular_indicators, null, false);
         queryContainer.removeAllViews();
         queryContainer.addView(popularIndicatorsLayout);
 
         // initialize layout elements
-
         queryResult = (ListView) popularIndicatorsLayout.findViewById(R.id.indicators_result_list);
         filterList = (ListView) popularIndicatorsLayout.findViewById(R.id.filters_list);
         addFilter = (Button) popularIndicatorsLayout.findViewById(R.id.add_filter_button);
         filterBtn = (Button) popularIndicatorsLayout.findViewById(R.id.filter_result_button);
 
+        // add behavior to filter building mechanism
         filterListAdapter = new FilterListAdapter(getContext(), R.layout.cell_pop_indicator_filter);
         filterList.setAdapter(filterListAdapter);
+        addFilter.setOnClickListener(v -> {
 
-        addFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            AddFilterDialog dialog = new AddFilterDialog();
+            dialog.setAddFilterCallback(new OnAddFilterReturn() {
+                @Override
+                public void onFilterReady(ShareRankFilter filter) {
+                    // add indicator to the list
+                    AsyncFilterListAdd task = new AsyncFilterListAdd(filterListAdapter, getContext());
+                    task.execute(filter);
+                }
+            });
 
-                AddFilterDialog dialog = new AddFilterDialog();
-                dialog.setAddFilterCallback(new OnAddFilterReturn() {
-                    @Override
-                    public void onFilterReady(ShareRankFilter filter) {
-                        // add indicator to the list
-                        AsyncFilterListAdd task = new AsyncFilterListAdd(filterListAdapter, getContext());
-                        task.execute(filter);
-                    }
-                });
-
-                interactionListener.showFilterDialog(dialog);
-            }
+            // show filter building dialog
+            interactionListener.showFilterDialog(dialog);
         });
 
-        filterBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchQuery();
-            }
-        });
+        filterBtn.setOnClickListener(v -> launchQuery());
 
     }
 
     /***********************************************************************************************
-     *  GENERAL STATS
+     *  GENERAL STATISTICS
      **********************************************************************************************/
 
     /**
@@ -221,12 +200,9 @@ public class BrowseFragment extends Fragment {
      * @return  a retrieval listener for the general statistics node
      */
     private OnGeneralStatisticsRetrievalListener createOnStatsSuccessListener() {
-        return new OnGeneralStatisticsRetrievalListener() {
-            @Override
-            public void onGeneralStatisticsRetrieved(ShareGeneralStats stats) {
-                // call UI update
-                setGeneralStatsValues(stats);
-            }
+        return stats -> {
+            // call UI update
+            setGeneralStatsValues(stats);
         };
     }
 
@@ -271,7 +247,7 @@ public class BrowseFragment extends Fragment {
         genderEntries.add(malePer);
         genderEntries.add(femalePer);
 
-        // gender dataset
+        // gender data set
         PieDataSet genderDataSet = new PieDataSet(genderEntries, "");
         genderDataSet.setSliceSpace(3);
         genderDataSet.setValueTextColor(ChartColors.BLACK);
@@ -306,7 +282,7 @@ public class BrowseFragment extends Fragment {
         typeEntries.add(parentsPer);
         typeEntries.add(othersPer);
 
-        // type dataset
+        // type data set
         PieDataSet typeDataSet = new PieDataSet(typeEntries, "");
         typeDataSet.setSliceSpace(3);
         typeDataSet.setValueTextColor(ChartColors.BLACK);
@@ -378,7 +354,7 @@ public class BrowseFragment extends Fragment {
         ageEntries.add(adultsPer);
         ageEntries.add(oldPer);
 
-        // type dataset
+        // type data set
         PieDataSet ageDataSet = new PieDataSet(ageEntries, "");
         ageDataSet.setSliceSpace(3);
         ageDataSet.setValueTextColor(ChartColors.BLACK);
@@ -473,35 +449,37 @@ public class BrowseFragment extends Fragment {
      *  POPULAR INDICATORS
      **********************************************************************************************/
 
+    /**
+     * Launches a firebase query using the current filter set.
+     */
     private void launchQuery() {
 
         // Uniform error callback listener that simply throws an exception
-        final OnFirebaseErrorListener errorListener = new OnFirebaseErrorListener() {
-
-            @Override
-            public void onError(String message) {
-                // TODO: evaluate recovery in app? just an error toast?
-                throw new DatabaseException(message);
-            }
+        final OnFirebaseErrorListener errorListener = message -> {
+            throw new DatabaseException(message);
         };
 
         // On retrieval of shared pool, process query with apposite method and forward result to display method
-        OnSharedPoolRetrievalListener retrievalListener = new OnSharedPoolRetrievalListener() {
-            @Override
-            public void onSharedPoolRetrieved(List<ShareRank> sharedPool) {
-                FilterManager filterManager = new FilterManager(filterListAdapter.getCurrentFilters());
-                int[] scores = filterManager.filter(sharedPool);
-                displayListResult(scores);
-            }
+        OnSharedPoolRetrievalListener retrievalListener = sharedPool -> {
+            // create filter manager with current filter set
+            FilterManager filterManager = new FilterManager(filterListAdapter.getCurrentFilters());
+            int[] scores = filterManager.filter(sharedPool);
+            displayListResult(scores);
         };
 
         // Launch shared pool retrieval with listeners
         firebaseHelper.retrieveSharedPool(retrievalListener, errorListener);
     }
 
+    /**
+     * Display indicator set with associated popularity scores.
+     *
+     * @param scores    popularity scores just computed from shared pool
+     */
     private void displayListResult(int[] scores) {
 
-        Map<Integer, Integer> indicatorsWeights = new HashMap<>();
+        // build indicator "settings"
+        @SuppressLint("UseSparseArrays") Map<Integer, Integer> indicatorsWeights = new HashMap<>();
         for(int i = 0; i < scores.length; i++) {
             indicatorsWeights.put(i, scores[i]);
         }

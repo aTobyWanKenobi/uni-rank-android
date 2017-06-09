@@ -1,6 +1,7 @@
 package com.example.albergon.unirank.Fragments;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -37,7 +38,11 @@ public class MyRankingsFragment extends Fragment {
     private DatabaseHelper databaseHelper = null;
     private FirebaseHelper firebaseHelper = null;
 
-    // Static factory method
+    /**
+     * Static factory method
+     *
+     * @return  a MyRankingsFragment instance
+     */
     public static MyRankingsFragment newInstance() {
         return new MyRankingsFragment();
     }
@@ -59,21 +64,25 @@ public class MyRankingsFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Method called after pressing the save upload icon. Triggers the upload of that save to the
+     * remote shared pool. The save is first retrieved from the database and then uploaded.
+     *
+     * @param name      name of the save to upload
+     */
     private void uploadToFirebase(String name) {
 
-        OnShareRankUploadListener callbackHandler = new OnShareRankUploadListener() {
-            @Override
-            public void onUploadCompleted(boolean successful) {
+        OnShareRankUploadListener callbackHandler = successful -> {
 
-                if(successful) {
-                    // TODO disable upload of same ranking
-                    Toast.makeText(getContext(), "Upload successful", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
-                }
+            if(successful) {
+                // TODO: disable upload of same ranking
+                Toast.makeText(getContext(), "Upload successful", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getContext(), "Upload failed", Toast.LENGTH_LONG).show();
             }
         };
 
+        // retrieve save and forward upload call to FirebaseHelper method
         SaveRank toUpload = databaseHelper.retrieveSave(name);
         firebaseHelper.uploadAggregation(toUpload.getResultList(), toUpload.getSettings(), callbackHandler);
     }
@@ -90,7 +99,7 @@ public class MyRankingsFragment extends Fragment {
         final Map<String, Map<Integer, Integer>> settingsMap = new HashMap<>();
         for(String save : saves) {
             Map<Integer, Integer> saveSettings = databaseHelper.retrieveSave(save).getSettings();
-            Map<Integer, Integer> completeSettings = new HashMap<>();
+            @SuppressLint("UseSparseArrays") Map<Integer, Integer> completeSettings = new HashMap<>();
             for(int i = 0; i < Tables.IndicatorsList.values().length; i++) {
                 completeSettings.put(i, saveSettings.getOrDefault(i, 0));
             }
@@ -105,6 +114,11 @@ public class MyRankingsFragment extends Fragment {
         savesList.setAdapter(adapter);
     }
 
+    /**
+     * Create behavior listeners for save icons.
+     *
+     * @return  a MyRankingButtonHandler that encapsulates the behavior for all icons
+     */
     private MyRankingButtonHandler createButtonHandler() {
         return new MyRankingButtonHandler() {
             @Override
@@ -132,7 +146,6 @@ public class MyRankingsFragment extends Fragment {
             }
         };
     }
-
 
     @Override
     public void onAttach(Context context) {

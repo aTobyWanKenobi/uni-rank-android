@@ -5,14 +5,14 @@ import com.example.albergon.unirank.Model.Range;
 import com.example.albergon.unirank.Model.ShareRank;
 
 /**
- * Filter aggregations by birthyear
+ * ShareRankFilter implementation that filters aggregations by birth year.
  */
 public class BirthyearFilter implements ShareRankFilter {
 
     private final Enums.PopularIndicatorsCategories category = Enums.PopularIndicatorsCategories.BIRTHYEAR;
 
     private Range parameter = null;
-    private String categoryString = "BirthYear";
+    private final String categoryString = "BirthYear";
     private String parameterString = null;
 
     public BirthyearFilter(Range range) {
@@ -25,6 +25,13 @@ public class BirthyearFilter implements ShareRankFilter {
         this.parameter = range;
     }
 
+    /**
+     * Alternative constructor that additionally takes the string representation of this filter's parameter
+     * as argument.
+     *
+     * @param range             Range parameter for this filter
+     * @param parameterString   string representation of the above range
+     */
     public BirthyearFilter(Range range, String parameterString) {
         this(range);
         this.parameterString = parameterString;

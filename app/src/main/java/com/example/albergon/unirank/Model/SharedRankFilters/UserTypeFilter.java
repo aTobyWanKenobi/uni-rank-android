@@ -4,14 +4,14 @@ import com.example.albergon.unirank.Model.Enums;
 import com.example.albergon.unirank.Model.ShareRank;
 
 /**
- * Filter aggregations by user type
+ * ShareRankFilter implementation that filters aggregations by user type
  */
 public class UserTypeFilter implements ShareRankFilter {
 
     private final Enums.PopularIndicatorsCategories category = Enums.PopularIndicatorsCategories.TYPE;
 
     private Enums.TypesOfUsers parameter = null;
-    private String categoryString = "Type of user";
+    private final String categoryString = "Type of user";
 
     public UserTypeFilter(Enums.TypesOfUsers type) {
 

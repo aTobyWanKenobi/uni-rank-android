@@ -1,7 +1,7 @@
 package com.example.albergon.unirank.Database.CallbackHandlers;
 
 /**
- * Callback interface for uploads
+ * Callback interface for Firebase uploads
  */
 public interface OnShareRankUploadListener {
 

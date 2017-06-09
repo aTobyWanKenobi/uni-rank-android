@@ -28,14 +28,19 @@ import java.util.Random;
  */
 public class FirebaseHelper {
 
-    public final static String SHARED_NODE = "shared";
+    // firebase database instance structure attributes
+    private final static String SHARED_NODE = "shared";
     public final static String GENERAL_STATISTICS_NODE = "general_statistics";
 
     private DatabaseHelper databaseHelper = null;
     private DatabaseReference firebase = null;
-
     private Context context = null;
 
+    /**
+     * Public constructor, retrieves local SQLite database instance and remote Firebase instance
+     *
+     * @param context   Activity Context of place where this FirebaseHelper is instantiated
+     */
     public FirebaseHelper(Context context) {
 
         // arguments check
@@ -45,10 +50,19 @@ public class FirebaseHelper {
 
         this.context = context;
 
+        // retrieve instances
         databaseHelper = DatabaseHelper.getInstance(context);
         firebase = FirebaseDatabase.getInstance().getReference();
     }
 
+    /**
+     * Upload an aggregation to the remote shared pool. Takes only ranking result and settings as
+     * parameters, but retrieves user settings from local database and attaches them to the aggregation.
+     *
+     * @param result            sorted list of university ids, representing aggregation result
+     * @param settings          indicators and weights used in the aggregation
+     * @param callbackHandler   callback listener provided by caller
+     */
     public void uploadAggregation(List<Integer> result, Map<Integer, Integer> settings,
                                   OnShareRankUploadListener callbackHandler) {
 
@@ -59,11 +73,12 @@ public class FirebaseHelper {
             throw new IllegalArgumentException(("Cannot upload an empty aggregation"));
         }
 
-        Settings userSettings = databaseHelper.retriveSettings(false);
+        // retrieve user settings and build ShareRank object
+        Settings userSettings = databaseHelper.retrieveSettings(false);
         ShareRank toShare = new ShareRank(generateDate(), result, settings, userSettings);
         String randomId = String.valueOf(generateRandomId());
 
-
+        // upload to firebase
         firebase.child(SHARED_NODE).child(randomId).setValue(toShare);
         firebase.child(SHARED_NODE).child(randomId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -85,19 +100,32 @@ public class FirebaseHelper {
 
     }
 
+    /**
+     * Private method called on each aggregation upload. Keeps the general statistics about the
+     * shared pool updated, in order to avoid computing them each time.
+     *
+     * @param userSettings      settings used for the upload that triggered the call
+     * @param callbackHandler   callback listener provided by caller
+     */
     private void updateGeneralStatistics(Settings userSettings, OnShareRankUploadListener callbackHandler) {
 
+        // update correct firebase node
         firebase.child(GENERAL_STATISTICS_NODE).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
+                    //retrieve current stats
                     ShareGeneralStats stats = dataSnapshot.getValue(ShareGeneralStats.class);
+
+                    // update them
                     stats.update(
                             userSettings.getGender(),
                             userSettings.getType(),
                             userSettings.getYearOfBirth(),
                             generateDate(),
                             userSettings.getCountryCode());
+
+                    // delegate new stats upload
                     uploadNewStats(stats, callbackHandler);
                 } else {
                     callbackHandler.onUploadCompleted(false);
@@ -114,6 +142,12 @@ public class FirebaseHelper {
 
     }
 
+    /**
+     * Part of the general statistics update system, performs the upload of the new statistics.
+     *
+     * @param toShare              statistics to be uploaded
+     * @param callbackHandler      callback listener provided by caller
+     */
     private void uploadNewStats(ShareGeneralStats toShare, OnShareRankUploadListener callbackHandler) {
 
         firebase.child(GENERAL_STATISTICS_NODE).setValue(toShare);
@@ -121,6 +155,8 @@ public class FirebaseHelper {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
+
+                    // confirm end of correct aggregation upload
                     callbackHandler.onUploadCompleted(true);
                 } else {
                     callbackHandler.onUploadCompleted(false);
@@ -136,6 +172,12 @@ public class FirebaseHelper {
 
     }
 
+    /**
+     * Retrieves the current statistics concerning the state of the remote share pool.
+     *
+     * @param successListener   success callback listener provided by caller
+     * @param errorListener     failure callback listener provided by caller
+     */
     public void retrieveGeneralStats(OnGeneralStatisticsRetrievalListener successListener,
                                      OnFirebaseErrorListener errorListener) {
 
@@ -159,6 +201,12 @@ public class FirebaseHelper {
         });
     }
 
+    /**
+     * Retrieve the entire remote database under the form a list of ShareRank objects.
+     *
+     * @param successHandler    success callback listener provided by caller
+     * @param errorListener     failure callback listener provided by caller
+     */
     public void retrieveSharedPool(OnSharedPoolRetrievalListener successHandler,
                                                OnFirebaseErrorListener errorListener) {
 
@@ -189,25 +237,26 @@ public class FirebaseHelper {
 
     }
 
-    //TODO remove
-    public void testDateRetriever(OnSharedPoolRetrievalListener successHandler,
-                                  OnFirebaseErrorListener error) {
-
-        retrieveSharedPool(successHandler, error);
-    }
-
+    /**
+     * Static utility method that computes current date in the format D MMM YYYY.
+     *
+     * @return  string representation of current date
+     */
     public static String generateDate() {
         // generate date in string format
         SimpleDateFormat dateFormat = new SimpleDateFormat("d MMM yyyy", Locale.ENGLISH);
-        String date = dateFormat.format(new Date());
 
-        return date;
+        return dateFormat.format(new Date());
     }
 
-    public static int generateRandomId() {
+    /**
+     * Static utility method that generates a random id for uploaded aggregations.
+     *
+     * @return  a randomly generated 6 digits integer
+     */
+    private static int generateRandomId() {
         Random rnd = new Random();
-        int rndNumber = 100000 + rnd.nextInt(900000);
 
-        return rndNumber;
+        return 100000 + rnd.nextInt(900000);
     }
 }

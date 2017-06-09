@@ -33,21 +33,22 @@ import java.util.Map;
  */
 public class AskSettingsDialog extends DialogFragment {
 
+    // interaction listeners
     private OnAskSettingsInteractionListener interactionListener = null;
     private OnAskSettingsReturn returnListener = null;
 
     // UI elements
-    Spinner countrySpinner = null;
-    Spinner genderSpinner = null;
-    NumberPicker yearPicker = null;
-    Spinner typeSpinner = null;
-    Button confirmBtn = null;
+    private Spinner countrySpinner = null;
+    private Spinner genderSpinner = null;
+    private NumberPicker yearPicker = null;
+    private Spinner typeSpinner = null;
+    private Button confirmBtn = null;
 
     // Entries
-    String currentCountry = null;
-    String currentGender = null;
-    int currentYear = 0;
-    String currentType = null;
+    private String currentCountry = null;
+    private String currentGender = null;
+    private int currentYear = 0;
+    private String currentType = null;
 
     @NonNull
     @Override
@@ -71,6 +72,7 @@ public class AskSettingsDialog extends DialogFragment {
         // needed here to dismiss dialog
         confirmBtn.setOnClickListener(v -> {
 
+            // retrieves user inputs
             Enums.TypesOfUsers userSelectedType = null;
             for(Enums.TypesOfUsers type : Enums.TypesOfUsers.values()) {
                 if(currentType.equals(type.toString())) {
@@ -95,11 +97,17 @@ public class AskSettingsDialog extends DialogFragment {
         return dialog;
     }
 
+    /**
+     * Receives callback listener from Activity or Fragment and encapsulate it for when the settings
+     * are returned.
+     *
+     * @param returnListener    callback listener from caller
+     */
     public void addSettingsListener(OnAskSettingsReturn returnListener) {
         this.returnListener = returnListener;
     }
 
-    public void setupUI(View view) {
+    private void setupUI(View view) {
 
         // Inflate elements
         countrySpinner = (Spinner) view.findViewById(R.id.country_spinner);
@@ -147,7 +155,10 @@ public class AskSettingsDialog extends DialogFragment {
         yearPicker.setWrapSelectorWheel(true);
     }
 
-    public void addBehavior() {
+    /**
+     * Attach correct listeners to each layout element.
+     */
+    private void addBehavior() {
 
         countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -208,6 +219,9 @@ public class AskSettingsDialog extends DialogFragment {
         interactionListener = null;
     }
 
+    /**
+     * Activity callback interface.
+     */
     public interface OnAskSettingsInteractionListener {
 
         void goToApp();
