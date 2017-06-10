@@ -205,7 +205,9 @@ public class AddFilterDialog extends DialogFragment {
                 parameter = (String) parent.getItemAtPosition(position);
 
                 // enable add button since filter is complete
-                addFilterButton.setEnabled(true);
+                if(!parameter.equals("not selected")) {
+                    addFilterButton.setEnabled(true);
+                }
             }
 
             @Override

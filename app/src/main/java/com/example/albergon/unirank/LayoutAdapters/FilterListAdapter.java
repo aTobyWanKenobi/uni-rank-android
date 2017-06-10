@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.albergon.unirank.Fragments.OnAddFilterReturn;
 import com.example.albergon.unirank.Model.SharedRankFilters.ShareRankFilter;
 import com.example.albergon.unirank.R;
 
@@ -24,15 +26,24 @@ public class FilterListAdapter extends BaseAdapter {
     private Context context = null;
     private int layoutResourceId = 0;
     private List<ShareRankFilter> filters = null;
+    private OnAddFilterReturn additionListener = null;
 
-    public FilterListAdapter(@NonNull Context context, @LayoutRes int resource) {
+    public FilterListAdapter(@NonNull Context context, @LayoutRes int resource, OnAddFilterReturn additionListener) {
         this.context = context;
         this.layoutResourceId = resource;
+        this.additionListener = additionListener;
         filters = new ArrayList<>();
     }
 
     public void addFilter(ShareRankFilter filter) {
         filters.add(filter);
+        additionListener.updateQuery();
+    }
+
+    public void removeFilter(int position) {
+        filters.remove(position);
+        this.notifyDataSetChanged();
+        additionListener.updateQuery();
     }
 
     @Override
@@ -67,7 +78,9 @@ public class FilterListAdapter extends BaseAdapter {
             row = inflater.inflate(layoutResourceId, parent, false);
 
             holder = new FilterHolder(  (TextView)row.findViewById(R.id.category_text),
-                                        (TextView)row.findViewById(R.id.parameter_text));
+                                        (TextView)row.findViewById(R.id.parameter_text),
+                                        (ImageView) row.findViewById(R.id.category_icon),
+                                        (ImageView) row.findViewById(R.id.remove_icon));
             row.setTag(holder);
         }
         else
@@ -80,6 +93,36 @@ public class FilterListAdapter extends BaseAdapter {
         holder.getCategory().setText(category);
         holder.getParameter().setText(parameter);
 
+        // set appropriate icon
+        switch(currentFilter.getCategory()) {
+
+            case GENDER:
+                holder.getCategoryIcon().setBackgroundResource(R.drawable.icon_gender);
+                break;
+            case TYPE:
+                holder.getCategoryIcon().setBackgroundResource(R.drawable.icon_types);
+                break;
+            case BIRTHYEAR:
+                holder.getCategoryIcon().setBackgroundResource(R.drawable.icon_age);
+                break;
+            case TIMEFRAME:
+                holder.getCategoryIcon().setBackgroundResource(R.drawable.icon_curation_month);
+                break;
+            case COUNTRY:
+                holder.getCategoryIcon().setBackgroundResource(R.drawable.icon_curation_country);
+                break;
+            default:
+                throw new IllegalStateException("Unknown element in category enum");
+        }
+
+        // add remove icon behaviour
+        holder.getRemoveIcon().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                removeFilter(position);
+            }
+        });
+
         return row;
     }
 
@@ -91,16 +134,20 @@ public class FilterListAdapter extends BaseAdapter {
 
         private TextView category = null;
         private TextView parameter = null;
+        private ImageView categoryIcon = null;
+        private ImageView removeIcon = null;
 
-        public FilterHolder(TextView category, TextView parameter) {
+        public FilterHolder(TextView category, TextView parameter, ImageView categoryIcon, ImageView removeIcon) {
 
             // arguments check
-            if(category == null || parameter == null) {
+            if(category == null || parameter == null || categoryIcon == null || removeIcon == null) {
                 throw new IllegalArgumentException("FilterHolder parameters cannot be null");
             }
 
             this.category = category;
             this.parameter = parameter;
+            this.categoryIcon = categoryIcon;
+            this.removeIcon = removeIcon;
         }
 
         public TextView getCategory() {
@@ -109,6 +156,14 @@ public class FilterListAdapter extends BaseAdapter {
 
         public TextView getParameter() {
             return parameter;
+        }
+
+        public ImageView getCategoryIcon() {
+            return categoryIcon;
+        }
+
+        public ImageView getRemoveIcon() {
+            return removeIcon;
         }
     }
 

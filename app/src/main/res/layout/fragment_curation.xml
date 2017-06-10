@@ -26,7 +26,7 @@
         android:layout_margin="10dp"
         android:background="@drawable/general_border_no_black"
         android:padding="10dp"
-        android:text="Look at what other people are ranking and what they value in Universities or start your own aggregation from scratch!"
+        android:text="Look at what other people are ranking and what they value in Universities or start your own aggregation"
         android:textAlignment="center" />
 
     <GridView

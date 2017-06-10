@@ -20,7 +20,7 @@ public class TabsFragmentPagerAdapter extends FragmentPagerAdapter {
     private Context context;
 
     // Tab titles
-    private final String[] tabTitles = new String[] { "Create", "MyRank", "Browse", "Settings" };
+    private final String[] tabTitles = new String[] { "Create", "My Rankings", "Browse", "Settings" };
 
 
     /**

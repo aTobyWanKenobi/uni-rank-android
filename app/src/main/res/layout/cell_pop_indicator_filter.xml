@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/general_background_border"
+    android:background="@drawable/general_border_no_black"
     android:orientation="vertical">
 
     <LinearLayout
@@ -12,36 +13,44 @@
         android:orientation="horizontal"
         android:padding="5dp">
 
-        <TextView
-            android:id="@+id/filter_type"
+        <ImageView
+            android:id="@+id/category_icon"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="20dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="1.5"
-            android:text="By" />
+            android:layout_weight="2"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            app:srcCompat="@drawable/icon_blank" />
 
         <TextView
             android:id="@+id/category_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1.5" />
+            android:layout_weight="1.5"
+            android:textAlignment="center" />
 
         <TextView
-            android:id="@+id/filter_parameter_txt"
+            android:id="@+id/textView7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="1.5"
-            android:gravity="left"
-            android:text="on" />
+            android:layout_weight="2"
+            android:text=":"
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/parameter_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1.5" />
+            android:layout_weight="1"
+            android:textAlignment="center" />
+
+        <ImageView
+            android:id="@+id/remove_icon"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_weight="2"
+            app:srcCompat="@drawable/icon_remove" />
 
     </LinearLayout>
 

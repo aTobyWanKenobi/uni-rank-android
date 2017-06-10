@@ -66,7 +66,6 @@ public class BrowseFragment extends Fragment {
     private ListView queryResult = null;
     private ListView filterList = null;
     private Button addFilter = null;
-    private Button filterBtn = null;
     private FilterListAdapter filterListAdapter = null;
 
     // General statistics layout
@@ -164,29 +163,35 @@ public class BrowseFragment extends Fragment {
         queryResult = (ListView) popularIndicatorsLayout.findViewById(R.id.indicators_result_list);
         filterList = (ListView) popularIndicatorsLayout.findViewById(R.id.filters_list);
         addFilter = (Button) popularIndicatorsLayout.findViewById(R.id.add_filter_button);
-        filterBtn = (Button) popularIndicatorsLayout.findViewById(R.id.filter_result_button);
+
+        // create callback handler
+        OnAddFilterReturn filterListener = new OnAddFilterReturn() {
+            @Override
+            public void onFilterReady(ShareRankFilter filter) {
+                // add indicator to the list
+                AsyncFilterListAdd task = new AsyncFilterListAdd(filterListAdapter, getContext());
+                task.execute(filter);
+            }
+
+            @Override
+            public void updateQuery() {
+                launchQuery();
+            }
+        };
 
         // add behavior to filter building mechanism
-        filterListAdapter = new FilterListAdapter(getContext(), R.layout.cell_pop_indicator_filter);
+        filterListAdapter = new FilterListAdapter(getContext(), R.layout.cell_pop_indicator_filter, filterListener);
         filterList.setAdapter(filterListAdapter);
         addFilter.setOnClickListener(v -> {
 
             AddFilterDialog dialog = new AddFilterDialog();
-            dialog.setAddFilterCallback(new OnAddFilterReturn() {
-                @Override
-                public void onFilterReady(ShareRankFilter filter) {
-                    // add indicator to the list
-                    AsyncFilterListAdd task = new AsyncFilterListAdd(filterListAdapter, getContext());
-                    task.execute(filter);
-                }
-            });
+            dialog.setAddFilterCallback(filterListener);
 
             // show filter building dialog
             interactionListener.showFilterDialog(dialog);
         });
 
-        filterBtn.setOnClickListener(v -> launchQuery());
-
+        launchQuery();
     }
 
     /***********************************************************************************************

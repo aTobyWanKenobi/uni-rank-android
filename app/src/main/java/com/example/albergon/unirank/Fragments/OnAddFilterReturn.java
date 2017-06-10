@@ -8,4 +8,6 @@ import com.example.albergon.unirank.Model.SharedRankFilters.ShareRankFilter;
 public interface OnAddFilterReturn {
 
     void onFilterReady(ShareRankFilter filter);
+
+    void updateQuery();
 }
