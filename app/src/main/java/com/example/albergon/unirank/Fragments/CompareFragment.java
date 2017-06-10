@@ -6,6 +6,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -57,6 +59,9 @@ public class CompareFragment extends Fragment {
     private Map<Integer, Integer> settings2 = null;
 
     // UI elements
+    private LinearLayout rank1Container = null;
+    private LinearLayout rank2Container = null;
+
     private ListView shownRank = null;
     private TextView rank1Name = null;
     private ListView rank1Settings = null;
@@ -156,7 +161,36 @@ public class CompareFragment extends Fragment {
 
         shownRank = (ListView) view.findViewById(R.id.compare_current_rank);
         rank1Settings = (ListView) view.findViewById(R.id.compare_settings_rank1);
+        rank1Settings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switchRank(CurrentlySelected.RANK1);
+            }
+        });
         rank2Settings = (ListView) view.findViewById(R.id.compare_settings_rank2);
+        rank2Settings.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switchRank(CurrentlySelected.RANK2);
+            }
+        });
+
+        // add switching behavior
+        rank1Container = (LinearLayout) view.findViewById(R.id.rank1_container);
+        rank1Container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchRank(CurrentlySelected.RANK1);
+            }
+        });
+
+        rank2Container = (LinearLayout) view.findViewById(R.id.rank2_container);
+        rank2Container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchRank(CurrentlySelected.RANK2);
+            }
+        });
 
         //show rank 1 initially
         switchRank(CurrentlySelected.RANK1);
@@ -171,6 +205,7 @@ public class CompareFragment extends Fragment {
                 R.layout.cell_settings_recap_small_vertical,
                 settings2);
         rank2Settings.setAdapter(adapter2);
+
     }
 
     /**
@@ -190,6 +225,8 @@ public class CompareFragment extends Fragment {
                         uniList1,
                         rank2,
                         false);
+                rank1Container.setBackgroundResource(R.drawable.general_background_selected);
+                rank2Container.setBackgroundResource(R.drawable.general_background_border);
                 break;
             case RANK2:
                 adapter = new UniversityListAdapter(getContext(),
@@ -197,6 +234,8 @@ public class CompareFragment extends Fragment {
                         uniList2,
                         rank1,
                         false);
+                rank2Container.setBackgroundResource(R.drawable.general_background_selected);
+                rank1Container.setBackgroundResource(R.drawable.general_background_border);
                 break;
             default:
                 throw new IllegalStateException("Unknown element of enum CurrentlySelected");
