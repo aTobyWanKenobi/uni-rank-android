@@ -1,4 +1,4 @@
-# UniRank
+# UniRank ![Logo](https://github.com/aTobyWanKenobi/uni-rank-android/blob/master/screenshots/icon_app_logo.png)
 ## User generated rankings: an Android mobile application
 
 
@@ -6,6 +6,8 @@
 Developed in the context of my Spring 2017 Bachelor semester project at the Media and Design Laboratory (LDM) at the École polytechnique fédérale de Lausanne (EPFL), UniRank is an application that allows to generate personalized university rankings based on a number of performance indicators.
 
 The goal of the application is to provide non-expert users with ways to directly manipulate university data without having to rely on existing rankings, which are not free from transparency concerns. It does so by presenting the user with a set of indicators which constitute the underlying data to some of the most recognized of those existing university rankings. UniRank then uses an implementation of HodgeRank, a rank aggregation algorithm by Jiang et al. (2008) that allows users to combine individual rankings and indicators by associating a weigth to each one of them.
+
+A more extensive PowerPoint presentation can be found [here](https://github.com/aTobyWanKenobi/uni-rank-android/blob/master/PowerPoint_UniRank.ppsx)
 
 ## Features
 
