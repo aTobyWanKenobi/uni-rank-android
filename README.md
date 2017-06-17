@@ -1,4 +1,5 @@
-# UniRank - User generated rankings: an Android mobile application
+# UniRank
+## User generated rankings: an Android mobile application
 
 ## Description
 Developed in the context of my Spring 2017 Bachelor semester project at the Media and Design Laboratory (LDM) at the École polytechnique fédérale de Lausanne (EPFL), UniRank is an application that allows to generate personalized university rankings based on a number of performance indicators.
@@ -8,6 +9,7 @@ The goal of the application is to provide non-expert users with ways to directly
 ## Functionalities
 
 - Rank aggregation procedure
+
   Select indicators, assign weights and see the algorithm's results.
   
   ![Aggregation setup](/screenshots/Screen_CreationIndicators.JPG)
