@@ -20,13 +20,13 @@ The goal of the application is to provide non-expert users with ways to directly
 
   Save work across application launches.
   
-  ![Aggregation setup](/screenshots/Screen_SavePreview.JPG)
+  ![Saves](/screenshots/Screen_SavePreview.JPG)
   
 - **Aggregation comparison**
 
   Compare different generated rankings to inspect differences.
   
-  ![Aggregation setup2](/screenshots/Screen_Comparison.JPG)
+  ![Comparison](/screenshots/Screen_Comparison.JPG)
   
 - **Ability to contribute to a shared pool of user-generated rankings**
 
@@ -36,8 +36,8 @@ The goal of the application is to provide non-expert users with ways to directly
 
   Shared data is accessible from within the application as a research tool.
   
-  ![Aggregation result](/screenshots/Screen_SharedPoolQuery.JPG)
-  ![Aggregation result](/screenshots/Screen_SharedPoolStatistics.JPG)
+  ![Shared Pool Queries](/screenshots/Screen_SharedPoolQuery.JPG)
+  ![Shared Pool Statistics](/screenshots/Screen_SharedPoolStatistics.JPG)
 
 ## Deployment
 The application is still not in a finalized state and is not guaranteed to work on every Android device. Until the first beta release, UniRank can be cloned and opened as a project in Android Studio.
