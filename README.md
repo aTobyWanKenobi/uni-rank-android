@@ -33,6 +33,7 @@ The application is still not in a finalized state and is not guaranteed to work 
 Albergoni Tobia - _Developement_ - aTobyWanKenobi
 
 ## License
+MIT licensed
 
 ## Acknowledgments
 - Koh Immanuel Chee Beng - _Project supervisor_ 
