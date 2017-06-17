@@ -1,6 +1,7 @@
 # UniRank  ![Logo](/screenshots/icon_app_logo.png)
 ## User generated rankings: an Android mobile application
 
+
 ## Description
 Developed in the context of my Spring 2017 Bachelor semester project at the Media and Design Laboratory (LDM) at the École polytechnique fédérale de Lausanne (EPFL), UniRank is an application that allows to generate personalized university rankings based on a number of performance indicators.
 
