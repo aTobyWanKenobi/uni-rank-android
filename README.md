@@ -44,7 +44,7 @@ The goal of the application is to provide non-expert users with ways to directly
 The application is still not in a finalized state and is not guaranteed to work on every Android device. Until the first beta release, UniRank can be cloned and opened as a project in Android Studio.
   
 ## Authors
-Albergoni Tobia - _Developement_ - @aTobyWanKenobi
+Albergoni Tobia - _Developement_ - [aTobyWanKenobi](https://github.com/aTobyWanKenobi)
 
 ## License
 MIT licensed, details in [LICENSE.md](https://github.com/aTobyWanKenobi/uni-rank-android/blob/master/LICENSE)
