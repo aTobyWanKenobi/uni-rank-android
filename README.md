@@ -1,4 +1,4 @@
-# UniRank  ![Application Logo](/screenshots/icon_app_logo.png)
+# UniRank
 ## User generated rankings: an Android mobile application
 
 
@@ -44,10 +44,10 @@ The goal of the application is to provide non-expert users with ways to directly
 The application is still not in a finalized state and is not guaranteed to work on every Android device. Until the first beta release, UniRank can be cloned and opened as a project in Android Studio.
   
 ## Authors
-Albergoni Tobia - _Developement_ - aTobyWanKenobi
+Albergoni Tobia - _Developement_ - @aTobyWanKenobi
 
 ## License
-MIT licensed, details in /LICENSE.md
+MIT licensed, details in [LICENSE.md](https://github.com/aTobyWanKenobi/uni-rank-android/blob/master/LICENSE)
 
 ## Acknowledgments
 - Koh Immanuel Chee Beng - _Project supervisor_ 
