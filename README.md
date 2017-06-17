@@ -1,4 +1,4 @@
-# UniRank ![Logo](https://github.com/aTobyWanKenobi/uni-rank-android/blob/master/screenshots/icon_app_logo.png)
+# ![Logo](https://github.com/aTobyWanKenobi/uni-rank-android/blob/master/screenshots/icon_app_logo.png) UniRank
 ## User generated rankings: an Android mobile application
 
 
