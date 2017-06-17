@@ -10,9 +10,9 @@ The goal of the application is to provide non-expert users with ways to directly
 - Rank aggregation procedure
   Select indicators, assign weights and see the algorithm's results.
   
-  ![Aggregation setup](/screenshots/Screen_CreationIndicators.JPG | width=100)
-  ![Aggregation setup2](/screenshots/Screen_CreationDialog.JPG | width=100)
-  ![Aggregation result](/screenshots/Screen_ConfrontResult.JPG | width=100)
+  ![Aggregation setup](/screenshots/Screen_CreationIndicators.JPG)
+  ![Aggregation setup2](/screenshots/Screen_CreationDialog.JPG)
+  ![Aggregation result](/screenshots/Screen_ConfrontResult.JPG)
   
 - Personal rankings saving system
   Save work across application launches.
