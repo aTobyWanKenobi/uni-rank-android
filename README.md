@@ -1,4 +1,4 @@
-# UniRank
+# UniRank  ![Logo](/screenshots/icon_app_logo.png)
 ## User generated rankings: an Android mobile application
 
 ## Description
